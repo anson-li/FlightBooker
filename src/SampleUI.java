@@ -7,9 +7,10 @@ class UI
   UI()
   {
     num_uis += 1;
+    WelcomeScreen();
   }
   
-  public static void main(String arg[]) {
+  public static void WelcomeScreen() {
     Scanner scan = new Scanner(System.in);
     System.out.println("Welcome to Air Kappa!");
     while(true) {
