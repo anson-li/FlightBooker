@@ -8,20 +8,20 @@ class UI
   {
     num_uis += 1;
     WelcomeScreen();
-  }
+  };
 
   public static void WelcomeScreen() {
     Scanner scan = new Scanner(System.in);
     System.out.println("Welcome to Air Kappa!");
     while(true) {
       System.out.println("Please (l)ogin or (r)egister to use our services, "
-                       + "or (e)xit the program.");
+                       + "\nor (e)xit the program.");
       String i = scan.nextLine();
-      if (i.equals("l")) {
+      if (i.equals("l") || i.equals("L")) {
         Login();
-      } else if (i.equals("r")) {
+      } else if (i.equals("r") || i.equals("R")) {
         Register();
-      } else if (i.equals("e")) {
+      } else if (i.equals("e")  || i.equals("E")) {
         System.out.println("System is exiting; "
                          + "thank you for visiting Air Kappa!");
         scan.close();
@@ -63,11 +63,25 @@ class UI
 
   public static void MainHub() {
     Scanner scan = new Scanner(System.in);
-    System.out.println("Main area reached. Please select from the following options:");
-    System.out.println("(S)earch for flights, (M)ake a booking, See (E)xisting bookings, (C)ancel a booking, Find (R)ound trips, (L)og out.");
-    String input = scan.nextLine();
-    scan.close();
-    System.exit(0); // will never actually exit from here ... delete after.
+    while(true) {
+      System.out.println("Main area reached. Please select from the following options:");
+      System.out.println("(S)earch for flights & make a booking, See (E)xisting bookings, (C)ancel a booking, Find (R)ound trips, (L)og out.");
+      String input = scan.nextLine();
+      if (input.equals("S") || input.equals("s")) {
+        SearchForFlights();
+      } else if (input.equals("E") || input.equals("e")) {
+        ExistingBookings();
+      } else if (input.equals("C") || input.equals("c")) {
+        CancelBooking();
+      } else if (input.equals("R") || input.equals("r")) {
+        RoundTrips();
+      } else if (input.equals("L") || input.equals("l")) {
+        Logout();
+      } else {
+        System.out.println("Invalid character entered.");
+      }
+    }
+
   }
 
   /*	Search for flights. A user should be able to search
@@ -97,13 +111,32 @@ class UI
   secondary sort criterion.
   */
   public static void SearchForFlights() {
+    Scanner scan = new Scanner(System.in);
     // ask user if they want to enter the airport code for source
+    System.out.println("Please enter the airport code for your source:");
+    String SrcACode = scan.nextLine();
     // if not valid airport code, search airport by name (partial match '%val%')
     // complete process for destination airport
+    System.out.println("Please enter the airport code for your destination:");
+    String DestACode = scan.nextLine();
     // add departure date
+    System.out.println("Please enter your departure date in format MM/DD/YYYY");
+    String DepDate = scan.nextLine();
     // search flights for direct flights and flights w one connection
     // provide information. ask user if they want to sort
     // if sort, then sort
+    System.out.println("The flights that match your description are as follows:");
+    // system.out.println(flightslist)
+    System.out.println("Flights are currently being sorted by price."
+                        + "\nWould you like to sort the result based on number of connections? Y/N");
+    System.out.println("Alternatively, select a booking with the corresponding ID (eg. 1, 2, ...)");
+    String i = scan.nextLine();
+    if (i.equals("Y")) {
+
+    } else if (i.equals("N")) {
+
+    }
+    MainHub();
   }
 
   /* Make a booking. A user should be able to select a flight
@@ -125,10 +158,19 @@ class UI
   issued for any reason.
   */
   public static void MakeABooking() {
+    // public static void MakeABooking(int Id)
     // select a flight
     // is user listed in the flight?
     // if so, don't let the rebook.
     // if not, book. add the name & country of the passenger (ask here...)
+    Scanner scan = new Scanner(System.in);
+    System.out.println("Please enter the name of the passenger:");
+    String name = scan.nextLine();
+    System.out.println("Please enter the country of the passenger:");
+    String country = scan.nextLine();
+    // process...
+    System.out.println("Success - you have booked your flight!");
+    MainHub();
   }
 
   /* List existing bookings. A user should be able to list all
@@ -141,6 +183,34 @@ class UI
   public static void ExistingBookings() {
     // search for user bookings
     // put them in a list, sep. by number index
+    Scanner scan = new Scanner(System.in);
+    System.out.println("Your current bookings for this account are: ");
+    //system.out.println(data)
+    System.out.println("Please select a booking by index to view more information, "
+                        + "or (e)xit.");
+    String i = scan.nextLine();
+    if (true) { // if the coming string is an integer - DONT KNOW HOW TO DO THIS ????
+      BookingDetail();
+    }
+    MainHub();
+  }
+
+  public static void BookingDetail() {
+    Scanner scan = new Scanner(System.in);
+    System.out.println("Your booking details is as follows: ");
+    System.out.println("Return to (b)ookings list, (c)ancel booking or (e)xit bookings page?");
+    String i = scan.nextLine();
+    if (i.equals("b") || i.equals("B")) {
+      ExistingBookings();
+    }
+    else if (i.equals("e") || i.equals("E")) {
+      MainHub();
+    } else if (i.equals("c") || i.equals("C")) {
+      CancelBooking(); //PASS VALUE
+    } else {
+      System.out.println("Invalid character - returning to main page.");
+      MainHub();
+    }
   }
 
   /* Cancel a booking. The user should be able to select a
@@ -152,6 +222,8 @@ class UI
   public static void CancelBooking() { // pass in booking value in here?
     // delete the booking
     // return to mainhub
+    System.out.println("Booking has been deleted.");
+    MainHub();
   }
 
   /* Logout. There must be an option to log out of the system. At
@@ -161,6 +233,8 @@ class UI
     // logout
     // detail system date for last_login
     // return to main
+    System.out.println("You have now been logged out.");
+    WelcomeScreen();
   }
 
   /* AIRLINE AGENT ONLY: Record a flight departure. After a plane takes off,
@@ -168,7 +242,12 @@ class UI
   task and make necessary updates such as updating the act_dep_time.
   */
   public static void RecordDeparture() {
-
+    Scanner scan = new Scanner(System.in);
+    System.out.println("Flight number:");
+    String flightno = scan.nextLine();
+    System.out.println("Departure time:");
+    String deptime = scan.nextLine();
+    MainHub();
   }
 
   /* AIRLINE AGENT ONLY: Record a flight arrival. After a landing, the user may
@@ -178,6 +257,12 @@ class UI
     // search for a flight
     // enter the flight arrival time
     // exit
+    Scanner scan = new Scanner(System.in);
+    System.out.println("Flight number:");
+    String flightno = scan.nextLine();
+    System.out.println("Arrival time:");
+    String arrtime = scan.nextLine();
+    MainHub();
   }
 
   /* CHOOSE ONE OF THREE OPTIONS:
@@ -207,5 +292,27 @@ class UI
     // get the end date
     // return the round-trips, sorted by the sum of the price.
     // user inputs a number (1,2,...) and the index is logged and booked (2 bookings, for the round trip!)
+    Scanner scan = new Scanner(System.in);
+    // ask user if they want to enter the airport code for source
+    System.out.println("Please enter the airport code for your source:");
+    String SrcACode = scan.nextLine();
+    // if not valid airport code, search airport by name (partial match '%val%')
+    // complete process for destination airport
+    System.out.println("Please enter the airport code for your destination:");
+    String DestACode = scan.nextLine();
+    // add departure date
+    System.out.println("Please enter your departure date in format MM/DD/YYYY");
+    String DepDate = scan.nextLine();
+    // add return date
+    System.out.println("Please enter your return date in format MM/DD/YYYY");
+    String ReturnDate = scan.nextLine();
+    // search flights for direct flights and flights w one connection
+    // provide information. ask user if they want to sort
+    // if sort, then sort
+    System.out.println("The round-trip flights that match your description are as follows:");
+    // system.out.println(flightslist)
+    System.out.println("Round-trips are currently being sorted by number of connections, and price.");
+    String i = scan.nextLine();
+    MainHub();
   }
 }
