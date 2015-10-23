@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.io.Console;
 import java.io.IOError;
 import java.sql.*;
@@ -68,6 +70,16 @@ class UI
       System.err.println(ioe.getMessage());
     }
 
+    for (int i = 0; i < 20; i++)
+      if (!validEmail(email))
+        System.out.println("not valid");
+      else
+        System.out.println("valid");
+
+    if (!validPassword(password));
+
+    // check if user already in DB
+    // add user to DB
 
     /* need to implement verification system...
     while (isValidEmailAddress(email) != true) {
@@ -77,7 +89,7 @@ class UI
     MainHub();
   }
 
-  public void Login() {
+  private void Login() {
     System.out.println("Login.");
     String email = "";
     String pword = "";
@@ -401,5 +413,18 @@ class UI
     System.out.println("Round-trips are currently being sorted by number of connections, and price.");
     String i = scan.nextLine();
     MainHub();
+  }
+
+  private boolean validEmail(String e)
+  {
+    String e_regex = "\\w+@\\w+.\\w+";
+    Pattern p = Pattern.compile(e_regex);
+    Matcher m = p.matcher(e);
+    return m.matches();
+  }
+
+  private boolean validPassword(String p)
+  {
+    return false;
   }
 }
