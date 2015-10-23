@@ -173,7 +173,7 @@ class UI
       java.sql.Date deptime = rs.getDate("DEP_TIME");
       int estdur = rs.getInt("EST_DUR");
 
-      System.out.println(flightno + ", " + src +", " +dst+", " +deptime+", " +estdur);
+      System.out.println(flightno + "    " + src +"   " +dst+"   " +deptime+"   " +estdur);
     }
 
 
