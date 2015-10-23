@@ -156,7 +156,7 @@ class UI
         e.printStackTrace();
     }
     String query = "select FLIGHTNO, SRC, DST, DEP_TIME, EST_DUR from flights where " +
-                   "SRC LIKE '" + srcACode + "' AND DST LIKE '" + destACode + "' AND DEP_TIME LIKE '" + DepDate + "'";
+                   "SRC LIKE '" + srcACode + "' AND DST LIKE '" + destACode + "' AND DEP_TIME LIKE '" + depDate + "'";
     ResultSet rs = sql_handler.runSQLQuery(query);
     while (rs.next()) {
       String flightno = rs.getString("FLIGHTNO");
