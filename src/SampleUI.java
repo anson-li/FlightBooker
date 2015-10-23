@@ -145,7 +145,7 @@ class UI
     System.out.println("Please enter your departure date in format MM/DD/YYYY");
     String strDate = scan.nextLine();
     DateFormat df = new SimpleDateFormat("MM/dd/yyyy"); 
-    Date depDate;
+    java.util.Date depDate;
     try {
         depDate = df.parse(strDate);
     } catch (ParseException e) {
