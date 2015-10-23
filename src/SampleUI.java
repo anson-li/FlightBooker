@@ -2,6 +2,7 @@ import java.util.*;
 import java.io.Console;
 import java.io.IOError;
 import java.sql.*;
+import java.text.*;
 
 class UI
 {
@@ -157,7 +158,7 @@ class UI
       String flightno = rs.getString("FLIGHTNO");
       String src = rs.getString("SRC");
       String dst = rs.getString("DST");
-      Date deptime = rs.getDate("DEP_TIME");
+      java.sql.Date deptime = rs.getDate("DEP_TIME");
       int estdur = rs.getInt("EST_DUR");
       System.out.println(flightno + "," + src +"," +dst+"," +deptime+"," +estdur);
     }
