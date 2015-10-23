@@ -132,7 +132,7 @@ class UI
   the primary sort criterion and the price as the
   secondary sort criterion.
   */
-  public void SearchForFlights() {
+  public void SearchForFlights() throws SQLException {
     Scanner scan = new Scanner(System.in);
     // ask user if they want to enter the airport code for source
     System.out.println("Please enter the airport code for your source:");
