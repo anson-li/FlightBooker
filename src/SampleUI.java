@@ -157,8 +157,15 @@ class UI
     }
     String query = "select FLIGHTNO, SRC, DST, DEP_TIME, EST_DUR from flights where " +
                    "SRC LIKE '" + srcACode + "' AND DST LIKE '" + destACode + "' AND DEP_TIME LIKE '" + df.format(depDate).toString().toUpperCase() + "'";
-    System.out.println(query);
+    //System.out.println(query);
     ResultSet rs = sql_handler.runSQLQuery(query);
+    // search flights for direct flights and flights w one connection
+    // provide information. ask user if they want to sort
+    // if sort, then sort
+    System.out.println("The flights that match your description are as follows:");
+    // system.out.println(flightslist)
+    System.out.println("\nFLIGHTNO  SRC   DST   DEP_TIME  EST_DUR");
+    System.out.println("--------  ---   ---   --------  -------");
     while (rs.next()) {
       String flightno = rs.getString("FLIGHTNO");
       String src = rs.getString("SRC");
@@ -169,11 +176,7 @@ class UI
       System.out.println(flightno + ", " + src +", " +dst+", " +deptime+", " +estdur);
     }
 
-    // search flights for direct flights and flights w one connection
-    // provide information. ask user if they want to sort
-    // if sort, then sort
-    System.out.println("The flights that match your description are as follows:");
-    // system.out.println(flightslist)
+
     System.out.println("Flights are currently being sorted by price."
                         + "\nWould you like to sort the result based on number of connections? Y/N");
     System.out.println("Alternatively, select a booking with the corresponding ID (eg. 1, 2, ...)");
