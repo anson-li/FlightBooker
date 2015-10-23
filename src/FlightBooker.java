@@ -36,7 +36,7 @@ public class FlightBooker {
     try {
       SQLHandler sql_handler = new SQLHandler(m_userName, m_password);
 
-      UI cli = new UI();
+      UI cli = new UI(sql_handler, co);
 
       // No more statements to compile/execute. So, close connection.
       sql_handler.close();

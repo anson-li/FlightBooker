@@ -1,14 +1,21 @@
 import java.util.*;
+import java.io.Console;
+import java.io.IOError;
+
 class UI
 {
   
   private int num_uis;
+  private SQLHandler sql_handler;
+  private Console con;
   
-  UI()
+  UI(SQLHandler sql_handler, Console con)
   {
     num_uis += 1;
+    this.sql_handler = sql_handler;
+    this.con = con;
     WelcomeScreen();
-  };
+  }
 
   public static void WelcomeScreen() {
     Scanner scan = new Scanner(System.in);
