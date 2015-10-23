@@ -18,10 +18,14 @@ class UI
     this.sql_handler = sql_handler;
     this.con = con;
     this.scan = new Scanner(System.in);
-    WelcomeScreen();
+    try {
+      WelcomeScreen();
+    } catch (SQLException e) {
+      
+    }
   };
 
-  public void WelcomeScreen() {
+  public void WelcomeScreen() throws SQLException {
     System.out.println("Welcome to Air Kappa!");
     while(true) {
       System.out.println("Please (l)ogin or (r)egister to use our services, "
@@ -42,7 +46,7 @@ class UI
     }
   }
 
-  public void Register() {
+  public void Register() throws SQLException {
     
     String username = "";
     String password = "";
@@ -72,7 +76,7 @@ class UI
     scan.close();
   }
 
-  public void Login() {
+  public void Login() throws SQLException {
     while(true) {
       System.out.println("Welcome to the Login page. Please enter your email: ");
       String email = scan.nextLine();
@@ -83,7 +87,7 @@ class UI
     }
   }
 
-  public void MainHub() {
+  public void MainHub() throws SQLException {
     Scanner scan = new Scanner(System.in);
     while(true) {
       System.out.println("Main area reached. Please select from the following options:");
@@ -198,7 +202,7 @@ class UI
   issued or a descriptive message if a ticket cannot be
   issued for any reason.
   */
-  public void MakeABooking() {
+  public void MakeABooking() throws SQLException {
     // public static void MakeABooking(int Id)
     // select a flight
     // is user listed in the flight?
@@ -221,7 +225,7 @@ class UI
   user should be able to select a row and get more detailed
   information about the booking.
   */
-  public void ExistingBookings() {
+  public void ExistingBookings() throws SQLException {
     // search for user bookings
     // put them in a list, sep. by number index
     Scanner scan = new Scanner(System.in);
@@ -236,7 +240,7 @@ class UI
     MainHub();
   }
 
-  public void BookingDetail() {
+  public void BookingDetail() throws SQLException {
     Scanner scan = new Scanner(System.in);
     System.out.println("Your booking details is as follows: ");
     System.out.println("Return to (b)ookings list, (c)ancel booking or (e)xit bookings page?");
@@ -260,7 +264,7 @@ class UI
   the cancelation and the cancelled seat should be returned to
   the system and is made available for future bookings.
   */
-  public void CancelBooking() { // pass in booking value in here?
+  public void CancelBooking() throws SQLException { // pass in booking value in here?
     // delete the booking
     // return to mainhub
     System.out.println("Booking has been deleted.");
@@ -270,7 +274,7 @@ class UI
   /* Logout. There must be an option to log out of the system. At
   logout, the field last_login in users is set to the current system date.
   */
-  public void Logout() {
+  public void Logout() throws SQLException {
     // logout
     // detail system date for last_login
     // return to main
@@ -282,7 +286,7 @@ class UI
   the user may want to record the departure. Your system should support the
   task and make necessary updates such as updating the act_dep_time.
   */
-  public void RecordDeparture() {
+  public void RecordDeparture() throws SQLException {
     System.out.println("Flight number:");
     String flightno = scan.nextLine();
     System.out.println("Departure time:");
@@ -293,7 +297,7 @@ class UI
   /* AIRLINE AGENT ONLY: Record a flight arrival. After a landing, the user may
   want to record the arrival and your system should support the task.
   */
-  public void RecordArrival() {
+  public void RecordArrival() throws SQLException {
     // search for a flight
     // enter the flight arrival time
     // exit
@@ -324,7 +328,7 @@ class UI
   For a party of size 4, your system will book those 2 lowest fare seats and another 2 seats in
   the next fare type that is available.
   */
-  public void RoundTrips() {
+  public void RoundTrips() throws SQLException {
     // get the user source
     // get the user destination
     // get the start date
