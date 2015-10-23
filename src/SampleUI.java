@@ -6,12 +6,12 @@ import java.text.*;
 
 class UI
 {
-  
+
   private int num_uis;
   private SQLHandler sql_handler;
   private Scanner scan;
   private Console con;
-  
+
   UI(SQLHandler sql_handler, Console con)
   {
     num_uis += 1;
@@ -51,43 +51,40 @@ class UI
   // createString = "insert into users values ('email', 'password', poweruser, sysdate)";
 
   public void Register() throws SQLException {
-    
-    String username = "";
+
+    String email = "";
     String password = "";
-    
+
     System.out.println("Registration:");
     try {
-      username = con.readLine("Email: ");
-      char[] pwArray = con.readPassword("Password: ");
-      password = String.valueOf(pwArray);
+      email = con.readLine("Email: ");
+      char[] pwArray1 = con.readPassword("Password: ");
+      char[] pwArray2 = con.readPassword("Confirm Password:");
+      if (Arrays.equals(pwArray1, pwArray2))
+        password = String.valueOf(pwArray1);
+      else
+        return;
     } catch (IOError ioe){
       System.err.println(ioe.getMessage());
-    }    
-    /*
-    Scanner scan = new Scanner(System.in);
-    System.out.println("Welcome to the Register page. "
-                     + "Please enter your email: ");
-    String email = scan.nextLine();
+    }
+
+
     /* need to implement verification system...
     while (isValidEmailAddress(email) != true) {
       System.out.println("Invalid email... Please enter your email: ");
       email = scan.next();
-    }
-    System.out.println("Please enter your password: ");
-    String pass = scan.nextLine();*/
+    }*/
     MainHub();
-
-    scan.close();
   }
 
-  // select * from users where email = 'email' and password = 'password'
-
-  public void Login() throws SQLException {
+  public void Login() {
+    System.out.println("Login.");
+    String email = "";
+    String pword = "";
     while(true) {
-      System.out.println("Welcome to the Login page. Please enter your email: ");
-      String email = scan.nextLine();
-      System.out.println("Please enter your password: ");
-      String pass = scan.nextLine();
+      email = con.readLine("Email: ");
+      char[] pwordA = con.readPassword("Password:");
+      pword = String.valueOf(pwordA);
       // if verification is valid ... { MainHub(-pass in permissions); }
       MainHub();
     }
@@ -145,7 +142,7 @@ class UI
 
   // select f.flightno, a1.acode, a2.acode, dep_time, dep_time + est_dur (not right...) as arr_time, 0 as num_conn, 0 as layover_time, ff1.price, ff1.limit - COUNT(b.seat) as open_seats
   // from flights f, flight_fares ff1, airports a1, airports a2, bookings b
-  // where (f.src like 'SRC' or a1.name like 'SRC') 
+  // where (f.src like 'SRC' or a1.name like 'SRC')
   // and (f.dst like 'DST' or a2.name like 'DST')
   // and (f.dep_time like 'DEP_TIME')
   // and f.src like a1.acode and f.dst like a2.acode and f.flightno like ff1.flightno
@@ -169,7 +166,7 @@ class UI
     // add departure date
     System.out.println("Please enter your departure date in format DD-MMM-YYYY - eg: 01-OCT-2015");
     String strDate = scan.nextLine();
-    DateFormat df = new SimpleDateFormat("dd-MMM-yy"); 
+    DateFormat df = new SimpleDateFormat("dd-MMM-yy");
     java.util.Date depDate = new java.util.Date();
     try {
         depDate = df.parse(strDate);
@@ -240,7 +237,6 @@ class UI
     // is user listed in the flight?
     // if so, don't let the rebook.
     // if not, book. add the name & country of the passenger (ask here...)
-    Scanner scan = new Scanner(System.in);
     System.out.println("Please enter the name of the passenger:");
     String name = scan.nextLine();
     System.out.println("Please enter the country of the passenger:");
@@ -265,7 +261,6 @@ class UI
   public void ExistingBookings() throws SQLException {
     // search for user bookings
     // put them in a list, sep. by number index
-    Scanner scan = new Scanner(System.in);
     System.out.println("Your current bookings for this account are: ");
     //system.out.println(data)
     System.out.println("Please select a booking by index to view more information, "
