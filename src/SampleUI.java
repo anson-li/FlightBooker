@@ -42,40 +42,39 @@ class UI
 
   public void Register() {
     
-    String username = "";
+    String email = "";
     String password = "";
     
     System.out.println("Registration.");
     try {
-      username = con.readLine("Username: ");
-      char[] pwArray = con.readPassword("Password: ");
-      password = String.valueOf(pwArray);
+      email = con.readLine("Email: ");
+      char[] pwArray1 = con.readPassword("Password: ");
+      char[] pwArray2 = con.readPassword("Confirm Password:");
+      if (Arrays.equals(pwArray1, pwArray2))
+        password = String.valueOf(pwArray1);
+      else
+        return;
     } catch (IOError ioe){
       System.err.println(ioe.getMessage());
-    }    
-    /*
-    Scanner scan = new Scanner(System.in);
-    System.out.println("Welcome to the Register page. "
-                     + "Please enter your email: ");
-    String email = scan.nextLine();
+    }
+    
+    
     /* need to implement verification system...
     while (isValidEmailAddress(email) != true) {
       System.out.println("Invalid email... Please enter your email: ");
       email = scan.next();
-    }
-    System.out.println("Please enter your password: ");
-    String pass = scan.nextLine();*/
+    }*/
     MainHub();
-
-    scan.close();
   }
 
   public void Login() {
+    System.out.println("Login.");
+    String email = "";
+    String pword = "";
     while(true) {
-      System.out.println("Welcome to the Login page. Please enter your email: ");
-      String email = scan.nextLine();
-      System.out.println("Please enter your password: ");
-      String pass = scan.nextLine();
+      email = con.readLine("Email: ");
+      char[] pwordA = con.readPassword("Password:");
+      pword = String.valueOf(pwordA);
       // if verification is valid ... { MainHub(-pass in permissions); }
       MainHub();
     }
@@ -131,7 +130,6 @@ class UI
   secondary sort criterion.
   */
   public void SearchForFlights() {
-    Scanner scan = new Scanner(System.in);
     // ask user if they want to enter the airport code for source
     System.out.println("Please enter the airport code for your source:");
     String SrcACode = scan.nextLine();
@@ -183,7 +181,6 @@ class UI
     // is user listed in the flight?
     // if so, don't let the rebook.
     // if not, book. add the name & country of the passenger (ask here...)
-    Scanner scan = new Scanner(System.in);
     System.out.println("Please enter the name of the passenger:");
     String name = scan.nextLine();
     System.out.println("Please enter the country of the passenger:");
@@ -203,7 +200,6 @@ class UI
   public void ExistingBookings() {
     // search for user bookings
     // put them in a list, sep. by number index
-    Scanner scan = new Scanner(System.in);
     System.out.println("Your current bookings for this account are: ");
     //system.out.println(data)
     System.out.println("Please select a booking by index to view more information, "
@@ -216,7 +212,6 @@ class UI
   }
 
   public void BookingDetail() {
-    Scanner scan = new Scanner(System.in);
     System.out.println("Your booking details is as follows: ");
     System.out.println("Return to (b)ookings list, (c)ancel booking or (e)xit bookings page?");
     String i = scan.nextLine();
