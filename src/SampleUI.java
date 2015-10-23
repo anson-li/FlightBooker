@@ -164,8 +164,8 @@ class UI
     // if sort, then sort
     System.out.println("The flights that match your description are as follows:");
     // system.out.println(flightslist)
-    System.out.println("\nFLIGHTNO  SRC   DST   DEP_TIME  EST_DUR");
-    System.out.println("--------  ---   ---   --------  -------");
+    System.out.println("\nFLIGHTNO  SRC   DST   DEP_TIME    EST_DUR");
+    System.out.println("--------  ---   ---   ----------  -------");
     while (rs.next()) {
       String flightno = rs.getString("FLIGHTNO");
       String src = rs.getString("SRC");
