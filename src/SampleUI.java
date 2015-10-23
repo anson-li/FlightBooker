@@ -1,6 +1,7 @@
 import java.util.*;
 import java.io.Console;
 import java.io.IOError;
+import java.sql.*;
 
 class UI
 {
@@ -17,7 +18,7 @@ class UI
     this.con = con;
     this.scan = new Scanner(System.in);
     WelcomeScreen();
-  }
+  };
 
   public void WelcomeScreen() {
     System.out.println("Welcome to Air Kappa!");
@@ -134,14 +135,33 @@ class UI
     Scanner scan = new Scanner(System.in);
     // ask user if they want to enter the airport code for source
     System.out.println("Please enter the airport code for your source:");
-    String SrcACode = scan.nextLine();
+    String srcACode = scan.nextLine();
     // if not valid airport code, search airport by name (partial match '%val%')
     // complete process for destination airport
     System.out.println("Please enter the airport code for your destination:");
-    String DestACode = scan.nextLine();
+    String destACode = scan.nextLine();
     // add departure date
     System.out.println("Please enter your departure date in format MM/DD/YYYY");
-    String DepDate = scan.nextLine();
+    String strDate = scan.nextLine();
+    DateFormat df = new SimpleDateFormat("MM/dd/yyyy"); 
+    Date depDate;
+    try {
+        depDate = df.parse(strDate);
+    } catch (ParseException e) {
+        e.printStackTrace();
+    }
+    String query = "select FLIGHTNO, SRC, DST, DEP_TIME, EST_DUR from flights where " +
+                   "SRC LIKE '" + srcACode + "' AND DST LIKE '" + destACode + "';";
+    ResultSet rs = sql_handler.runSQLQuery(query);
+    while (rs.next()) {
+      String flightno = rs.getString("FLIGHTNO");
+      String src = rs.getString("SRC");
+      String dst = rs.getString("DST");
+      Date deptime = rs.getDate("DEP_TIME");
+      int estdur = rs.getInt("EST_DUR");
+      System.out.println(flightno + "," + src +"," +dst+"," +deptime+"," +estdur);
+    }
+
     // search flights for direct flights and flights w one connection
     // provide information. ask user if they want to sort
     // if sort, then sort

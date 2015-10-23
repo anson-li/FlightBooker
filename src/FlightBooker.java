@@ -24,7 +24,6 @@ public class FlightBooker {
 
     String m_userName = "";
     String m_password = "";
-
     System.out.println("Login in to SQLPlus Database");
     // get username
     try {
