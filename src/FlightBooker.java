@@ -34,7 +34,6 @@ public class FlightBooker {
 
     try {
       SQLHandler sql_handler = SQLHandler(m_userName, m_password);
-
       UI cli = new UI();
 
       // No more statements to compile/execute. So, close connection.

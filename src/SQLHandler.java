@@ -15,7 +15,6 @@ public class SQLHandler
     } catch (ClassNotFoundException cnfe) {
       System.err.println("Could not load driver.");
     }
-
     setURL();
     this.username = username;
     this.password = password;

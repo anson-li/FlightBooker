@@ -1,12 +1,15 @@
 import java.util.*;
+
 class UI
 {
   
   private int num_uis;
+  private SQLHandler sqlh;
   
-  UI()
+  UI(SQLHandler sqlh)
   {
     num_uis += 1;
+    this.sqlh = sqlh;
     WelcomeScreen();
   };
 
@@ -125,6 +128,22 @@ class UI
     // search flights for direct flights and flights w one connection
     // provide information. ask user if they want to sort
     // if sort, then sort
+
+    String query = "select T_NAME, SUP_ID, SALES, PRICE, TOTAL from toffees";
+    // when you want to use an updatable result set, you cannot use * for select all:
+    // all column names should be specified.
+    ResultSet rs = sqlh.runSQLQuery(query);
+    while (rs.next())
+            {
+          String s = rs.getString("T_NAME");
+    int supid = rs.getInt("SUP_ID");
+          float n = rs.getFloat("PRICE");
+    int sales = rs.getInt("SALES");
+    int total = rs.getInt("TOTAL");
+          System.out.println(s+"," + supid+"," +sales+"," +n+"," +total);
+        }
+
+
     System.out.println("The flights that match your description are as follows:");
     // system.out.println(flightslist)
     System.out.println("Flights are currently being sorted by price."
