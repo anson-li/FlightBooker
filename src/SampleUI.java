@@ -7,6 +7,7 @@ class UI
   
   private int num_uis;
   private SQLHandler sql_handler;
+  private Scanner scan;
   private Console con;
   
   UI(SQLHandler sql_handler, Console con)
@@ -14,11 +15,11 @@ class UI
     num_uis += 1;
     this.sql_handler = sql_handler;
     this.con = con;
+    this.scan = new Scanner(System.in);
     WelcomeScreen();
   }
 
-  public static void WelcomeScreen() {
-    Scanner scan = new Scanner(System.in);
+  public void WelcomeScreen() {
     System.out.println("Welcome to Air Kappa!");
     while(true) {
       System.out.println("Please (l)ogin or (r)egister to use our services, "
@@ -39,7 +40,20 @@ class UI
     }
   }
 
-  public static void Register() {
+  public void Register() {
+    
+    String username = "";
+    String password = "";
+    
+    System.out.println("Registration.");
+    try {
+      username = con.readLine("Username: ");
+      char[] pwArray = con.readPassword("Password: ");
+      password = String.valueOf(pwArray);
+    } catch (IOError ioe){
+      System.err.println(ioe.getMessage());
+    }    
+    /*
     Scanner scan = new Scanner(System.in);
     System.out.println("Welcome to the Register page. "
                      + "Please enter your email: ");
@@ -48,16 +62,15 @@ class UI
     while (isValidEmailAddress(email) != true) {
       System.out.println("Invalid email... Please enter your email: ");
       email = scan.next();
-    }*/
+    }
     System.out.println("Please enter your password: ");
-    String pass = scan.nextLine();
+    String pass = scan.nextLine();*/
     MainHub();
 
     scan.close();
   }
 
-  public static void Login() {
-    Scanner scan = new Scanner(System.in); // not closed.
+  public void Login() {
     while(true) {
       System.out.println("Welcome to the Login page. Please enter your email: ");
       String email = scan.nextLine();
@@ -68,7 +81,7 @@ class UI
     }
   }
 
-  public static void MainHub() {
+  public void MainHub() {
     Scanner scan = new Scanner(System.in);
     while(true) {
       System.out.println("Main area reached. Please select from the following options:");
@@ -117,7 +130,7 @@ class UI
   the primary sort criterion and the price as the
   secondary sort criterion.
   */
-  public static void SearchForFlights() {
+  public void SearchForFlights() {
     Scanner scan = new Scanner(System.in);
     // ask user if they want to enter the airport code for source
     System.out.println("Please enter the airport code for your source:");
@@ -164,7 +177,7 @@ class UI
   issued or a descriptive message if a ticket cannot be
   issued for any reason.
   */
-  public static void MakeABooking() {
+  public void MakeABooking() {
     // public static void MakeABooking(int Id)
     // select a flight
     // is user listed in the flight?
@@ -187,7 +200,7 @@ class UI
   user should be able to select a row and get more detailed
   information about the booking.
   */
-  public static void ExistingBookings() {
+  public void ExistingBookings() {
     // search for user bookings
     // put them in a list, sep. by number index
     Scanner scan = new Scanner(System.in);
@@ -202,7 +215,7 @@ class UI
     MainHub();
   }
 
-  public static void BookingDetail() {
+  public void BookingDetail() {
     Scanner scan = new Scanner(System.in);
     System.out.println("Your booking details is as follows: ");
     System.out.println("Return to (b)ookings list, (c)ancel booking or (e)xit bookings page?");
@@ -226,7 +239,7 @@ class UI
   the cancelation and the cancelled seat should be returned to
   the system and is made available for future bookings.
   */
-  public static void CancelBooking() { // pass in booking value in here?
+  public void CancelBooking() { // pass in booking value in here?
     // delete the booking
     // return to mainhub
     System.out.println("Booking has been deleted.");
@@ -236,7 +249,7 @@ class UI
   /* Logout. There must be an option to log out of the system. At
   logout, the field last_login in users is set to the current system date.
   */
-  public static void Logout() {
+  public void Logout() {
     // logout
     // detail system date for last_login
     // return to main
@@ -248,8 +261,7 @@ class UI
   the user may want to record the departure. Your system should support the
   task and make necessary updates such as updating the act_dep_time.
   */
-  public static void RecordDeparture() {
-    Scanner scan = new Scanner(System.in);
+  public void RecordDeparture() {
     System.out.println("Flight number:");
     String flightno = scan.nextLine();
     System.out.println("Departure time:");
@@ -260,11 +272,10 @@ class UI
   /* AIRLINE AGENT ONLY: Record a flight arrival. After a landing, the user may
   want to record the arrival and your system should support the task.
   */
-  public static void RecordArrival() {
+  public void RecordArrival() {
     // search for a flight
     // enter the flight arrival time
     // exit
-    Scanner scan = new Scanner(System.in);
     System.out.println("Flight number:");
     String flightno = scan.nextLine();
     System.out.println("Arrival time:");
@@ -292,14 +303,13 @@ class UI
   For a party of size 4, your system will book those 2 lowest fare seats and another 2 seats in
   the next fare type that is available.
   */
-  public static void RoundTrips() {
+  public void RoundTrips() {
     // get the user source
     // get the user destination
     // get the start date
     // get the end date
     // return the round-trips, sorted by the sum of the price.
     // user inputs a number (1,2,...) and the index is logged and booked (2 bookings, for the round trip!)
-    Scanner scan = new Scanner(System.in);
     // ask user if they want to enter the airport code for source
     System.out.println("Please enter the airport code for your source:");
     String SrcACode = scan.nextLine();

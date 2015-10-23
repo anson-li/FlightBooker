@@ -4,7 +4,7 @@ import java.io.Console; // Java package includes Console for getting password fr
 import java.io.IOError;
 
 public class FlightBooker {
-
+  
   static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
   static final String DB_URL = "jdbc:mysql://localhost/EMP";
 
@@ -13,11 +13,13 @@ public class FlightBooker {
   	// before you start, write 'CLASSPATH = $CLASSPATH:' into the console.
 
     Console co = System.console();
-    if (co == null)
-    {
-      System.err.println("System.console() returned null.");
-      // System.console() returns null if console doesn't exist
-      // need error handling
+    try {
+      co.flush();
+    } catch (NullPointerException npe) {
+      npe.printStackTrace();
+      System.err.println("Unable to initialize System.console()\nExiting.");
+      // may want to perform re-try instead.
+      System.exit(0);
     }
 
     String m_userName = "";
