@@ -35,7 +35,7 @@ public class SQLHandler
 
   private void setURL()
   {
-    url = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS" // or System.getenv("DB_URL");
+    url = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS"; // or System.getenv("DB_URL");
   }
 
   private void makeConnection() throws SQLException
@@ -53,7 +53,7 @@ public class SQLHandler
     return statement.executeQuery(q);
   }
 
-  public void close()
+  public void close() throws SQLException
   {
     statement.close();
     con.close();

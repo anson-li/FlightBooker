@@ -1,6 +1,7 @@
 import java.util.*;
 import java.sql.*; // Java package for accessing Oracle
 import java.io.Console; // Java package includes Console for getting password from user and printing to screen
+import java.io.IOError;
 
 public class FlightBooker {
 
@@ -14,7 +15,7 @@ public class FlightBooker {
     Console co = System.console();
     if (co == null)
     {
-      System.err.println("System.console() returned null.")
+      System.err.println("System.console() returned null.");
       // System.console() returns null if console doesn't exist
       // need error handling
     }
@@ -22,7 +23,7 @@ public class FlightBooker {
     String m_userName = "";
     String m_password = "";
 
-    System.println("Login in to SQLPlus Database")
+    System.out.println("Login in to SQLPlus Database");
     // get username
     try {
     	m_userName = co.readLine("SQLPlus Username: ");
@@ -33,7 +34,7 @@ public class FlightBooker {
     }
 
     try {
-      SQLHandler sql_handler = SQLHandler(m_userName, m_password);
+      SQLHandler sql_handler = new SQLHandler(m_userName, m_password);
 
       UI cli = new UI();
 
