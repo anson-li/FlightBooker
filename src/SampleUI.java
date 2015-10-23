@@ -146,9 +146,9 @@ class UI
     System.out.println("Please enter the airport code for your destination:");
     String destACode = scan.nextLine();
     // add departure date
-    System.out.println("Please enter your departure date in format MM/DD/YYYY");
+    System.out.println("Please enter your departure date in format MM-DD-YYYY");
     String strDate = scan.nextLine();
-    DateFormat df = new SimpleDateFormat("MM/dd/yyyy"); 
+    DateFormat df = new SimpleDateFormat("MM-dd-yyyy"); 
     java.util.Date depDate = new java.util.Date();
     try {
         depDate = df.parse(strDate);
