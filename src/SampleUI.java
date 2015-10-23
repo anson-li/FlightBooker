@@ -156,7 +156,7 @@ class UI
         e.printStackTrace();
     }
     String query = "select FLIGHTNO, SRC, DST, DEP_TIME, EST_DUR from flights where " +
-                   "SRC LIKE '" + srcACode + "' AND DST LIKE '" + destACode + "';";
+                   "SRC LIKE '" + srcACode + "' AND DST LIKE '" + destACode + "' AND DEP_TIME LIKE '" + DepDate + "'";
     ResultSet rs = sql_handler.runSQLQuery(query);
     while (rs.next()) {
       String flightno = rs.getString("FLIGHTNO");
@@ -164,7 +164,8 @@ class UI
       String dst = rs.getString("DST");
       java.sql.Date deptime = rs.getDate("DEP_TIME");
       int estdur = rs.getInt("EST_DUR");
-      System.out.println(flightno + "," + src +"," +dst+"," +deptime+"," +estdur);
+
+      System.out.println(flightno + ", " + src +", " +dst+", " +deptime+", " +estdur);
     }
 
     // search flights for direct flights and flights w one connection
