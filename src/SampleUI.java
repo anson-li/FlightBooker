@@ -48,7 +48,6 @@ class UI
     String password = "";
     
     System.out.println("Registration.");
-    for (int i = 0; i < 20; i++) {
     try {
       email = con.readLine("Email: ");
       char[] pwArray1 = con.readPassword("Password: ");
@@ -61,10 +60,7 @@ class UI
       System.err.println(ioe.getMessage());
     }
     
-    if (!validEmail(email))
-      System.out.println("not valid");
-    else
-        System.out.println("valid");
+    if (!validEmail(email));
     
     if (!validPassword(password));
     
@@ -75,7 +71,7 @@ class UI
     while (isValidEmailAddress(email) != true) {
       System.out.println("Invalid email... Please enter your email: ");
       email = scan.next();
-    }*/}
+    }*/
     MainHub();
   }
 
@@ -342,7 +338,7 @@ class UI
   
   private boolean validEmail(String e)
   {
-    String e_regex = "(\\w | .)+@\\w+.\\w+";
+    String e_regex = "(\\w|\\.)+\\@\\w+\\.\\w+";
     Pattern p = Pattern.compile(e_regex);
     Matcher m = p.matcher(e);
     return m.matches();
