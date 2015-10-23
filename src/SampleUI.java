@@ -148,7 +148,7 @@ class UI
     // add departure date
     System.out.println("Please enter your departure date in format DD-MMM-YYYY - eg: 01-OCT-2015");
     String strDate = scan.nextLine();
-    DateFormat df = new SimpleDateFormat("dd-MMM-yyyy"); 
+    DateFormat df = new SimpleDateFormat("dd-MMM-yy"); 
     java.util.Date depDate = new java.util.Date();
     try {
         depDate = df.parse(strDate);
