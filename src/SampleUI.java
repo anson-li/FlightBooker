@@ -21,7 +21,7 @@ class UI
     try {
       WelcomeScreen();
     } catch (SQLException e) {
-      
+      e.printStackTrace();
     }
   };
 
