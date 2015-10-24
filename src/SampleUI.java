@@ -177,7 +177,7 @@ class UI
     }
 
 
-    System.out.println("Flights are currently being sorted by price."
+    System.out.println("\nFlights are currently being sorted by price."
                         + "\nWould you like to sort the result based on number of connections? Y/N");
     System.out.println("Alternatively, select a booking with the corresponding ID (eg. 1, 2, ...)");
     String i = scan.nextLine();
