@@ -46,14 +46,18 @@ class UI
     }
   }
 
+  // create table users { email String, password String, role String, last_login DATE }
+  // createString = "insert into users values ('email', 'password', user, sysdate)";
+  // createString = "insert into users values ('email', 'password', poweruser, sysdate)";
+
   public void Register() throws SQLException {
     
     String username = "";
     String password = "";
     
-    System.out.println("Registration.");
+    System.out.println("Registration:");
     try {
-      username = con.readLine("Username: ");
+      username = con.readLine("Email: ");
       char[] pwArray = con.readPassword("Password: ");
       password = String.valueOf(pwArray);
     } catch (IOError ioe){
@@ -75,6 +79,8 @@ class UI
 
     scan.close();
   }
+
+  // select * from users where email = 'email' and password = 'password'
 
   public void Login() throws SQLException {
     while(true) {
@@ -136,6 +142,21 @@ class UI
   the primary sort criterion and the price as the
   secondary sort criterion.
   */
+
+  // select f.flightno, a1.acode, a2.acode, dep_time, dep_time + est_dur (not right...) as arr_time, 0 as num_conn, 0 as layover_time, ff1.price, ff1.limit - COUNT(b.seat) as open_seats
+  // from flights f, flight_fares ff1, airports a1, airports a2, bookings b
+  // where (f.src like 'SRC' or a1.name like 'SRC') 
+  // and (f.dst like 'DST' or a2.name like 'DST')
+  // and (f.dep_time like 'DEP_TIME')
+  // and f.src like a1.acode and f.dst like a2.acode and f.flightno like ff1.flightno
+  // and b.flightno like f.flightno and b.fare like ff1.fare
+  // UNION
+  // (add the 1-connection flights ...)
+  // GROUP BY flightno, ...
+  // ORDER BY PRICE
+
+  // after the requery - ORDER BY num_conn
+
   public void SearchForFlights() throws SQLException {
     Scanner scan = new Scanner(System.in);
     // ask user if they want to enter the airport code for source
@@ -207,6 +228,12 @@ class UI
   issued or a descriptive message if a ticket cannot be
   issued for any reason.
   */
+
+  // if seat is empty..
+  // insert into passengers values ('EMAIL', 'NAME', 'COUNTRY')
+  // insert into tickets values (tno (gen), 'EMAIL', 'PAID PRICE')
+  // insert into bookings values (tno (gen), flight_no, fare, dep_date, seat)
+
   public void MakeABooking() throws SQLException {
     // public static void MakeABooking(int Id)
     // select a flight
@@ -230,6 +257,11 @@ class UI
   user should be able to select a row and get more detailed
   information about the booking.
   */
+
+  // select b.tno, p.name, s.dep_date, t.paid_price
+  // from bookings b, tickets t, passengers p, sch_flights s
+  // where b.tno like t.tno and p.email like t.email and s.flightno like b.flightno
+
   public void ExistingBookings() throws SQLException {
     // search for user bookings
     // put them in a list, sep. by number index
@@ -244,6 +276,10 @@ class UI
     }
     MainHub();
   }
+
+  // select tno, flight_no, fare, dep_date, seat
+  // from bookings
+  // where tno like 'TNO_INPUT'
 
   public void BookingDetail() throws SQLException {
     Scanner scan = new Scanner(System.in);
@@ -269,6 +305,10 @@ class UI
   the cancelation and the cancelled seat should be returned to
   the system and is made available for future bookings.
   */
+
+  // delete from bookings
+  // where tno like 'TNO_INPUT'
+
   public void CancelBooking() throws SQLException { // pass in booking value in here?
     // delete the booking
     // return to mainhub
@@ -279,6 +319,11 @@ class UI
   /* Logout. There must be an option to log out of the system. At
   logout, the field last_login in users is set to the current system date.
   */
+
+  // get the user into the rs... select * from users where user_id like 'INPUTUSERID'
+  // rs.updateString(4, sysdate); // currently only in the result set: Indexing from 1.
+  // rs.updateRow(); // makes the changes permanent
+
   public void Logout() throws SQLException {
     // logout
     // detail system date for last_login
