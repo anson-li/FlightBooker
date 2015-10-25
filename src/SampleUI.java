@@ -54,6 +54,7 @@ class UI
       "where a1.dst=a2.src and a1.arr_time +1.5/24 <=a2.dep_time and a1.arr_time +5/24 >=a2.dep_time" +
       "group by a1.src, a2.dst, a1.dep_date, a1.flightno, a2.flightno, a2.dep_time, a1.arr_time";
 	*/
+	System.out.println("@generate_views");
 	sql_handler.runSQLStatement("@generate_views");
 	//String dropAvailableFlights = "drop table available_flights" ;
 	//String createAvailableFlights = 
