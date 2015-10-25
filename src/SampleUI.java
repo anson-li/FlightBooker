@@ -21,7 +21,7 @@ class UI
     this.con = con;
     this.scan = new Scanner(System.in);
     try {
-      GenerateViews();
+      //GenerateViews();
       WelcomeScreen();
     } catch (SQLException e) {
       e.printStackTrace();
