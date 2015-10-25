@@ -13,6 +13,7 @@ class UI
   private SQLHandler sql_handler;
   private Scanner scan;
   private Console con;
+  private String user_email;
 
   UI(SQLHandler sql_handler, Console con)
   {
@@ -20,6 +21,7 @@ class UI
     this.sql_handler = sql_handler;
     this.con = con;
     this.scan = new Scanner(System.in);
+    this.user_email = "";
     try {
       GenerateViews();
       WelcomeScreen();
@@ -54,7 +56,7 @@ class UI
     sql_handler.runSQLStatement(createAvailableFlights);
     //sql_handler.runSQLStatement(dropGoodConnections);
     //sql_handler.runSQLStatement(createGoodConnections);
-	System.out.println("@generate_views");
+  System.out.println("@generate_views");
   }
 
   public void WelcomeScreen() throws SQLException {
@@ -115,6 +117,9 @@ class UI
     System.out.println("Please enter your password: ");
     String pass = scan.nextLine();*/
     String role = "user";
+
+    this.user_email = email;
+
     MainHub(role);
 
     scan.close();
@@ -130,6 +135,9 @@ class UI
       pword = String.valueOf(pwordA);
       // if verification is valid ... { MainHub(-pass in permissions); }
       String role = "poweruser";
+
+      this.user_email = email;
+
       MainHub(role);
     }
   }
@@ -327,6 +335,14 @@ class UI
 
   public void ExistingBookings(String role) throws SQLException {
     // search for user bookings
+
+  String query = "select tno, name, dep_date, price_paid "
+           + "from passengers p, tickets t, bookings b "
+           + "where p.email = '" + this.user_email + "' "
+           + "and p.name = t.name "
+           + "and p.email = t.email "
+           + "and b.tno = t.tno";
+
     // put them in a list, sep. by number index
     System.out.println("Your current bookings for this account are: ");
     //system.out.println(data)
