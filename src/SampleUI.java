@@ -354,7 +354,7 @@ class UI
     System.out.println("Please select a booking by ID to view more information, "
                         + "or (e)xit.\n");
     System.out.println("\nID  TNO  NAME   DEP_DATE  PRICE");
-    System.out.println("  --  ---  ----   --------  -----");
+    System.out.println("--  ---  ----   --------  -----");
     ResultSet rs = sql_handler.runSQLQuery(query);
     int intId = 0;
     while (rs.next()) {
