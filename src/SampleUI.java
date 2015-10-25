@@ -28,7 +28,14 @@ class UI
       e.printStackTrace();
     }
   };
-
+  
+  /**
+   * Creates the views 'available_flights'
+   * and 'good_connections' in the SQLPlus
+   * database. Solution from assignment2
+   * q7 and q9.
+   * @throws SQLException
+   */
   public void GenerateViews() throws SQLException {
     String dropAvailableFlights = "drop view available_flights";
     String createAvailableFlights = "create view available_flights(flightno,dep_date,src,dst,dep_time, " +
@@ -60,8 +67,8 @@ class UI
   public void WelcomeScreen() throws SQLException {
     System.out.println("Welcome to Air Kappa!");
     while(true) {
-      System.out.println("Please (l)ogin or (r)egister to use our services, "
-                       + "\nor (e)xit the program.");
+      System.out.println("Please (L)ogin or (R)egister to use our services, "
+                       + "\nor (E)xit the program.");
       String i = scan.nextLine();
       if (i.equals("l") || i.equals("L")) {
         Login();
@@ -69,7 +76,7 @@ class UI
         Register();
       } else if (i.equals("e")  || i.equals("E")) {
         System.out.println("System is exiting; "
-                         + "thank you for visiting Air Kappa!");
+                         + "Thank you for visiting Air Kappa!");
         scan.close();
         System.exit(0);
       } else {
@@ -87,7 +94,7 @@ class UI
     String email = "";
     String password = "";
 
-    System.out.println("Registration (password must be alpha-numeric):");
+    System.out.println("Registration (password must be 4(or less) alpha-numeric characters):");
     try {
       email = con.readLine("Email: ");
       char[] pwArray1 = con.readPassword("Password: ");
@@ -118,32 +125,27 @@ class UI
         System.out.println("Registration failed. User exists.");
         return;
       } 
-      else
-      {
-        String statement = "insert into users values('" + email +  "',"
-                                                  + "'" + password + "',"
-                                                  + "to_date('" + (new java.sql.Date((new java.util.Date()).getTime()))
-                                                      + "', 'YYYY-MM-DD'))";
-        System.out.println(statement);
-        sql_handler.runSQLStatement(statement);
-      }
     }
 
     if (!validPassword(password))
     {
       System.out.println("Registration failed. Invalid Password.");
+      return;
+    }
+    else
+    {
+      // FIXME: need to use java.sql.Timestamp for time values sql.Date truncates time.
+      // but format isn't recognized by sqlplus currently only stores the date last accessed.
+      // timestamp also contains the date along with time
+      String statement = "insert into users values('" + email +  "',"
+                        + "'" + password + "',"
+                        + 'sysdate' + ")";
+                        /*+ "to_date('" + (new java.sql.Date((new java.util.Date()).getTime()))
+                        + "', 'YYYY-MM-DD'))";*/
+      System.out.println(statement);
+      sql_handler.runSQLStatement(statement);
     }
 
-    // check if user already in DB
-    // add user to DB
-
-    /* need to implement verification system...
-    while (isValidEmailAddress(email) != true) {
-      System.out.println("Invalid email... Please enter your email: ");
-      email = scan.next();
-    }
-    System.out.println("Please enter your password: ");
-    String pass = scan.nextLine();*/
     String role = "user";
     pub_email = email; // remove this once emailvalidation exists
     MainHub(role);
@@ -578,22 +580,43 @@ class UI
     MainHub(role);
   }
 
+  /**
+   * Takes an email address and returns
+   * true or false if valid or invalid.
+   * @param e A string for the email.
+   * @return boolean
+   */
   private boolean validEmail(String e)
-  {
+  {    
     String e_regex = "(\\w|\\.)+\\@\\w+\\.\\w+";
     Pattern p = Pattern.compile(e_regex);
     Matcher m = p.matcher(e);
     return m.matches();
   }
-
+  
+  /**
+   * Takes a password and returns true or false
+   * if it is valid or invalid respectively.
+   * @param pword A string for the password.
+   * @return boolean
+   */
   private boolean validPassword(String pword)
   {
-    String p_regex = "(\\w|\\-)+";
+    if (pword.length() > 4 || pword.length() < 1)
+      return false;
+    
+    String p_regex = "\\w+";
     Pattern p = Pattern.compile(p_regex);
     Matcher m = p.matcher(pword);
     return m.matches();
   }
 
+  /**
+   * FIXME: add method comment
+   * @param s
+   * @param radix
+   * @return
+   */
   public static boolean isInteger(String s, int radix) {
     if(s.isEmpty()) return false;
     for(int i = 0; i < s.length(); i++) {
