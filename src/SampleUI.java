@@ -244,8 +244,8 @@ class UI
     // if sort, then sort
     System.out.println("The flights that match your description are as follows:");
     // system.out.println(flightslist)
-    System.out.println("\nFLIGHTNO  SRC   DST   DEP_TIME    EST_DUR");
-    System.out.println("--------  ---   ---   ----------  -------");
+    System.out.println("\nFLIGHTNO  FLIGHTNO2   LAYOVER  PRICE");
+    System.out.println("  --------  ---------   -------  -----");
     while (rs.next()) {
       String flightno1 = rs.getString("FLIGHTNO1");
       String flightno2 = rs.getString("FLIGHTNO2");
@@ -257,7 +257,7 @@ class UI
       //java.sql.Date deptime = rs.getDate("DEP_TIME");
       //int estdur = rs.getInt("EST_DUR");
 
-      System.out.println(flightno1 + "    " + flightno2 +"   " +layover+"   " +price);
+      System.out.println(flightno1 + "       " + flightno2 +"   " +layover+"   " +price);
     }
 
 
