@@ -350,10 +350,10 @@ class UI
     System.out.println("Your current bookings for this account are: ");
     String query = "select b.tno, p.name, b.dep_date, t.paid_price " +
       "from bookings b, tickets t, passengers p " +
-      "where b.tno = t.tno and t.email like p.email and t.email like '" + pub_email + "'";
+      "where b.tno = t.tno and t.email like p.email and t.email = '" + pub_email + "'";
     System.out.println("Please select a booking by ID to view more information, "
                         + "or (e)xit.\n");
-    System.out.println("\nID  TNO  NAME   DEP_DATE  PRICE");
+    System.out.println("ID  TNO  NAME   DEP_DATE  PRICE");
     System.out.println("--  ---  ----   --------  -----");
     ResultSet rs = sql_handler.runSQLQuery(query);
     int intId = 0;
