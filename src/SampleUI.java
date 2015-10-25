@@ -419,8 +419,11 @@ class UI
     return m.matches();
   }
 
-  private boolean validPassword(String p)
+  private boolean validPassword(String pword)
   {
-    return false;
+    String p_regex = "(\\w|\\-)+";
+    Pattern p = Pattern.compile(p_regex);
+    Matcher m = p.matcher(pword);
+    return m.matches();
   }
 }
