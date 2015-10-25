@@ -381,11 +381,13 @@ class UI
       if (isInteger(i, 10)) { 
         Integer intIndex = Integer.parseInt(i); 
         System.out.println(intIndex);
+        System.out.println(tnolist.size());
+        System.out.println(tnolist.get(intIndex - 1));
         if (intIndex < tnolist.size() && intIndex > 0) {
           intIndex = intIndex - 1;
           BookingDetail(role, tnolist.get(intIndex));
         } else {
-          System.out.println("Invalid entry - please try again. AAA");
+          System.out.println("Invalid entry - please try again.");
         }
       } else if (i.equals("e") || i.equals("E")) {
         MainHub(role); 
