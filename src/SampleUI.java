@@ -75,6 +75,7 @@ class UI
     }
     System.out.println("Please enter your password: ");
     String pass = scan.nextLine();*/
+    String role = "user";
     MainHub(role);
 
     scan.close();
