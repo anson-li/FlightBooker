@@ -21,7 +21,7 @@ class UI
     this.con = con;
     this.scan = new Scanner(System.in);
     try {
-      //GenerateViews();
+      GenerateViews();
       WelcomeScreen();
     } catch (SQLException e) {
       e.printStackTrace();
@@ -29,6 +29,8 @@ class UI
   };
 
   public void GenerateViews() throws SQLException {
+	  
+	  /*
     String dropAvailableFlights = "if exists (select * from all_tables where table_name like 'AVAILABLE_FLIGHTS')" +
       "drop table available_flights";
     String createAvailableFlights = "create view available_flights(flightno,dep_date,src,dst,dep_time," +
@@ -51,11 +53,14 @@ class UI
       "from available_flights a1, available_flights a2" +
       "where a1.dst=a2.src and a1.arr_time +1.5/24 <=a2.dep_time and a1.arr_time +5/24 >=a2.dep_time" +
       "group by a1.src, a2.dst, a1.dep_date, a1.flightno, a2.flightno, a2.dep_time, a1.arr_time";
-
-    sql_handler.runSQLStatement(dropAvailableFlights);
-    sql_handler.runSQLStatement(createAvailableFlights);
-    sql_handler.runSQLStatement(dropGoodConnections);
-    sql_handler.runSQLStatement(createGoodConnections);
+	*/
+	sql_handler.runSQLStatement("@generate_views");
+	//String dropAvailableFlights = "drop table available_flights" ;
+	//String createAvailableFlights = 
+    //sql_handler.runSQLStatement(dropAvailableFlights);
+    //sql_handler.runSQLStatement(createAvailableFlights);
+    //sql_handler.runSQLStatement(dropGoodConnections);
+    //sql_handler.runSQLStatement(createGoodConnections);
   }
 
   public void WelcomeScreen() throws SQLException {
