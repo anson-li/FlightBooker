@@ -87,7 +87,7 @@ class UI
     String email = "";
     String password = "";
 
-    System.out.println("Registration:");
+    System.out.println("Registration (password must be alpha-numeric):");
     try {
       email = con.readLine("Email: ");
       char[] pwArray1 = con.readPassword("Password: ");
@@ -95,14 +95,41 @@ class UI
       if (Arrays.equals(pwArray1, pwArray2))
         password = String.valueOf(pwArray1);
       else
+      {
+        System.out.println("Registration failed. Passwords do not match.");
         return;
+      }
     } catch (IOError ioe){
       System.err.println(ioe.getMessage());
     }
 
-    if (!validEmail(email));
+    if (!validEmail(email))
+    {
+      System.out.println("Registration failed. Invalid Email.");
+      return;
+    }
+    else
+    {
+      String query = "select * from users where email='"+email+"'";
+      ResultSet rs = sql_handler.runSQLQuery(query);
+      
+      if (rs.next())
+      {
+        System.out.println("Registration failed. User exists.");
+        return;
+      } 
+      else
+      {
+        String statement = "insert into users values('" + email +  "',"
+                                                  + "'" + password + "',"
+                                                  + ( new java.sql.Date((new java.util.Date()).getTime()) ) +")";
+      }
+    }
 
-    if (!validPassword(password));
+    if (!validPassword(password))
+    {
+      System.out.println("Registration failed. Invalid Password.");
+    }
 
     // check if user already in DB
     // add user to DB
