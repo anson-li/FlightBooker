@@ -1,0 +1,4 @@
+Case insensitive searching in Oracle:
+  use: regexp_like(column, string, 'i')
+  referenced from: http://stackoverflow.com/questions/5391069/case-insensitive-searching-in-oracle
+  stackoverflow answer by: Ben
