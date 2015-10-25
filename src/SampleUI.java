@@ -247,9 +247,14 @@ class UI
     // system.out.println(flightslist)
     System.out.println("\nFLIGHTNO  FLIGHTNO2   LAYOVER  PRICE");
     System.out.println("--------  ---------   -------  -----");
+    ArrayList<String> flightnolist = new ArrayList<>();
+    ArrayList<String> flightnolist2 = new ArrayList<>();
     while (rs.next()) {
       String flightno1 = rs.getString("FLIGHTNO1");
       String flightno2 = rs.getString("FLIGHTNO2");
+      flightnolist.add(flightno1);
+      flightnolist2.add(flightno2);
+
       String layover = rs.getString("LAYOVER");
       String price = rs.getString("PRICE");
 
@@ -261,17 +266,18 @@ class UI
       System.out.println(flightno1 + "       " + flightno2 +"      " +layover+"        " +price);
     }
 
-
-    System.out.println("\nFlights are currently being sorted by price."
-                        + "\nWould you like to sort the result based on number of connections? Y/N");
-    System.out.println("Alternatively, select a booking with the corresponding ID (eg. 1, 2, ...)");
+    System.out.println("\nFlights are currently being sorted by price:"
+                        + "\n(S)ort the result based on number of connections, or (R)eturn to main menu.");
+    System.out.println("Or select a booking with the corresponding ID (eg. 1, 2, ...)");
     String i = scan.nextLine();
-    if (i.equals("Y")) {
+    if (i.equals("S") || i.equals("s")) {
 
-    } else if (i.equals("N")) {
-
+    } else if (i.equals("R") || i.equals("r") {
+      MainHub(role);
+    } else if (isInteger(i,10)) {
+      Integer intIndex = Integer.parseInt(i); 
+      MakeABooking(role, flightnolist.get(intIndex), flightnolist2.get(intIndex));
     }
-    MainHub(role);
   }
 
   /* Make a booking. A user should be able to select a flight
@@ -298,7 +304,8 @@ class UI
   // insert into tickets values (tno (gen), 'EMAIL', 'PAID PRICE')
   // insert into bookings values (tno (gen), flight_no, fare, dep_date, seat)
 
-  public void MakeABooking(String role) throws SQLException {
+  public void MakeABooking(String role, String flightno1, String flightno2) throws SQLException {
+    System.out.println(flightno1 + " " + flightno2);
     // public static void MakeABooking(int Id)
     // select a flight
     // is user listed in the flight?
