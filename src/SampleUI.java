@@ -122,8 +122,8 @@ class UI
       {
         String statement = "insert into users values('" + email +  "',"
                                                   + "'" + password + "',"
-                                                  + "to_date(" + (new java.sql.Timestamp((new java.util.Date()).getTime())).toString() +""
-                                                      + ", 'YYYY-MM-DD HH24:MI:SS.FF'))";
+                                                  + "to_date('" + (new java.sql.Timestamp((new java.util.Date()).getTime())).toString()
+                                                      + "', 'YYYY-MM-DD HH24:MI:SS.FF'))";
         System.out.println(statement);
         sql_handler.runSQLStatement(statement);
       }
