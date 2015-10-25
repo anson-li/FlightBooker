@@ -282,13 +282,13 @@ class UI
       } else if (isInteger(i,10)) {
         Integer intIndex = Integer.parseInt(i); 
         intIndex = intIndex - 1;
-        if (intIndex < flightnolist.size()) {
+        if (intIndex < flightnolist.size() && intIndex > 0) {
           MakeABooking(role, flightnolist.get(intIndex), flightnolist2.get(intIndex));
         } else {
-          System.out.println("Incorrect value entered...");
+          System.out.println("Invalid entry - please try again.");
         }
       } else {
-        System.out.println("Incorrect value entered...");
+        System.out.println("Invalid entry - please try again.");
       }
     }
   }
@@ -378,17 +378,21 @@ class UI
 
       System.out.println(intId + "   " + tno + "    " + name + " " + depdate + "   " + price);
     }
-    String i = scan.nextLine();
-    if (isInteger(i, 10)) { 
-      Integer intIndex = Integer.parseInt(i); 
-      intIndex = intIndex - 1;
-      if (intIndex < tnolist.size()) {
-        BookingDetail(role, tnolist.get(intIndex));
+    while(true) {
+      String i = scan.nextLine();
+      if (isInteger(i, 10)) { 
+        Integer intIndex = Integer.parseInt(i); 
+        intIndex = intIndex - 1;
+        if (intIndex < tnolist.size() && intIndex > 0) {
+          BookingDetail(role, tnolist.get(intIndex));
+        } else {
+          System.out.println("Invalid index number.");
+        }
+      } else if (i.equals("e") || i.equals("E")) {
+        MainHub(role); 
       } else {
-        System.out.println("Invalid index number.");
+        System.out.println("Invalid entry - please try again.")
       }
-    } else if (i.equals("e") || i.equals("E")) {
-      MainHub(role); 
     }
   }
 
@@ -401,17 +405,18 @@ class UI
     Scanner scan = new Scanner(System.in);
     System.out.println("Your booking details is as follows: ");
     System.out.println("Return to (b)ookings list, (c)ancel booking or (e)xit bookings page?");
-    String i = scan.nextLine();
-    if (i.equals("b") || i.equals("B")) {
-      ExistingBookings(role);
-    }
-    else if (i.equals("e") || i.equals("E")) {
-      MainHub(role);
-    } else if (i.equals("c") || i.equals("C")) {
-      CancelBooking(role); //PASS VALUE
-    } else {
-      System.out.println("Invalid character - returning to main page.");
-      MainHub(role);
+    while(true) {
+      String i = scan.nextLine();
+      if (i.equals("b") || i.equals("B")) {
+        ExistingBookings(role);
+      }
+      else if (i.equals("e") || i.equals("E")) {
+        MainHub(role);
+      } else if (i.equals("c") || i.equals("C")) {
+        CancelBooking(role, tno); //PASS VALUE
+      } else {
+        System.out.println("Invalid character - please try again");
+      }
     }
   }
 
@@ -425,7 +430,7 @@ class UI
   // delete from bookings
   // where tno like 'TNO_INPUT'
 
-  public void CancelBooking(String role) throws SQLException { // pass in booking value in here?
+  public void CancelBooking(String role, String tno) throws SQLException { // pass in booking value in here?
     // delete the booking
     // return to mainhub
     System.out.println("Booking has been deleted.");
