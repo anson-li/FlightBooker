@@ -245,10 +245,11 @@ class UI
     // if sort, then sort
     System.out.println("The flights that match your description are as follows:");
     // system.out.println(flightslist)
-    System.out.println("\nFLIGHTNO  FLIGHTNO2   LAYOVER  PRICE");
-    System.out.println("--------  ---------   -------  -----");
+    System.out.println("\nID  FLIGHTNO  FLIGHTNO2   LAYOVER  PRICE");
+    System.out.println("--  --------  ---------   -------  -----");
     ArrayList<String> flightnolist = new ArrayList<>();
     ArrayList<String> flightnolist2 = new ArrayList<>();
+    int intId = 1;
     while (rs.next()) {
       String flightno1 = rs.getString("FLIGHTNO1");
       String flightno2 = rs.getString("FLIGHTNO2");
@@ -257,13 +258,13 @@ class UI
 
       String layover = rs.getString("LAYOVER");
       String price = rs.getString("PRICE");
-
+      intId++;
       //String src = rs.getString("SRC");
       //String dst = rs.getString("DST");
       //java.sql.Date deptime = rs.getDate("DEP_TIME");
       //int estdur = rs.getInt("EST_DUR");
 
-      System.out.println(flightno1 + "       " + flightno2 +"      " +layover+"        " +price);
+      System.out.println(intId + "    " + flightno1 + "       " + flightno2 +"      " +layover+"        " +price);
     }
 
     System.out.println("\nFlights are currently being sorted by price:"
@@ -311,6 +312,11 @@ class UI
     // is user listed in the flight?
     // if so, don't let the rebook.
     // if not, book. add the name & country of the passenger (ask here...)
+    if flightno2.equals("null") {
+      System.out.println("Only one flight selected.");
+    } else { 
+      System.out.println("Two flights to be booked!");
+    }
     System.out.println("Please enter the name of the passenger:");
     String name = scan.nextLine();
     System.out.println("Please enter the country of the passenger:");
