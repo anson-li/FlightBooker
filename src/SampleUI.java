@@ -279,8 +279,8 @@ class UI
         MainHub(role);
       } else if (isInteger(i,10)) {
         Integer intIndex = Integer.parseInt(i); 
-        intIndex = intIndex - 1;
         if (intIndex < flightnolist.size() && intIndex > 0) {
+          intIndex = intIndex - 1;
           MakeABooking(role, flightnolist.get(intIndex), flightnolist2.get(intIndex));
         } else {
           System.out.println("Invalid entry - please try again.");
@@ -380,8 +380,8 @@ class UI
       String i = scan.nextLine();
       if (isInteger(i, 10)) { 
         Integer intIndex = Integer.parseInt(i); 
-        intIndex = intIndex - 1;
         if (intIndex < tnolist.size() && intIndex > 0) {
+          intIndex = intIndex - 1;
           BookingDetail(role, tnolist.get(intIndex));
         } else {
           System.out.println("Invalid entry - please try again.");
