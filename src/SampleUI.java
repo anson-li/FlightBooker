@@ -209,11 +209,11 @@ class UI
     String query = "select flightno1, flightno2, layover, price" + 
       "from ( select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
       "from ( select flightno1, flightno2, layover, price " + 
-      "from good_connections "
+      "from good_connections " + 
       "where dep_date ='" + df.format(depDate).toString().toUpperCase() + "' and src='" + srcACode + "' and dst='" + destACode + "' " +
       "union " + 
       "select flightno flightno1, '' flightno2, 0 layover, price " +
-      "from available_flights "
+      "from available_flights " +
       "where dep_date ='" + df.format(depDate).toString().toUpperCase() + "' and src='" + srcACode + "' and dst='" + destACode + "'";
 
     //System.out.println(query);
