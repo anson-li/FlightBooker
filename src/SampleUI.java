@@ -336,22 +336,51 @@ class UI
   public void ExistingBookings(String role) throws SQLException {
     // search for user bookings
 
-  String query = "select tno, name, dep_date, price_paid "
-           + "from passengers p, tickets t, bookings b "
-           + "where p.email = '" + this.user_email + "' "
-           + "and p.name = t.name "
-           + "and p.email = t.email "
-           + "and b.tno = t.tno";
-
-    // put them in a list, sep. by number index
+    String query = "select tno, name, dep_date, price_paid "
+                 + "from passengers p, tickets t, bookings b "
+                 + "where p.email = '"+this.user_email+"' "
+                 + "and p.name = t.name "
+                 + "and p.email = t.email "
+                 + "and b.tno = t.tno";
+    
+    ResultSet rs = sql_handler.runSQLQuery(query);
+    
     System.out.println("Your current bookings for this account are: ");
+    System.out.println("\n"
+                      +"Ticket Number  Passenger Name  Departure Date  Price");
+    int bookingno = 1;
+    
+    while(rs.next())
+    {
+      String tno = rs.getString("TNO");
+      String name = rs.getString("NAME");
+      java.sql.Date dep_date = rs.getDate("DEP_DATE");
+      String price = rs.getString("PRICE_PAID");
+      
+      System.out.print(tno);
+      for(int i = 0; i < (15-tno.length()); i++)
+        System.out.print(" ");
+      
+      System.out.print(name);
+      for(int i = 0; i < (16-name.length()); i++)
+        System.out.print(" ");
+      
+      System.out.print(dep_date);
+      for(int i = 0; i < (16- dep_date.toString().length()); i++)
+        System.out.print(" ");
+      
+      System.out.print(price);
+    }
+    
+    /*
+    // put them in a list, sep. by number index
     //system.out.println(data)
     System.out.println("Please select a booking by index to view more information, "
                         + "or (e)xit.");
     String i = scan.nextLine();
     if (true) { // if the coming string is an integer - DONT KNOW HOW TO DO THIS ????
       BookingDetail(role);
-    }
+    }*/
     MainHub(role);
   }
 
