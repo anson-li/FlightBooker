@@ -312,7 +312,7 @@ class UI
     // is user listed in the flight?
     // if so, don't let the rebook.
     // if not, book. add the name & country of the passenger (ask here...)
-    if flightno2.equals("null") {
+    if (flightno2.equals("null")) {
       System.out.println("Only one flight selected.");
     } else { 
       System.out.println("Two flights to be booked!");
