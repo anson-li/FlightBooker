@@ -273,16 +273,20 @@ class UI
     System.out.println("\nFlights are currently being sorted by price:"
                         + "\n(S)ort the result based on number of connections, or (R)eturn to main menu.");
     System.out.println("Or select a booking with the corresponding ID (eg. 1, 2, ...)");
-    String i = scan.nextLine();
-    if (i.equals("S") || i.equals("s")) {
-
-    } else if (i.equals("R") || i.equals("r")) {
-      MainHub(role);
-    } else if (isInteger(i,10)) {
-      Integer intIndex = Integer.parseInt(i); 
-      intIndex = intIndex - 1;
-      if (intIndex < flightnolist.size()) {
-        MakeABooking(role, flightnolist.get(intIndex), flightnolist2.get(intIndex));
+    while(true) {
+      String i = scan.nextLine();
+      if (i.equals("S") || i.equals("s")) {
+        // nothing done yet
+      } else if (i.equals("R") || i.equals("r")) {
+        MainHub(role);
+      } else if (isInteger(i,10)) {
+        Integer intIndex = Integer.parseInt(i); 
+        intIndex = intIndex - 1;
+        if (intIndex < flightnolist.size()) {
+          MakeABooking(role, flightnolist.get(intIndex), flightnolist2.get(intIndex));
+        }
+      } else {
+        System.out.println("Incorrect value entered...");
       }
     }
   }
@@ -370,14 +374,16 @@ class UI
       tnolist.add(tno);
       intId++;
 
-      System.out.println(intId + "   " + tno + "  " + name + "   " + depdate + "   " + price);
+      System.out.println(intId + "   " + tno + "    " + name + " " + depdate + "   " + price);
     }
     String i = scan.nextLine();
-    if (isInteger(i, 10)) { // if the coming string is an integer - DONT KNOW HOW TO DO THIS ????
+    if (isInteger(i, 10)) { 
       Integer intIndex = Integer.parseInt(i); 
       intIndex = intIndex - 1;
       if (intIndex < tnolist.size()) {
         BookingDetail(role, tnolist.get(intIndex));
+      } else {
+        System.out.println("Invalid index number.");
       }
     }
     MainHub(role);
