@@ -122,7 +122,7 @@ class UI
       {
         String statement = "insert into users values('" + email +  "',"
                                                   + "'" + password + "',"
-                                                  + ( new java.sql.Date((new java.util.Date()).getTime()) ) +")";
+                                                  + ( (new java.util.Date()).getTime() ) +")";
         System.out.println(statement);
         sql_handler.runSQLStatement(statement);
       }
