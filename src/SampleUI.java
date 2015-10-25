@@ -380,11 +380,12 @@ class UI
       String i = scan.nextLine();
       if (isInteger(i, 10)) { 
         Integer intIndex = Integer.parseInt(i); 
+        System.out.println(intIndex);
         if (intIndex < tnolist.size() && intIndex > 0) {
           intIndex = intIndex - 1;
           BookingDetail(role, tnolist.get(intIndex));
         } else {
-          System.out.println("Invalid entry - please try again.");
+          System.out.println("Invalid entry - please try again. AAA");
         }
       } else if (i.equals("e") || i.equals("E")) {
         MainHub(role); 
