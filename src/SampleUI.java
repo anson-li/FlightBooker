@@ -298,14 +298,29 @@ class UI
    * @throws SQLException
    */
   public void SearchForFlights(String role) throws SQLException {
-    Scanner scan = new Scanner(System.in);
-    // ask user if they want to enter the airport code for source
-    System.out.println("Please enter the airport code for your source:");
-    String srcACode = scan.nextLine();
+    // Scanner scan = new Scanner(System.in);
+    // there is a class var scan defined. easier to close that
+    // than individual scan's in each method.
+    String srcACode = "";
+    String destACode = "";
+    
+    
+    while (!validAcode(srcACode))
+    {
+      // ask user if they want to enter the airport code for source
+      System.out.println("Please enter the airport code for your source:");
+      srcACode = scan.nextLine();
+    
+    }
+    
     // if not valid airport code, search airport by name (partial match '%val%')
     // complete process for destination airport
-    System.out.println("Please enter the airport code for your destination:");
-    String destACode = scan.nextLine();
+    while (!validAcode(destACode))
+    {
+      System.out.println("Please enter the airport code for your destination:");
+      destACode = scan.nextLine();
+    }
+    
     // add departure date
     System.out.println("Please enter your departure date in format DD-MMM-YYYY - eg: 01-OCT-2015");
     String strDate = scan.nextLine();
@@ -718,4 +733,41 @@ class UI
     }
     return true;
 }
+
+  /**
+   * FIXME: finish comment
+   * @param ac
+   * @return
+   * @throws SQLException
+   */
+  private boolean validAcode(String ac) throws SQLException
+  {
+    if (ac.equals(""))
+      return false;
+    
+    String query = "select * from airports where acode='"+ac+"'";
+    ResultSet rs = sql_handler.runSQLQuery(query);
+    
+    if (rs.next())
+      return true;
+    
+    System.out.println("Sorry the airport code could not be matched.");
+    
+    query = "select * from airports where regexp_like(name, '"+ac+"', 'i')";
+    rs = sql_handler.runSQLQuery(query);
+    
+    while (rs.next())
+    {
+      if (rs.isFirst())
+      {
+        System.out.println("Did you mean one of the following airports?");
+        System.out.println("\nCode    Ariport Name");
+        System.out.println  ("----    ------------");
+      }
+      
+      System.out.println(rs.getString("ACODE") + "     " + rs.getString("name"));
+    }
+    
+    return false;
+  }
 }
