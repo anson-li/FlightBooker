@@ -81,8 +81,13 @@ class UI
     while (isValidEmailAddress(email) != true) {
       System.out.println("Invalid email... Please enter your email: ");
       email = scan.next();
-    }*/
-    MainHub();
+    }
+    System.out.println("Please enter your password: ");
+    String pass = scan.nextLine();*/
+    String role = "user";
+    MainHub(role);
+
+    scan.close();
   }
 
   private void Login() {
@@ -94,26 +99,35 @@ class UI
       char[] pwordA = con.readPassword("Password:");
       pword = String.valueOf(pwordA);
       // if verification is valid ... { MainHub(-pass in permissions); }
-      MainHub();
+      String role = "poweruser";
+      MainHub(role);
     }
   }
 
-  public void MainHub() throws SQLException {
+  //
+  public void MainHub(String role) throws SQLException {
     Scanner scan = new Scanner(System.in);
     while(true) {
       System.out.println("Main area reached. Please select from the following options:");
       System.out.println("(S)earch for flights & make a booking, See (E)xisting bookings, (C)ancel a booking, Find (R)ound trips, (L)og out.");
+      if (role.equals("poweruser")) {
+        System.out.println("AIRLINE AGENT: Record (D)eparture, Record (A)rrival for a scheduled flight.");
+      }
       String input = scan.nextLine();
       if (input.equals("S") || input.equals("s")) {
-        SearchForFlights();
+        SearchForFlights(role);
       } else if (input.equals("E") || input.equals("e")) {
-        ExistingBookings();
+        ExistingBookings(role);
       } else if (input.equals("C") || input.equals("c")) {
-        CancelBooking();
+        CancelBooking(role);
       } else if (input.equals("R") || input.equals("r")) {
-        RoundTrips();
+        RoundTrips(role);
       } else if (input.equals("L") || input.equals("l")) {
         Logout();
+      } else if ((input.equals("D") || input.equals("d")) && role.equals("poweruser")) {
+        RecordDeparture(role);
+      } else if ((input.equals("A") || input.equals("a")) && role.equals("poweruser")) {
+        RecordArrival(role);
       } else {
         System.out.println("Invalid character entered.");
       }
@@ -162,7 +176,7 @@ class UI
 
   // after the requery - ORDER BY num_conn
 
-  public void SearchForFlights() throws SQLException {
+  public void SearchForFlights(String role) throws SQLException {
     Scanner scan = new Scanner(System.in);
     // ask user if they want to enter the airport code for source
     System.out.println("Please enter the airport code for your source:");
@@ -212,7 +226,7 @@ class UI
     } else if (i.equals("N")) {
 
     }
-    MainHub();
+    MainHub(role);
   }
 
   /* Make a booking. A user should be able to select a flight
@@ -239,7 +253,7 @@ class UI
   // insert into tickets values (tno (gen), 'EMAIL', 'PAID PRICE')
   // insert into bookings values (tno (gen), flight_no, fare, dep_date, seat)
 
-  public void MakeABooking() throws SQLException {
+  public void MakeABooking(String role) throws SQLException {
     // public static void MakeABooking(int Id)
     // select a flight
     // is user listed in the flight?
@@ -251,7 +265,7 @@ class UI
     String country = scan.nextLine();
     // process...
     System.out.println("Success - you have booked your flight!");
-    MainHub();
+    MainHub(role);
   }
 
   /* List existing bookings. A user should be able to list all
@@ -266,7 +280,7 @@ class UI
   // from bookings b, tickets t, passengers p, sch_flights s
   // where b.tno like t.tno and p.email like t.email and s.flightno like b.flightno
 
-  public void ExistingBookings() throws SQLException {
+  public void ExistingBookings(String role) throws SQLException {
     // search for user bookings
     // put them in a list, sep. by number index
     System.out.println("Your current bookings for this account are: ");
@@ -275,30 +289,30 @@ class UI
                         + "or (e)xit.");
     String i = scan.nextLine();
     if (true) { // if the coming string is an integer - DONT KNOW HOW TO DO THIS ????
-      BookingDetail();
+      BookingDetail(role);
     }
-    MainHub();
+    MainHub(role);
   }
 
   // select tno, flight_no, fare, dep_date, seat
   // from bookings
   // where tno like 'TNO_INPUT'
 
-  public void BookingDetail() throws SQLException {
+  public void BookingDetail(String role) throws SQLException {
     Scanner scan = new Scanner(System.in);
     System.out.println("Your booking details is as follows: ");
     System.out.println("Return to (b)ookings list, (c)ancel booking or (e)xit bookings page?");
     String i = scan.nextLine();
     if (i.equals("b") || i.equals("B")) {
-      ExistingBookings();
+      ExistingBookings(role);
     }
     else if (i.equals("e") || i.equals("E")) {
-      MainHub();
+      MainHub(role);
     } else if (i.equals("c") || i.equals("C")) {
-      CancelBooking(); //PASS VALUE
+      CancelBooking(role); //PASS VALUE
     } else {
       System.out.println("Invalid character - returning to main page.");
-      MainHub();
+      MainHub(role);
     }
   }
 
@@ -312,11 +326,11 @@ class UI
   // delete from bookings
   // where tno like 'TNO_INPUT'
 
-  public void CancelBooking() throws SQLException { // pass in booking value in here?
+  public void CancelBooking(String role) throws SQLException { // pass in booking value in here?
     // delete the booking
     // return to mainhub
     System.out.println("Booking has been deleted.");
-    MainHub();
+    MainHub(role);
   }
 
   /* Logout. There must be an option to log out of the system. At
@@ -339,18 +353,26 @@ class UI
   the user may want to record the departure. Your system should support the
   task and make necessary updates such as updating the act_dep_time.
   */
-  public void RecordDeparture() throws SQLException {
+
+  // select * from sch_flights // flightno, dep_date, act_dep_time, act_arr_time
+  // rs.updateString(3, INPUT_DATE);
+
+  public void RecordDeparture(String role) throws SQLException {
     System.out.println("Flight number:");
     String flightno = scan.nextLine();
     System.out.println("Departure time:");
     String deptime = scan.nextLine();
-    MainHub();
+    MainHub(role);
   }
 
   /* AIRLINE AGENT ONLY: Record a flight arrival. After a landing, the user may
   want to record the arrival and your system should support the task.
   */
-  public void RecordArrival() throws SQLException {
+
+  // select * from sch_flights // flightno, dep_date, act_dep_time, act_arr_time
+  // rs.updateString(4, INPUT_DATE)
+
+  public void RecordArrival(String role) throws SQLException {
     // search for a flight
     // enter the flight arrival time
     // exit
@@ -358,7 +380,7 @@ class UI
     String flightno = scan.nextLine();
     System.out.println("Arrival time:");
     String arrtime = scan.nextLine();
-    MainHub();
+    MainHub(role);
   }
 
   /* CHOOSE ONE OF THREE OPTIONS:
@@ -381,7 +403,20 @@ class UI
   For a party of size 4, your system will book those 2 lowest fare seats and another 2 seats in
   the next fare type that is available.
   */
-  public void RoundTrips() throws SQLException {
+
+  // select f.flightno, a1.acode, a2.acode, dep_time, dep_time + est_dur (not right...) as arr_time, 0 as num_conn, 0 as layover_time, ff1.price, ff1.limit - COUNT(b.seat) as open_seats
+  // from flights f, flight_fares ff1, airports a1, airports a2, bookings b
+  // where (f.src like 'SRC' or a1.name like 'SRC')
+  // and (f.dst like 'DST' or a2.name like 'DST')
+  // and (f.dep_time like 'DEP_TIME')
+  // and f.src like a1.acode and f.dst like a2.acode and f.flightno like ff1.flightno
+  // and b.flightno like f.flightno and b.fare like ff1.fare
+  // UNION
+  // (add the 1-connection flights ...)
+  // GROUP BY flightno, ...
+  // ORDER BY PRICE
+
+  public void RoundTrips(String role) throws SQLException {
     // get the user source
     // get the user destination
     // get the start date
@@ -408,7 +443,7 @@ class UI
     // system.out.println(flightslist)
     System.out.println("Round-trips are currently being sorted by number of connections, and price.");
     String i = scan.nextLine();
-    MainHub();
+    MainHub(role);
   }
 
   private boolean validEmail(String e)
