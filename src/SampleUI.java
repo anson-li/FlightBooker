@@ -139,7 +139,7 @@ class UI
       // timestamp also contains the date along with time
       String statement = "insert into users values('" + email +  "',"
                         + "'" + password + "',"
-                        + 'sysdate' + ")";
+                        + "'sysdate'" + ")";
                         /*+ "to_date('" + (new java.sql.Date((new java.util.Date()).getTime()))
                         + "', 'YYYY-MM-DD'))";*/
       System.out.println(statement);
