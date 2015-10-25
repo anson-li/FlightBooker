@@ -30,17 +30,24 @@ class UI
     }
   };
 
+  /**
+   * Creates the views 'available_flights'
+   * and 'good_connections' in the SQLPlus
+   * database. Solution from assignment2
+   * q7 and q9.
+   * @throws SQLException
+   */
   public void GenerateViews() throws SQLException {
     String dropAvailableFlights = "drop view available_flights";
     String createAvailableFlights = "create view available_flights(flightno,dep_date,src,dst,dep_time, " +
-      "arr_time,fare,seats,price) as " +                         
+      "arr_time,fare,seats,price) as " +
       "select f.flightno, sf.dep_date, f.src, f.dst, f.dep_time+(trunc(sf.dep_date)-trunc(f.dep_time)), " +
       "f.dep_time+(trunc(sf.dep_date)-trunc(f.dep_time))+(f.est_dur/60+a2.tzone-a1.tzone)/24, " +
-      "fa.fare, fa.limit-count(tno), fa.price " + 
+      "fa.fare, fa.limit-count(tno), fa.price " +
       "from flights f, flight_fares fa, sch_flights sf, bookings b, airports a1, airports a2 " +
       "where f.flightno=sf.flightno and f.flightno=fa.flightno and f.src=a1.acode and " +
       "f.dst=a2.acode and fa.flightno=b.flightno(+) and fa.fare=b.fare(+) and " +
-      "sf.dep_date=b.dep_date(+) " + 
+      "sf.dep_date=b.dep_date(+) " +
       "group by f.flightno, sf.dep_date, f.src, f.dst, f.dep_time, f.est_dur,a2.tzone, " +
       "a1.tzone, fa.fare, fa.limit, fa.price " +
       "having fa.limit-count(tno) > 0";
@@ -58,11 +65,15 @@ class UI
     sql_handler.runSQLStatement(createGoodConnections);
   }
 
+  /**
+   *
+   * @throws SQLException
+   */
   public void WelcomeScreen() throws SQLException {
     System.out.println("Welcome to Air Kappa!");
     while(true) {
-      System.out.println("Please (l)ogin or (r)egister to use our services, "
-                       + "\nor (e)xit the program.");
+      System.out.println("Please (L)ogin or (R)egister to use our services, "
+                       + "\nor (E)xit the program.");
       String i = scan.nextLine();
       if (i.equals("l") || i.equals("L")) {
         Login();
@@ -70,7 +81,7 @@ class UI
         Register();
       } else if (i.equals("e")  || i.equals("E")) {
         System.out.println("System is exiting; "
-                         + "thank you for visiting Air Kappa!");
+                         + "Thank you for visiting Air Kappa!");
         scan.close();
         System.exit(0);
       } else {
@@ -79,67 +90,139 @@ class UI
     }
   }
 
-  // create table users { email String, password String, role String, last_login DATE }
-  // createString = "insert into users values ('email', 'password', user, sysdate)";
-  // createString = "insert into users values ('email', 'password', poweruser, sysdate)";
-
+  /**
+   * FIXME: i want to be a complete method comment
+   * @throws SQLException
+   */
   public void Register() throws SQLException {
 
     String email = "";
     String password = "";
 
-    System.out.println("Registration:");
+    System.out.println("Registration (password must be 4(or less) alpha-numeric characters):");
     try {
       email = con.readLine("Email: ");
       char[] pwArray1 = con.readPassword("Password: ");
       char[] pwArray2 = con.readPassword("Confirm Password:");
       if (Arrays.equals(pwArray1, pwArray2))
-        password = String.valueOf(pwArray1);
+      password = String.valueOf(pwArray1);
       else
+      {
+        System.out.println("Registration failed. Passwords do not match.");
         return;
+      }
     } catch (IOError ioe){
       System.err.println(ioe.getMessage());
     }
 
-    if (!validEmail(email));
-
-    if (!validPassword(password));
-
-    // check if user already in DB
-    // add user to DB
-
-    /* need to implement verification system...
-    while (isValidEmailAddress(email) != true) {
-      System.out.println("Invalid email... Please enter your email: ");
-      email = scan.next();
+    if (!validEmail(email))
+    {
+      System.out.println("Registration failed. Invalid Email.");
+      return;
     }
-    System.out.println("Please enter your password: ");
-    String pass = scan.nextLine();*/
+    else
+    {
+      String query = "select * from users where email='"+email+"'";
+      ResultSet rs = sql_handler.runSQLQuery(query);
+
+      if (rs.next())
+      {
+        System.out.println("Registration failed. User exists.");
+        return;
+      }
+    }
+
+    if (!validPassword(password))
+    {
+      System.out.println("Registration failed. Invalid Password.");
+      return;
+    }
+    else
+    {
+      String statement = "insert into users values('" + email +  "',"
+                        + "'" + password + "',"
+                        + "sysdate )";
+
+      System.out.println(statement);
+      sql_handler.runSQLStatement(statement);
+    }
+
+    // TODO: how is the user's role selected? are they predetermined?
     String role = "user";
     pub_email = email; // remove this once emailvalidation exists
     pub_role = role;
     MainHub();
-
     scan.close();
   }
 
+  /**
+   * FIXME: my dream is to be a complete comment
+   * @throws SQLException
+   */
   private void Login() throws SQLException {
     System.out.println("Login.");
     String email = "";
     String pword = "";
+    String role = "";
+
     while(true) {
       email = con.readLine("Email: ");
       char[] pwordA = con.readPassword("Password:");
       pword = String.valueOf(pwordA);
-      // if verification is valid ... { MainHub(-pass in permissions); }
-      String role = "poweruser";
+
+      if (!validEmail(email))
+      {
+        System.out.println("Invalid email.");
+        return;
+      }
+
+      if (!validPassword(pword))
+      {
+        System.out.println("Invalid password.");
+        return;
+      }
+
+      String query = "select email, pass from users where email='"+email+"'";
+      ResultSet rs = sql_handler.runSQLQuery(query);
+
+      if (!rs.next())
+      {
+        System.out.println("Invalid email/password combination.");
+        return;
+      }
+
+      query = "select email from airline_agents where email='"+email+"'";
+      rs = sql_handler.runSQLQuery(query);
+      if (rs.next())
+      {
+        role = "poweruser";
+        System.out.println("Ariline Agent: " + rs.getString("NAME") );
+      }
+      else
+      {
+        role = "user";
+        System.out.println("Standard User.");
+      }
+
+      String statement = "update users "
+          + "set last_login=sysdate "
+          + "where email='"+pub_email+"'";
+
+      sql_handler.runSQLStatement(statement);
+
+      System.out.println("Login Successful. ");
+
       pub_email = email;
       pub_role = role;
       MainHub();
     }
   }
 
-  //
+  /**
+   * FIXME: im a incomplete comment
+   * @param role
+   * @throws SQLException
+   */
   public void MainHub() throws SQLException {
     Scanner scan = new Scanner(System.in);
     while(true) {
@@ -193,7 +276,7 @@ class UI
   number of connections (with direct flights listed first) as
   the primary sort criterion and the price as the
   secondary sort criterion.
-  */
+
 
   // select f.flightno, a1.acode, a2.acode, dep_time, dep_time + est_dur (not right...) as arr_time, 0 as num_conn, 0 as layover_time, ff1.price, ff1.limit - COUNT(b.seat) as open_seats
   // from flights f, flight_fares ff1, airports a1, airports a2, bookings b
@@ -209,6 +292,11 @@ class UI
 
   // after the requery - ORDER BY num_conn
 
+  /**
+   *
+   * @param role
+   * @throws SQLException
+   */
   public void SearchForFlights() throws SQLException {
     Scanner scan = new Scanner(System.in);
     // ask user if they want to enter the airport code for source
@@ -239,7 +327,7 @@ class UI
       "union " +
       "select flightno flightno1, '' flightno2, 0 layover, price " +
       "from available_flights " +
-      "where dep_date ='" + df.format(depDate).toString().toUpperCase() + "' and src='" + srcACode + "' and dst='" + destACode + "')) " + 
+      "where dep_date ='" + df.format(depDate).toString().toUpperCase() + "' and src='" + srcACode + "' and dst='" + destACode + "')) " +
       "order by price";
 
     //System.out.println(query);
@@ -311,13 +399,20 @@ class UI
   ticket number and a confirmation message if a ticket is
   issued or a descriptive message if a ticket cannot be
   issued for any reason.
-  */
+
 
   // if seat is empty..
   // insert into passengers values ('EMAIL', 'NAME', 'COUNTRY')
   // insert into tickets values (tno (gen), 'EMAIL', 'PAID PRICE')
   // insert into bookings values (tno (gen), flight_no, fare, dep_date, seat)
 
+  /**
+   *
+   * @param role
+   * @param flightno1
+   * @param flightno2
+   * @throws SQLException
+   */
   public void MakeABooking(String flightno1, String flightno2) throws SQLException {
     System.out.println(flightno1 + " " + flightno2);
     // public static void MakeABooking(int Id)
@@ -328,7 +423,7 @@ class UI
     if (flightno2 == null) {
       System.out.println("Only one flight selected.");
       // run query only once here
-    } else { 
+    } else {
       System.out.println("Two flights to be booked!");
       // run query twice through here
     }
@@ -347,12 +442,16 @@ class UI
   the passenger name, the departure date and the price. The
   user should be able to select a row and get more detailed
   information about the booking.
-  */
 
   // select b.tno, p.name, s.dep_date, t.paid_price
   // from bookings b, tickets t, passengers p, sch_flights s
   // where b.tno like t.tno and p.email like t.email and s.flightno like b.flightno
 
+  /**
+   *
+   * @param role
+   * @throws SQLException
+   */
   public void ExistingBookings() throws SQLException {
     // search for user bookings
     // put them in a list, sep. by number index
@@ -381,8 +480,8 @@ class UI
     }
     while(true) {
       String i = scan.nextLine();
-      if (isInteger(i, 10)) { 
-        Integer intIndex = Integer.parseInt(i); 
+      if (isInteger(i, 10)) {
+        Integer intIndex = Integer.parseInt(i);
         if (intIndex <= tnolist.size() && intIndex > 0) {
           intIndex = intIndex - 1;
           BookingDetail(tnolist.get(intIndex));
@@ -390,7 +489,7 @@ class UI
           System.out.println("Invalid entry - please try again.");
         }
       } else if (i.equals("e") || i.equals("E")) {
-        MainHub(); 
+        MainHub();
       } else {
         System.out.println("Invalid entry - please try again.");
       }
@@ -401,6 +500,12 @@ class UI
   // from bookings
   // where tno like 'TNO_INPUT'
 
+  /**
+   *
+   * @param role
+   * @param tno
+   * @throws SQLException
+   */
   public void BookingDetail(String tno) throws SQLException {
     System.out.println("Booking tno: " + tno);
     Scanner scan = new Scanner(System.in);
@@ -414,7 +519,7 @@ class UI
       else if (i.equals("e") || i.equals("E")) {
         MainHub();
       } else if (i.equals("c") || i.equals("C")) {
-        CancelBooking(tno); 
+        CancelBooking(tno);
       } else {
         System.out.println("Invalid entry - please try again.");
       }
@@ -450,6 +555,13 @@ class UI
     // logout
     // detail system date for last_login
     // return to main
+
+    String statement = "update users "
+                     + "set last_login=sysdate "
+                     + "where email='"+pub_email+"'";
+
+    sql_handler.runSQLStatement(statement);
+
     System.out.println("You have now been logged out.");
     WelcomeScreen();
   }
@@ -551,6 +663,12 @@ class UI
     MainHub();
   }
 
+  /**
+   * Takes an email address and returns
+   * true or false if valid or invalid.
+   * @param e A string for the email.
+   * @return boolean
+   */
   private boolean validEmail(String e)
   {
     String e_regex = "(\\w|\\.)+\\@\\w+\\.\\w+";
@@ -559,14 +677,29 @@ class UI
     return m.matches();
   }
 
+  /**
+   * Takes a password and returns true or false
+   * if it is valid or invalid respectively.
+   * @param pword A string for the password.
+   * @return boolean
+   */
   private boolean validPassword(String pword)
   {
-    String p_regex = "(\\w|\\-)+";
+    if (pword.length() > 4 || pword.length() < 1)
+      return false;
+
+    String p_regex = "\\w+";
     Pattern p = Pattern.compile(p_regex);
     Matcher m = p.matcher(pword);
     return m.matches();
   }
 
+  /**
+   * FIXME: add method comment
+   * @param s
+   * @param radix
+   * @return
+   */
   public static boolean isInteger(String s, int radix) {
     if(s.isEmpty()) return false;
     for(int i = 0; i < s.length(); i++) {
