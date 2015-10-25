@@ -284,6 +284,8 @@ class UI
         intIndex = intIndex - 1;
         if (intIndex < flightnolist.size()) {
           MakeABooking(role, flightnolist.get(intIndex), flightnolist2.get(intIndex));
+        } else {
+          System.out.println("Incorrect value entered...");
         }
       } else {
         System.out.println("Incorrect value entered...");
@@ -360,8 +362,8 @@ class UI
       "where b.tno = t.tno and t.email like p.email and t.email = '" + pub_email + "'";
     System.out.println("Please select a booking by ID to view more information, "
                         + "or (e)xit.\n");
-    System.out.println("ID  TNO  NAME                DEP_DATE               PRICE");
-    System.out.println("--  ---  -----------------   ---------------------  -----");
+    System.out.println("ID  TNO  NAME                 DEP_DATE               PRICE");
+    System.out.println("--  ---  -----------------    ---------------------  -----");
     ResultSet rs = sql_handler.runSQLQuery(query);
     int intId = 0;
     ArrayList<String> tnolist = new ArrayList<>();
@@ -385,8 +387,9 @@ class UI
       } else {
         System.out.println("Invalid index number.");
       }
+    } else if (i.equals("e") || i.equals("E")) {
+      MainHub(role); 
     }
-    MainHub(role);
   }
 
   // select tno, flight_no, fare, dep_date, seat
