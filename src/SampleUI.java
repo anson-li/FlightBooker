@@ -298,23 +298,16 @@ class UI
    * @throws SQLException
    */
   public void SearchForFlights(String role) throws SQLException {
-    // Scanner scan = new Scanner(System.in);
-    // there is a class var scan defined. easier to close that
-    // than individual scan's in each method.
     String srcACode = "";
     String destACode = "";
-    
+    String depDate = "";
     
     while (!validAcode(srcACode))
     {
-      // ask user if they want to enter the airport code for source
       System.out.println("Please enter the airport code for your source:");
       srcACode = scan.nextLine();
-    
     }
     
-    // if not valid airport code, search airport by name (partial match '%val%')
-    // complete process for destination airport
     while (!validAcode(destACode))
     {
       System.out.println("Please enter the airport code for your destination:");
@@ -322,28 +315,43 @@ class UI
     }
     
     // add departure date
-    System.out.println("Please enter your departure date in format DD-MMM-YYYY - eg: 01-OCT-2015");
-    String strDate = scan.nextLine();
-    DateFormat df = new SimpleDateFormat("dd-MMM-yy");
+    System.out.println("Please enter your departure date in format DD/MMM/YYYY - eg: 01/10/2015 for October 10, 2015");
+    depDate = scan.nextLine();
+    /*DateFormat df = new SimpleDateFormat("dd-MMM-yy");
     java.util.Date depDate = new java.util.Date();
     try {
         depDate = df.parse(strDate);
     } catch (ParseException e) {
         e.printStackTrace();
-    }
+    }*/
     // SAMPLE QUERY: YEG/LAX/22-DEC-2015
     // MISSING THE NUMBER OF SEATS...
     // and missing the secondary query with acodes.
+    /*
     String query = "select flightno1, flightno2, layover, price " +
-      "from ( select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
-      "from ( select flightno1, flightno2, layover, price " +
-      "from good_connections " +
-      "where dep_date ='" + df.format(depDate).toString().toUpperCase() + "' and src='" + srcACode + "' and dst='" + destACode + "' " +
-      "union " +
-      "select flightno flightno1, '' flightno2, 0 layover, price " +
-      "from available_flights " +
-      "where dep_date ='" + df.format(depDate).toString().toUpperCase() + "' and src='" + srcACode + "' and dst='" + destACode + "')) " +
-      "order by price";
+                   "from ( select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
+                     "from ( select flightno1, flightno2, layover, price " +
+                     "from good_connections " +
+                       "where dep_date ='" + df.format(depDate).toString().toUpperCase() + 
+                       "' and src='" + srcACode + "' and dst='" + destACode + "' " +
+                   "union " +
+                   "select flightno flightno1, '' flightno2, 0 layover, price " +
+                   "from available_flights " +
+                   "where dep_date ='" + df.format(depDate).toString().toUpperCase() + 
+                   "' and src='" + srcACode + "' and dst='" + destACode + "')) " +
+                   "order by price";
+    */
+    String query =  "select flightno1, flightno2, layover, price " +
+                    "from ( " +
+                    "select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
+                    "from " +
+                    "(select flightno1, flightno2, layover, price " +
+                    "from good_connections " +
+                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='" + srcACode.toUpperCase() + "' and dst='" + destACode.toUpperCase() + "' " +
+                    "union " +
+                    "select flightno flightno1, '' flightno2, 0 layover, price " +
+                    "from available_flights " +
+                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='YEG' and dst='LAX')) ";
 
     //System.out.println(query);
     ResultSet rs = sql_handler.runSQLQuery(query);
@@ -353,7 +361,7 @@ class UI
     System.out.println("The flights that match your description are as follows:");
     // system.out.println(flightslist)
     System.out.println("\nID  FLIGHTNO  FLIGHTNO2   LAYOVER  PRICE");
-    System.out.println("--  --------  ---------   -------  -----");
+    System.out.println  ("--  --------  ---------   -------  -----");
     ArrayList<String> flightnolist = new ArrayList<>();
     ArrayList<String> flightnolist2 = new ArrayList<>();
     int intId = 0;
