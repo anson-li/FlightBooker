@@ -249,7 +249,7 @@ class UI
     System.out.println("--  --------  ---------   -------  -----");
     ArrayList<String> flightnolist = new ArrayList<>();
     ArrayList<String> flightnolist2 = new ArrayList<>();
-    int intId = 1;
+    int intId = 0;
     while (rs.next()) {
       String flightno1 = rs.getString("FLIGHTNO1");
       String flightno2 = rs.getString("FLIGHTNO2");
@@ -312,7 +312,7 @@ class UI
     // is user listed in the flight?
     // if so, don't let the rebook.
     // if not, book. add the name & country of the passenger (ask here...)
-    if (flightno2.equals("null")) {
+    if (flightno2 == null) {
       System.out.println("Only one flight selected.");
     } else { 
       System.out.println("Two flights to be booked!");
