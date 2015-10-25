@@ -353,22 +353,26 @@ class UI
       "where b.tno = t.tno and t.email like p.email and t.email = '" + pub_email + "'";
     System.out.println("Please select a booking by ID to view more information, "
                         + "or (e)xit.\n");
-    System.out.println("ID  TNO  NAME   DEP_DATE  PRICE");
-    System.out.println("--  ---  ----   --------  -----");
+    System.out.println("ID  TNO  NAME                DEP_DATE               PRICE");
+    System.out.println("--  ---  -----------------   ---------------------  -----");
     ResultSet rs = sql_handler.runSQLQuery(query);
     int intId = 0;
+    ArrayList<String> tnolist = new ArrayList<>();
+
     while (rs.next()) {
       String tno = rs.getString("tno");
       String name = rs.getString("name");
       String depdate = rs.getString("dep_date");
       String price = rs.getString("PAID_PRICE");
+      tnolist.add(tno);
       intId++;
 
-      System.out.println(intId + "   " + tno + "   " + name + "   " + depdate + "   " + price);
+      System.out.println(intId + "   " + tno + "                " + name + "   " + depdate + "   " + price);
     }
     String i = scan.nextLine();
-    if (true) { // if the coming string is an integer - DONT KNOW HOW TO DO THIS ????
-      BookingDetail(role);
+    if (isInteger(i, 10)) { // if the coming string is an integer - DONT KNOW HOW TO DO THIS ????
+      Integer intIndex = Integer.parseInt(i); 
+      BookingDetail(role, tnolist.get(i));
     }
     MainHub(role);
   }
@@ -377,7 +381,8 @@ class UI
   // from bookings
   // where tno like 'TNO_INPUT'
 
-  public void BookingDetail(String role) throws SQLException {
+  public void BookingDetail(String role, String tno) throws SQLException {
+    System.out.println("Booking tno: " + tno);
     Scanner scan = new Scanner(System.in);
     System.out.println("Your booking details is as follows: ");
     System.out.println("Return to (b)ookings list, (c)ancel booking or (e)xit bookings page?");
