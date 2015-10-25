@@ -14,6 +14,7 @@ class UI
   private Scanner scan;
   private Console con;
   public String pub_email;
+  public String pub_role;
 
   UI(SQLHandler sql_handler, Console con)
   {
@@ -116,7 +117,8 @@ class UI
     String pass = scan.nextLine();*/
     String role = "user";
     pub_email = email; // remove this once emailvalidation exists
-    MainHub(role);
+    pub_role = role;
+    MainHub();
 
     scan.close();
   }
@@ -132,32 +134,33 @@ class UI
       // if verification is valid ... { MainHub(-pass in permissions); }
       String role = "poweruser";
       pub_email = email;
-      MainHub(role);
+      pub_role = role;
+      MainHub();
     }
   }
 
   //
-  public void MainHub(String role) throws SQLException {
+  public void MainHub() throws SQLException {
     Scanner scan = new Scanner(System.in);
     while(true) {
       System.out.println("Main area reached. Please select from the following options:");
       System.out.println("(S)earch for flights & make a booking, See (E)xisting bookings, Find (R)ound trips, (L)og out.");
-      if (role.equals("poweruser")) {
+      if (pub_role.equals("poweruser")) {
         System.out.println("AIRLINE AGENT: Record (D)eparture, Record (A)rrival for a scheduled flight.");
       }
       String input = scan.nextLine();
       if (input.equals("S") || input.equals("s")) {
-        SearchForFlights(role);
+        SearchForFlights();
       } else if (input.equals("E") || input.equals("e")) {
-        ExistingBookings(role);
+        ExistingBookings();
       } else if (input.equals("R") || input.equals("r")) {
-        RoundTrips(role);
+        RoundTrips();
       } else if (input.equals("L") || input.equals("l")) {
         Logout();
-      } else if ((input.equals("D") || input.equals("d")) && role.equals("poweruser")) {
-        RecordDeparture(role);
-      } else if ((input.equals("A") || input.equals("a")) && role.equals("poweruser")) {
-        RecordArrival(role);
+      } else if ((input.equals("D") || input.equals("d")) && pub_role.equals("poweruser")) {
+        RecordDeparture();
+      } else if ((input.equals("A") || input.equals("a")) && pub_role.equals("poweruser")) {
+        RecordArrival();
       } else {
         System.out.println("Invalid entry - please try again.");
       }
@@ -206,7 +209,7 @@ class UI
 
   // after the requery - ORDER BY num_conn
 
-  public void SearchForFlights(String role) throws SQLException {
+  public void SearchForFlights() throws SQLException {
     Scanner scan = new Scanner(System.in);
     // ask user if they want to enter the airport code for source
     System.out.println("Please enter the airport code for your source:");
@@ -276,12 +279,12 @@ class UI
       if (i.equals("S") || i.equals("s")) {
         // nothing done yet
       } else if (i.equals("R") || i.equals("r")) {
-        MainHub(role);
+        MainHub();
       } else if (isInteger(i,10)) {
         Integer intIndex = Integer.parseInt(i); 
         if (intIndex <= flightnolist.size() && intIndex > 0) {
           intIndex = intIndex - 1;
-          MakeABooking(role, flightnolist.get(intIndex), flightnolist2.get(intIndex));
+          MakeABooking(flightnolist.get(intIndex), flightnolist2.get(intIndex));
         } else {
           System.out.println("Invalid entry - please try again.");
         }
@@ -315,7 +318,7 @@ class UI
   // insert into tickets values (tno (gen), 'EMAIL', 'PAID PRICE')
   // insert into bookings values (tno (gen), flight_no, fare, dep_date, seat)
 
-  public void MakeABooking(String role, String flightno1, String flightno2) throws SQLException {
+  public void MakeABooking(String flightno1, String flightno2) throws SQLException {
     System.out.println(flightno1 + " " + flightno2);
     // public static void MakeABooking(int Id)
     // select a flight
@@ -335,7 +338,7 @@ class UI
     String country = scan.nextLine();
     // process...
     System.out.println("Success - you have booked your flight!");
-    MainHub(role);
+    MainHub();
   }
 
   /* List existing bookings. A user should be able to list all
@@ -350,7 +353,7 @@ class UI
   // from bookings b, tickets t, passengers p, sch_flights s
   // where b.tno like t.tno and p.email like t.email and s.flightno like b.flightno
 
-  public void ExistingBookings(String role) throws SQLException {
+  public void ExistingBookings() throws SQLException {
     // search for user bookings
     // put them in a list, sep. by number index
     // System.out.println("pub_email: " + pub_email);
@@ -382,12 +385,12 @@ class UI
         Integer intIndex = Integer.parseInt(i); 
         if (intIndex <= tnolist.size() && intIndex > 0) {
           intIndex = intIndex - 1;
-          BookingDetail(role, tnolist.get(intIndex));
+          BookingDetail(tnolist.get(intIndex));
         } else {
           System.out.println("Invalid entry - please try again.");
         }
       } else if (i.equals("e") || i.equals("E")) {
-        MainHub(role); 
+        MainHub(); 
       } else {
         System.out.println("Invalid entry - please try again.");
       }
@@ -398,7 +401,7 @@ class UI
   // from bookings
   // where tno like 'TNO_INPUT'
 
-  public void BookingDetail(String role, String tno) throws SQLException {
+  public void BookingDetail(String tno) throws SQLException {
     System.out.println("Booking tno: " + tno);
     Scanner scan = new Scanner(System.in);
     System.out.println("Your booking details is as follows: ");
@@ -406,12 +409,12 @@ class UI
     while(true) {
       String i = scan.nextLine();
       if (i.equals("b") || i.equals("B")) {
-        ExistingBookings(role);
+        ExistingBookings();
       }
       else if (i.equals("e") || i.equals("E")) {
-        MainHub(role);
+        MainHub();
       } else if (i.equals("c") || i.equals("C")) {
-        CancelBooking(role, tno); 
+        CancelBooking(tno); 
       } else {
         System.out.println("Invalid entry - please try again.");
       }
@@ -428,11 +431,11 @@ class UI
   // delete from bookings
   // where tno like 'TNO_INPUT'
 
-  public void CancelBooking(String role, String tno) throws SQLException { // pass in booking value in here?
+  public void CancelBooking(String tno) throws SQLException { // pass in booking value in here?
     // delete the booking
     // return to mainhub
     System.out.println("Booking has been deleted.");
-    MainHub(role);
+    MainHub();
   }
 
   /* Logout. There must be an option to log out of the system. At
@@ -459,12 +462,12 @@ class UI
   // select * from sch_flights // flightno, dep_date, act_dep_time, act_arr_time
   // rs.updateString(3, INPUT_DATE);
 
-  public void RecordDeparture(String role) throws SQLException {
+  public void RecordDeparture() throws SQLException {
     System.out.println("Flight number:");
     String flightno = scan.nextLine();
     System.out.println("Departure time:");
     String deptime = scan.nextLine();
-    MainHub(role);
+    MainHub();
   }
 
   /* AIRLINE AGENT ONLY: Record a flight arrival. After a landing, the user may
@@ -474,7 +477,7 @@ class UI
   // select * from sch_flights // flightno, dep_date, act_dep_time, act_arr_time
   // rs.updateString(4, INPUT_DATE)
 
-  public void RecordArrival(String role) throws SQLException {
+  public void RecordArrival() throws SQLException {
     // search for a flight
     // enter the flight arrival time
     // exit
@@ -482,7 +485,7 @@ class UI
     String flightno = scan.nextLine();
     System.out.println("Arrival time:");
     String arrtime = scan.nextLine();
-    MainHub(role);
+    MainHub();
   }
 
   /* CHOOSE ONE OF THREE OPTIONS:
@@ -518,7 +521,7 @@ class UI
   // GROUP BY flightno, ...
   // ORDER BY PRICE
 
-  public void RoundTrips(String role) throws SQLException {
+  public void RoundTrips() throws SQLException {
     // get the user source
     // get the user destination
     // get the start date
@@ -545,7 +548,7 @@ class UI
     // system.out.println(flightslist)
     System.out.println("Round-trips are currently being sorted by number of connections, and price.");
     String i = scan.nextLine();
-    MainHub(role);
+    MainHub();
   }
 
   private boolean validEmail(String e)
