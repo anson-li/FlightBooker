@@ -195,7 +195,7 @@ class UI
       
       query = "select email from airline_agents where email='"+email+"'";
       rs = sql_handler.runSQLQuery(query);
-      if (!rs.next())
+      if (rs.next())
       {
         role = "poweruser";
         System.out.println("Ariline Agent: " + rs.getString("NAME") );
