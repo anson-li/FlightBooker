@@ -196,14 +196,15 @@ class UI
       query = "select email from airline_agents where email='"+email+"'";
       rs = sql_handler.runSQLQuery(query);
       if (!rs.next())
+      {
         role = "poweruser";
-      else
-        role = "user";
-      
-      if (role.equals("poweruser"))
         System.out.println("Ariline Agent: " + rs.getString("NAME") );
+      }
       else
+      {
+        role = "user";
         System.out.println("Standard User.");
+      }
       
       String statement = "update users "
           + "set last_login=sysdate "
