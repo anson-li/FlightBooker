@@ -228,8 +228,8 @@ class UI
     while (rs.next()) {
       String flightno1 = rs.getString("FLIGHTNO1");
       String flightno2 = rs.getString("FLIGHTNO2");
-      String layover = rs.getstring("LAYOVER");
-      String price = rs.getstring("PRICE");
+      String layover = rs.getString("LAYOVER");
+      String price = rs.getString("PRICE");
 
       //String src = rs.getString("SRC");
       //String dst = rs.getString("DST");
