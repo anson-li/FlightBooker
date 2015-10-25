@@ -200,7 +200,7 @@ class UI
         role = "user";
       
       String statement = "update users "
-          + "set last_login=sysdate"
+          + "set last_login=sysdate "
           + "where email='"+pub_email+"'";
 
       sql_handler.runSQLStatement(statement);
@@ -561,7 +561,7 @@ class UI
     // return to main
     
     String statement = "update users "
-                     + "set last_login=sysdate"
+                     + "set last_login=sysdate "
                      + "where email='"+pub_email+"'";
     
     sql_handler.runSQLStatement(statement);
