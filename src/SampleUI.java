@@ -351,7 +351,8 @@ class UI
                     "union " +
                     "select flightno flightno1, '' flightno2, 0 layover, price " +
                     "from available_flights " +
-                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='YEG' and dst='LAX')) ";
+                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='YEG' and dst='LAX')) " +
+                    "order by price";
 
     //System.out.println(query);
     ResultSet rs = sql_handler.runSQLQuery(query);
