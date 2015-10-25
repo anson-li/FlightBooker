@@ -272,7 +272,7 @@ class UI
     String i = scan.nextLine();
     if (i.equals("S") || i.equals("s")) {
 
-    } else if (i.equals("R") || i.equals("r") {
+    } else if (i.equals("R") || i.equals("r")) {
       MainHub(role);
     } else if (isInteger(i,10)) {
       Integer intIndex = Integer.parseInt(i); 
