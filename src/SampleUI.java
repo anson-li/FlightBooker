@@ -227,7 +227,7 @@ class UI
     // SAMPLE QUERY: YEG/LAX/22-DEC-2015
     // MISSING THE NUMBER OF SEATS...
     // and missing the secondary query with acodes.
-    String query = "select flightno1, flightno2, layover, price" +
+    String query = "select flightno1, flightno2, layover, price " +
       "from ( select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
       "from ( select flightno1, flightno2, layover, price " +
       "from good_connections " +
