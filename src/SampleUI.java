@@ -675,6 +675,9 @@ class UI
    */
   private boolean validEmail(String e)
   {
+    if (e.length() > 20)
+      return false;
+    
     String e_regex = "(\\w|\\.)+\\@\\w+\\.\\w+";
     Pattern p = Pattern.compile(e_regex);
     Matcher m = p.matcher(e);
