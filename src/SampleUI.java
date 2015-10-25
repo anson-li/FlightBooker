@@ -13,6 +13,7 @@ class UI
   private SQLHandler sql_handler;
   private Scanner scan;
   private Console con;
+  public String pub_email;
 
   UI(SQLHandler sql_handler, Console con)
   {
@@ -114,6 +115,7 @@ class UI
     System.out.println("Please enter your password: ");
     String pass = scan.nextLine();*/
     String role = "user";
+    pub_email = email; // remove this once emailvalidation exists
     MainHub(role);
 
     scan.close();
@@ -129,6 +131,7 @@ class UI
       pword = String.valueOf(pwordA);
       // if verification is valid ... { MainHub(-pass in permissions); }
       String role = "poweruser";
+      pub_email = email;
       MainHub(role);
     }
   }
@@ -314,8 +317,10 @@ class UI
     // if not, book. add the name & country of the passenger (ask here...)
     if (flightno2 == null) {
       System.out.println("Only one flight selected.");
+      // run query only once here
     } else { 
       System.out.println("Two flights to be booked!");
+      // run query twice through here
     }
     System.out.println("Please enter the name of the passenger:");
     String name = scan.nextLine();
@@ -341,8 +346,11 @@ class UI
   public void ExistingBookings(String role) throws SQLException {
     // search for user bookings
     // put them in a list, sep. by number index
+    System.out.println("pub_email: " + pub_email);
     System.out.println("Your current bookings for this account are: ");
-    //system.out.println(data)
+    String query = "select b.tno, p.name, b.dep_date, t.paid_price " +
+      "from bookings b, tickets t, passengers p " +
+      "where b.tno = t.tno and t.email like p.email and t.email like '" + pub_email + "'";
     System.out.println("Please select a booking by index to view more information, "
                         + "or (e)xit.");
     String i = scan.nextLine();
