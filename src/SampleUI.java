@@ -75,7 +75,7 @@ class UI
     }
     System.out.println("Please enter your password: ");
     String pass = scan.nextLine();*/
-    MainHub();
+    MainHub(role);
 
     scan.close();
   }
@@ -89,7 +89,7 @@ class UI
       System.out.println("Please enter your password: ");
       String pass = scan.nextLine();
       // if verification is valid ... { MainHub(-pass in permissions); }
-      String role = "poweruser"
+      String role = "poweruser";
       MainHub(role);
     }
   }
@@ -100,7 +100,7 @@ class UI
     while(true) {
       System.out.println("Main area reached. Please select from the following options:");
       System.out.println("(S)earch for flights & make a booking, See (E)xisting bookings, (C)ancel a booking, Find (R)ound trips, (L)og out.");
-      if (role.equals("poweruser") {
+      if (role.equals("poweruser")) {
         System.out.println("AIRLINE AGENT: Record (D)eparture, Record (A)rrival for a scheduled flight.");
       }
       String input = scan.nextLine();
@@ -117,7 +117,7 @@ class UI
       } else if ((input.equals("D") || input.equals("d")) && role.equals("poweruser")) {
         RecordDeparture(role);
       } else if ((input.equals("A") || input.equals("a")) && role.equals("poweruser")) {
-        RecordArrival(role)
+        RecordArrival(role);
       } else {
         System.out.println("Invalid character entered.");
       }
@@ -318,11 +318,11 @@ class UI
   // delete from bookings
   // where tno like 'TNO_INPUT'
 
-  public void CancelBooking() throws SQLException { // pass in booking value in here?
+  public void CancelBooking(String role) throws SQLException { // pass in booking value in here?
     // delete the booking
     // return to mainhub
     System.out.println("Booking has been deleted.");
-    MainHub();
+    MainHub(role);
   }
 
   /* Logout. There must be an option to log out of the system. At
@@ -349,12 +349,12 @@ class UI
   // select * from sch_flights // flightno, dep_date, act_dep_time, act_arr_time
   // rs.updateString(3, INPUT_DATE);
 
-  public void RecordDeparture() throws SQLException {
+  public void RecordDeparture(String role) throws SQLException {
     System.out.println("Flight number:");
     String flightno = scan.nextLine();
     System.out.println("Departure time:");
     String deptime = scan.nextLine();
-    MainHub();
+    MainHub(role);
   }
 
   /* AIRLINE AGENT ONLY: Record a flight arrival. After a landing, the user may
@@ -364,7 +364,7 @@ class UI
   // select * from sch_flights // flightno, dep_date, act_dep_time, act_arr_time
   // rs.updateString(4, INPUT_DATE)
 
-  public void RecordArrival() throws SQLException {
+  public void RecordArrival(String role) throws SQLException {
     // search for a flight
     // enter the flight arrival time
     // exit
@@ -372,7 +372,7 @@ class UI
     String flightno = scan.nextLine();
     System.out.println("Arrival time:");
     String arrtime = scan.nextLine();
-    MainHub();
+    MainHub(role);
   }
 
   /* CHOOSE ONE OF THREE OPTIONS:
@@ -408,7 +408,7 @@ class UI
   // GROUP BY flightno, ...
   // ORDER BY PRICE
 
-  public void RoundTrips() throws SQLException {
+  public void RoundTrips(String role) throws SQLException {
     // get the user source
     // get the user destination
     // get the start date
@@ -435,6 +435,6 @@ class UI
     // system.out.println(flightslist)
     System.out.println("Round-trips are currently being sorted by number of connections, and price.");
     String i = scan.nextLine();
-    MainHub();
+    MainHub(role);
   }
 }
