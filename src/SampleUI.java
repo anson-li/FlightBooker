@@ -280,7 +280,10 @@ class UI
       MainHub(role);
     } else if (isInteger(i,10)) {
       Integer intIndex = Integer.parseInt(i); 
-      MakeABooking(role, flightnolist.get(intIndex), flightnolist2.get(intIndex));
+      intIndex = intIndex - 1;
+      if (intIndex < flightnolist.size()) {
+        MakeABooking(role, flightnolist.get(intIndex), flightnolist2.get(intIndex));
+      }
     }
   }
 
@@ -367,12 +370,15 @@ class UI
       tnolist.add(tno);
       intId++;
 
-      System.out.println(intId + "   " + tno + "                " + name + "   " + depdate + "   " + price);
+      System.out.println(intId + "   " + tno + "  " + name + "   " + depdate + "   " + price);
     }
     String i = scan.nextLine();
     if (isInteger(i, 10)) { // if the coming string is an integer - DONT KNOW HOW TO DO THIS ????
       Integer intIndex = Integer.parseInt(i); 
-      BookingDetail(role, tnolist.get(intIndex));
+      intIndex = intIndex - 1;
+      if (intIndex < tnolist.size()) {
+        BookingDetail(role, tnolist.get(intIndex));
+      }
     }
     MainHub(role);
   }
