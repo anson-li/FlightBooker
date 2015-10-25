@@ -199,6 +199,18 @@ class UI
       else
         role = "user";
       
+      String statement = "update users "
+          + "set last_login=sysdate"
+          + "where email='"+pub_email+"'";
+
+      sql_handler.runSQLStatement(statement);
+      
+      System.out.print("Login Successful. ");
+      if (role.equals("poweruser"))
+        System.out.println("Ariline Agent: " + rs.getString("NAME") );
+      else
+        System.out.println("Standard User.");
+      
       pub_email = email;
       MainHub(role);
     }
