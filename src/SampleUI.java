@@ -138,21 +138,17 @@ class UI
     }
     else
     {
-      // FIXME: need to use java.sql.Timestamp for time values sql.Date truncates time.
-      // but format isn't recognized by sqlplus currently only stores the date last accessed.
-      // Timestamp also contains the date along with time
       String statement = "insert into users values('" + email +  "',"
                         + "'" + password + "',"
                         + "sysdate )";
-                        //+ "to_date('" + (new java.sql.Date((new java.util.Date()).getTime()))
-                        //+ "', 'YYYY-MM-DD'))";
+      
       System.out.println(statement);
       sql_handler.runSQLStatement(statement);
     }
     
     // TODO: how is the user's role selected? are they predetermined?
     String role = "user";
-    pub_email = email; // remove this once email validation exists
+    pub_email = email; // TODO: remove this once email validation exists
     MainHub(role);
     
     scan.close();
