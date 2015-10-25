@@ -73,7 +73,7 @@ class UI
         scan.close();
         System.exit(0);
       } else {
-        System.out.println("Invalid character; please try again:");
+        System.out.println("Invalid entry - please try again.");
       }
     }
   }
@@ -161,7 +161,7 @@ class UI
       } else if ((input.equals("A") || input.equals("a")) && role.equals("poweruser")) {
         RecordArrival(role);
       } else {
-        System.out.println("Invalid character entered.");
+        System.out.println("Invalid entry - please try again.");
       }
     }
 
@@ -386,12 +386,12 @@ class UI
         if (intIndex < tnolist.size() && intIndex > 0) {
           BookingDetail(role, tnolist.get(intIndex));
         } else {
-          System.out.println("Invalid index number.");
+          System.out.println("Invalid entry - please try again.");
         }
       } else if (i.equals("e") || i.equals("E")) {
         MainHub(role); 
       } else {
-        System.out.println("Invalid entry - please try again.")
+        System.out.println("Invalid entry - please try again.");
       }
     }
   }
@@ -413,9 +413,9 @@ class UI
       else if (i.equals("e") || i.equals("E")) {
         MainHub(role);
       } else if (i.equals("c") || i.equals("C")) {
-        CancelBooking(role, tno); //PASS VALUE
+        CancelBooking(role, tno); 
       } else {
-        System.out.println("Invalid character - please try again");
+        System.out.println("Invalid entry - please try again.");
       }
     }
   }
