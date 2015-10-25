@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.io.Console;
 import java.io.IOError;
 import java.sql.*;
@@ -6,12 +8,12 @@ import java.text.*;
 
 class UI
 {
-  
+
   private int num_uis;
   private SQLHandler sql_handler;
   private Scanner scan;
   private Console con;
-  
+
   UI(SQLHandler sql_handler, Console con)
   {
     num_uis += 1;
@@ -27,31 +29,37 @@ class UI
   };
 
   public void GenerateViews() throws SQLException {
-    String dropAvailableFlights = "drop view available_flights";
-    String createAvailableFlights = "create view available_flights(flightno,dep_date,src,dst,dep_time, " +
-      "arr_time,fare,seats,price) as " +                         
-      "select f.flightno, sf.dep_date, f.src, f.dst, f.dep_time+(trunc(sf.dep_date)-trunc(f.dep_time)), " +
+	  /*
+    String dropAvailableFlights = "if exists (select * from all_tables where table_name like 'AVAILABLE_FLIGHTS')" +
+      "drop table available_flights";
+    String createAvailableFlights = "create view available_flights(flightno,dep_date,src,dst,dep_time," +
+      "arr_time,fare,seats,price) as" +
+      "select f.flightno, sf.dep_date, f.src, f.dst, f.dep_time+(trunc(sf.dep_date)-trunc(f.dep_time))," +
       "f.dep_time+(trunc(sf.dep_date)-trunc(f.dep_time))+(f.est_dur/60+a2.tzone-a1.tzone)/24," +
-      "fa.fare, fa.limit-count(tno), fa.price " + 
-      "from flights f, flight_fares fa, sch_flights sf, bookings b, airports a1, airports a2 " +
-      "where f.flightno=sf.flightno and f.flightno=fa.flightno and f.src=a1.acode and " +
-      "f.dst=a2.acode and fa.flightno=b.flightno(+) and fa.fare=b.fare(+) and " +
-      "sf.dep_date=b.dep_date(+) " + 
-      "group by f.flightno, sf.dep_date, f.src, f.dst, f.dep_time, f.est_dur,a2.tzone, " +
-      "a1.tzone, fa.fare, fa.limit, fa.price " +
+      "fa.fare, fa.limit-count(tno), fa.price" +
+      "from flights f, flight_fares fa, sch_flights sf, bookings b, airports a1, airports a2" +
+      "where f.flightno=sf.flightno and f.flightno=fa.flightno and f.src=a1.acode and" +
+      "f.dst=a2.acode and fa.flightno=b.flightno(+) and fa.fare=b.fare(+) and" +
+      "sf.dep_date=b.dep_date(+)" +
+      "group by f.flightno, sf.dep_date, f.src, f.dst, f.dep_time, f.est_dur,a2.tzone," +
+      "a1.tzone, fa.fare, fa.limit, fa.price" +
       "having fa.limit-count(tno) > 0";
-    String dropGoodConnections = "drop view good_connections";
-    String createGoodConnections = "create view good_connections (src,dst,dep_date,flightno1,flightno2, layover,price) as " +
-      "select a1.src, a2.dst, a1.dep_date, a1.flightno, a2.flightno, a2.dep_time-a1.arr_time, " +
+    String dropGoodConnections = "if exists (select * from all_tables where table_name like 'GOOD_CONNECTIONS')" +
+      "drop table good_connections";
+    String createGoodConnections = "create view good_connections (src,dst,dep_date,flightno1,flightno2, layover,price) as" +
+      "select a1.src, a2.dst, a1.dep_date, a1.flightno, a2.flightno, a2.dep_time-a1.arr_time," +
       "min(a1.price+a2.price) " +
-      "from available_flights a1, available_flights a2 " +
-      "where a1.dst=a2.src and a1.arr_time +1.5/24 <=a2.dep_time and a1.arr_time +5/24 >=a2.dep_time " +
-      "group by a1.src, a2.dst, a1.dep_date, a1.flightno, a2.flightno, a2.dep_time, a1.arr_time ";
-
-    sql_handler.runSQLStatement(dropAvailableFlights);
-    sql_handler.runSQLStatement(createAvailableFlights);
-    sql_handler.runSQLStatement(dropGoodConnections);
-    sql_handler.runSQLStatement(createGoodConnections);
+      "from available_flights a1, available_flights a2" +
+      "where a1.dst=a2.src and a1.arr_time +1.5/24 <=a2.dep_time and a1.arr_time +5/24 >=a2.dep_time" +
+      "group by a1.src, a2.dst, a1.dep_date, a1.flightno, a2.flightno, a2.dep_time, a1.arr_time";
+	*/
+	sql_handler.runSQLStatement("@generate_views");
+	//String dropAvailableFlights = "drop table available_flights" ;
+	//String createAvailableFlights = 
+    //sql_handler.runSQLStatement(dropAvailableFlights);
+    //sql_handler.runSQLStatement(createAvailableFlights);
+    //sql_handler.runSQLStatement(dropGoodConnections);
+    //sql_handler.runSQLStatement(createGoodConnections);
   }
 
   public void WelcomeScreen() throws SQLException {
@@ -80,23 +88,30 @@ class UI
   // createString = "insert into users values ('email', 'password', poweruser, sysdate)";
 
   public void Register() throws SQLException {
-    
-    String username = "";
+
+    String email = "";
     String password = "";
-    
+
     System.out.println("Registration:");
     try {
-      username = con.readLine("Email: ");
-      char[] pwArray = con.readPassword("Password: ");
-      password = String.valueOf(pwArray);
+      email = con.readLine("Email: ");
+      char[] pwArray1 = con.readPassword("Password: ");
+      char[] pwArray2 = con.readPassword("Confirm Password:");
+      if (Arrays.equals(pwArray1, pwArray2))
+        password = String.valueOf(pwArray1);
+      else
+        return;
     } catch (IOError ioe){
       System.err.println(ioe.getMessage());
-    }    
-    /*
-    Scanner scan = new Scanner(System.in);
-    System.out.println("Welcome to the Register page. "
-                     + "Please enter your email: ");
-    String email = scan.nextLine();
+    }
+
+    if (!validEmail(email));
+
+    if (!validPassword(password));
+
+    // check if user already in DB
+    // add user to DB
+
     /* need to implement verification system...
     while (isValidEmailAddress(email) != true) {
       System.out.println("Invalid email... Please enter your email: ");
@@ -110,21 +125,21 @@ class UI
     scan.close();
   }
 
-  // select * from users where email = 'email' and password = 'password'
-
-  public void Login() throws SQLException {
+  private void Login() throws SQLException {
+    System.out.println("Login.");
+    String email = "";
+    String pword = "";
     while(true) {
-      System.out.println("Welcome to the Login page. Please enter your email: ");
-      String email = scan.nextLine();
-      System.out.println("Please enter your password: ");
-      String pass = scan.nextLine();
+      email = con.readLine("Email: ");
+      char[] pwordA = con.readPassword("Password:");
+      pword = String.valueOf(pwordA);
       // if verification is valid ... { MainHub(-pass in permissions); }
       String role = "poweruser";
       MainHub(role);
     }
   }
 
-  // 
+  //
   public void MainHub(String role) throws SQLException {
     Scanner scan = new Scanner(System.in);
     while(true) {
@@ -182,6 +197,18 @@ class UI
   secondary sort criterion.
   */
 
+  // select f.flightno, a1.acode, a2.acode, dep_time, dep_time + est_dur (not right...) as arr_time, 0 as num_conn, 0 as layover_time, ff1.price, ff1.limit - COUNT(b.seat) as open_seats
+  // from flights f, flight_fares ff1, airports a1, airports a2, bookings b
+  // where (f.src like 'SRC' or a1.name like 'SRC')
+  // and (f.dst like 'DST' or a2.name like 'DST')
+  // and (f.dep_time like 'DEP_TIME')
+  // and f.src like a1.acode and f.dst like a2.acode and f.flightno like ff1.flightno
+  // and b.flightno like f.flightno and b.fare like ff1.fare
+  // UNION
+  // (add the 1-connection flights ...)
+  // GROUP BY flightno, ...
+  // ORDER BY PRICE
+
   // after the requery - ORDER BY num_conn
 
   public void SearchForFlights(String role) throws SQLException {
@@ -196,7 +223,7 @@ class UI
     // add departure date
     System.out.println("Please enter your departure date in format DD-MMM-YYYY - eg: 01-OCT-2015");
     String strDate = scan.nextLine();
-    DateFormat df = new SimpleDateFormat("dd-MMM-yy"); 
+    DateFormat df = new SimpleDateFormat("dd-MMM-yy");
     java.util.Date depDate = new java.util.Date();
     try {
         depDate = df.parse(strDate);
@@ -206,12 +233,12 @@ class UI
     // SAMPLE QUERY: YEG/LAX/22-DEC-2015
     // MISSING THE NUMBER OF SEATS...
     // and missing the secondary query with acodes.
-    String query = "select flightno1, flightno2, layover, price" + 
+    String query = "select flightno1, flightno2, layover, price" +
       "from ( select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
-      "from ( select flightno1, flightno2, layover, price " + 
-      "from good_connections " + 
+      "from ( select flightno1, flightno2, layover, price " +
+      "from good_connections " +
       "where dep_date ='" + df.format(depDate).toString().toUpperCase() + "' and src='" + srcACode + "' and dst='" + destACode + "' " +
-      "union " + 
+      "union " +
       "select flightno flightno1, '' flightno2, 0 layover, price " +
       "from available_flights " +
       "where dep_date ='" + df.format(depDate).toString().toUpperCase() + "' and src='" + srcACode + "' and dst='" + destACode + "'";
@@ -282,7 +309,6 @@ class UI
     // is user listed in the flight?
     // if so, don't let the rebook.
     // if not, book. add the name & country of the passenger (ask here...)
-    Scanner scan = new Scanner(System.in);
     System.out.println("Please enter the name of the passenger:");
     String name = scan.nextLine();
     System.out.println("Please enter the country of the passenger:");
@@ -307,7 +333,6 @@ class UI
   public void ExistingBookings(String role) throws SQLException {
     // search for user bookings
     // put them in a list, sep. by number index
-    Scanner scan = new Scanner(System.in);
     System.out.println("Your current bookings for this account are: ");
     //system.out.println(data)
     System.out.println("Please select a booking by index to view more information, "
@@ -431,7 +456,7 @@ class UI
 
   // select f.flightno, a1.acode, a2.acode, dep_time, dep_time + est_dur (not right...) as arr_time, 0 as num_conn, 0 as layover_time, ff1.price, ff1.limit - COUNT(b.seat) as open_seats
   // from flights f, flight_fares ff1, airports a1, airports a2, bookings b
-  // where (f.src like 'SRC' or a1.name like 'SRC') 
+  // where (f.src like 'SRC' or a1.name like 'SRC')
   // and (f.dst like 'DST' or a2.name like 'DST')
   // and (f.dep_time like 'DEP_TIME')
   // and f.src like a1.acode and f.dst like a2.acode and f.flightno like ff1.flightno
@@ -469,5 +494,21 @@ class UI
     System.out.println("Round-trips are currently being sorted by number of connections, and price.");
     String i = scan.nextLine();
     MainHub(role);
+  }
+
+  private boolean validEmail(String e)
+  {
+    String e_regex = "(\\w|\\.)+\\@\\w+\\.\\w+";
+    Pattern p = Pattern.compile(e_regex);
+    Matcher m = p.matcher(e);
+    return m.matches();
+  }
+
+  private boolean validPassword(String pword)
+  {
+    String p_regex = "(\\w|\\-)+";
+    Pattern p = Pattern.compile(p_regex);
+    Matcher m = p.matcher(pword);
+    return m.matches();
   }
 }
