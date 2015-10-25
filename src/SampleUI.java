@@ -372,7 +372,7 @@ class UI
     String i = scan.nextLine();
     if (isInteger(i, 10)) { // if the coming string is an integer - DONT KNOW HOW TO DO THIS ????
       Integer intIndex = Integer.parseInt(i); 
-      BookingDetail(role, tnolist.get(i));
+      BookingDetail(role, tnolist.get(intIndex));
     }
     MainHub(role);
   }
