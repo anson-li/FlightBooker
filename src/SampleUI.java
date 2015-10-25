@@ -141,7 +141,7 @@ class UI
     Scanner scan = new Scanner(System.in);
     while(true) {
       System.out.println("Main area reached. Please select from the following options:");
-      System.out.println("(S)earch for flights & make a booking, See (E)xisting bookings, (C)ancel a booking, Find (R)ound trips, (L)og out.");
+      System.out.println("(S)earch for flights & make a booking, See (E)xisting bookings, Find (R)ound trips, (L)og out.");
       if (role.equals("poweruser")) {
         System.out.println("AIRLINE AGENT: Record (D)eparture, Record (A)rrival for a scheduled flight.");
       }
@@ -150,8 +150,6 @@ class UI
         SearchForFlights(role);
       } else if (input.equals("E") || input.equals("e")) {
         ExistingBookings(role);
-      } else if (input.equals("C") || input.equals("c")) {
-        CancelBooking(role);
       } else if (input.equals("R") || input.equals("r")) {
         RoundTrips(role);
       } else if (input.equals("L") || input.equals("l")) {
