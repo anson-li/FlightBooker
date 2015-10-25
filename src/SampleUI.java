@@ -19,11 +19,40 @@ class UI
     this.con = con;
     this.scan = new Scanner(System.in);
     try {
+      GenerateViews();
       WelcomeScreen();
     } catch (SQLException e) {
       e.printStackTrace();
     }
   };
+
+  public void GenerateViews() throws SQLException {
+    String dropAvailableFlights = "drop table available_flights";
+    String createAvailableFlights = "create view available_flights(flightno,dep_date,src,dst,dep_time," +
+      "arr_time,fare,seats,price) as" +                         
+      "select f.flightno, sf.dep_date, f.src, f.dst, f.dep_time+(trunc(sf.dep_date)-trunc(f.dep_time))," +
+      "f.dep_time+(trunc(sf.dep_date)-trunc(f.dep_time))+(f.est_dur/60+a2.tzone-a1.tzone)/24," +
+      "fa.fare, fa.limit-count(tno), fa.price" + 
+      "from flights f, flight_fares fa, sch_flights sf, bookings b, airports a1, airports a2" +
+      "where f.flightno=sf.flightno and f.flightno=fa.flightno and f.src=a1.acode and" +
+      "f.dst=a2.acode and fa.flightno=b.flightno(+) and fa.fare=b.fare(+) and" +
+      "sf.dep_date=b.dep_date(+)" + 
+      "group by f.flightno, sf.dep_date, f.src, f.dst, f.dep_time, f.est_dur,a2.tzone," +
+      "a1.tzone, fa.fare, fa.limit, fa.price" +
+      "having fa.limit-count(tno) > 0";
+    String dropGoodConnections = "drop table good_connections";
+    String createGoodConnections = "create view good_connections (src,dst,dep_date,flightno1,flightno2, layover,price) as" +
+      "select a1.src, a2.dst, a1.dep_date, a1.flightno, a2.flightno, a2.dep_time-a1.arr_time," +
+      "min(a1.price+a2.price) " +
+      "from available_flights a1, available_flights a2" +
+      "where a1.dst=a2.src and a1.arr_time +1.5/24 <=a2.dep_time and a1.arr_time +5/24 >=a2.dep_time" +
+      "group by a1.src, a2.dst, a1.dep_date, a1.flightno, a2.flightno, a2.dep_time, a1.arr_time";
+
+    sql_handler.runSQLStatement(dropAvailableFlights);
+    sql_handler.runSQLStatement(createAvailableFlights);
+    sql_handler.runSQLStatement(dropGoodConnections);
+    sql_handler.runSQLStatement(createGoodConnections);
+  }
 
   public void WelcomeScreen() throws SQLException {
     System.out.println("Welcome to Air Kappa!");
@@ -153,18 +182,6 @@ class UI
   secondary sort criterion.
   */
 
-  // select f.flightno, a1.acode, a2.acode, dep_time, dep_time + est_dur (not right...) as arr_time, 0 as num_conn, 0 as layover_time, ff1.price, ff1.limit - COUNT(b.seat) as open_seats
-  // from flights f, flight_fares ff1, airports a1, airports a2, bookings b
-  // where (f.src like 'SRC' or a1.name like 'SRC') 
-  // and (f.dst like 'DST' or a2.name like 'DST')
-  // and (f.dep_time like 'DEP_TIME')
-  // and f.src like a1.acode and f.dst like a2.acode and f.flightno like ff1.flightno
-  // and b.flightno like f.flightno and b.fare like ff1.fare
-  // UNION
-  // (add the 1-connection flights ...)
-  // GROUP BY flightno, ...
-  // ORDER BY PRICE
-
   // after the requery - ORDER BY num_conn
 
   public void SearchForFlights(String role) throws SQLException {
@@ -186,8 +203,19 @@ class UI
     } catch (ParseException e) {
         e.printStackTrace();
     }
-    String query = "select FLIGHTNO, SRC, DST, DEP_TIME, EST_DUR from flights where " +
-                   "SRC LIKE '" + srcACode + "' AND DST LIKE '" + destACode + "' AND DEP_TIME LIKE '" + df.format(depDate).toString().toUpperCase() + "'";
+    // SAMPLE QUERY: YEG/LAX/22-DEC-2015
+    // MISSING THE NUMBER OF SEATS...
+    // and missing the secondary query with acodes.
+    String query = "select flightno1, flightno2, layover, price" + 
+      "from ( select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
+      "from ( select flightno1, flightno2, layover, price " + 
+      "from good_connections "
+      "where dep_date ='" + df.format(depDate).toString().toUpperCase() + "' and src='" + srcACode + "' and dst='" + destACode + "' " +
+      "union " + 
+      "select flightno flightno1, '' flightno2, 0 layover, price " +
+      "from available_flights "
+      "where dep_date ='" + df.format(depDate).toString().toUpperCase() + "' and src='" + srcACode + "' and dst='" + destACode + "'";
+
     //System.out.println(query);
     ResultSet rs = sql_handler.runSQLQuery(query);
     // search flights for direct flights and flights w one connection
@@ -198,13 +226,17 @@ class UI
     System.out.println("\nFLIGHTNO  SRC   DST   DEP_TIME    EST_DUR");
     System.out.println("--------  ---   ---   ----------  -------");
     while (rs.next()) {
-      String flightno = rs.getString("FLIGHTNO");
-      String src = rs.getString("SRC");
-      String dst = rs.getString("DST");
-      java.sql.Date deptime = rs.getDate("DEP_TIME");
-      int estdur = rs.getInt("EST_DUR");
+      String flightno1 = rs.getString("FLIGHTNO1");
+      String flightno2 = rs.getString("FLIGHTNO2");
+      String layover = rs.getstring("LAYOVER");
+      String price = rs.getstring("PRICE");
 
-      System.out.println(flightno + "    " + src +"   " +dst+"   " +deptime+"   " +estdur);
+      //String src = rs.getString("SRC");
+      //String dst = rs.getString("DST");
+      //java.sql.Date deptime = rs.getDate("DEP_TIME");
+      //int estdur = rs.getInt("EST_DUR");
+
+      System.out.println(flightno1 + "    " + flightno2 +"   " +layover+"   " +price);
     }
 
 
