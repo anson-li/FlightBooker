@@ -768,6 +768,8 @@ class UI
       System.out.println(rs.getString("ACODE") + "     " + rs.getString("name"));
     }
     
+    System.out.println();
+    
     return false;
   }
 }
