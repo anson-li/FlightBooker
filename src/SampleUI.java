@@ -235,7 +235,7 @@ class UI
       "union " +
       "select flightno flightno1, '' flightno2, 0 layover, price " +
       "from available_flights " +
-      "where dep_date ='" + df.format(depDate).toString().toUpperCase() + "' and src='" + srcACode + "' and dst='" + destACode + "'";
+      "where dep_date ='" + df.format(depDate).toString().toUpperCase() + "' and src='" + srcACode + "' and dst='" + destACode + "'))";
 
     //System.out.println(query);
     ResultSet rs = sql_handler.runSQLQuery(query);
