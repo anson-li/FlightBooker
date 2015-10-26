@@ -94,6 +94,10 @@ class UI
    * FIXME: i want to be a complete method comment
    * @throws SQLException
    */
+  /*
+  Sample users table generation:
+  create table users ( email varchar(20), password varchar(8), role varchar(6), last_login date)
+  */
   public void Register() throws SQLException {
 
     String email = "";
@@ -140,7 +144,7 @@ class UI
     else
     {
       String statement = "insert into users values('" + email +  "',"
-                        + "'" + password + "',"
+                        + "'" + password + "', 'user', " 
                         + "sysdate )";
 
       System.out.println(statement);
@@ -579,6 +583,10 @@ class UI
     String flightno = scan.nextLine();
     System.out.println("Departure time:");
     String deptime = scan.nextLine();
+    String statement = "update sch_flights "
+      + "set act_dep_date = sysdate "
+      + "where flightno = '"+flightno.toUpperCase()+"'";
+
     MainHub();
   }
 
@@ -700,6 +708,8 @@ class UI
    * @param radix
    * @return
    */
+  // code taken from http://stackoverflow.com/questions/5439529/determine-if-a-string-is-an-integer-in-java
+  // by corsiKa 
   public static boolean isInteger(String s, int radix) {
     if(s.isEmpty()) return false;
     for(int i = 0; i < s.length(); i++) {
