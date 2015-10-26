@@ -545,13 +545,13 @@ class UI
         seats = rs.getString("seats");
         price = rs.getString("price");
       }
-
+      DateFormat df = new SimpleDateFormat("yyyy/mm/dd");
       System.out.println("-----------------------------------------");
       System.out.println("Flight Info:");
       System.out.println("    Flight #:  "+flightno1);
       System.out.println("    Source:    "+src);
       System.out.println("    Dest.:     "+dst);
-      System.out.println("    Dep. Date: "+depdate);
+      System.out.println("    Dep. Date: "+df.parse(depdate));
       System.out.println("    Dep. Time: "+dept);
       System.out.println("    Arr. Time: "+arrt);
       System.out.println("    Name:      "+name);
@@ -567,7 +567,7 @@ class UI
         while (tnoVal.next()) {
           maxTno = Integer.parseInt(tnoVal.getString("tno"));
         }
-        maxTno = maxTno + 1;
+        maxTno = maxTno + 100;
         try {
           sql_handler.con.setAutoCommit(false);
           GenerateViews();
