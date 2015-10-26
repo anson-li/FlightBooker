@@ -810,7 +810,33 @@ class UI
     System.out.println("Booking tno: " + tno);
     Scanner scan = new Scanner(System.in);
     System.out.println("Your booking details is as follows: ");
-    // missing booking detail
+    String query = "select b.tno, b.flightno, b.fare, p.name, p.email, p.country, b.dep_date, t.paid_price " +
+      "from bookings b, tickets t, passengers p " +
+      "where b.tno = t.tno and t.email = p.email and t.email = '" + pub_email + "' and p.name = t.name";
+    ResultSet rs = sql_handler.runSQLQuery(query);
+    while (rs.next()) {
+      String tno = rs.getString("tno");
+      String flightno = rs.getString("flightno");
+      String fare = rs.getString("fare");
+      String name = rs.getString("name");
+      String country = rs.getString("email");
+      String email = rs.getString("country");
+      String depdate = rs.getString("dep_date");
+      String price = rs.getString("PAID_PRICE");
+
+      System.out.println("+-=-=-=-=-=-=-=-=-=-=-Flight Details-=-=-=-=-=-=-=-=-=-=-=-+");
+      System.out.println("Ticket Number: " + tno);
+      System.out.println("Flight Number: " + flightno);
+      System.out.println("Fare:          " + fare);
+      System.out.println("Dep. Date:     " + depdate);
+      System.out.println("Price:         " + price);
+      System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-User Details-=-=-=-=-=-=-=-=-=-=-=-+");
+      System.out.println("Email:         " + email);
+      System.out.println("Name:          " + name);
+      System.out.println("Country:       " + email);
+      System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-+");
+
+    }
     System.out.println("Return to (b)ookings list, (c)ancel booking or (e)xit bookings page?");
     while(true) {
       String i = scan.nextLine();
