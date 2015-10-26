@@ -946,18 +946,11 @@ class UI
         System.out.println("    Arr. Time: "+arr1);
       }
       
-      
-      
-      
-      
-      
-      
       flightnolist3.add(ret_flightno1);
       flightnolist4.add(ret_flightno2);
 
       query = "select src, dst, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, seats " +
               "from available_flights where flightno='"+ret_flightno1+"'";
-      sqlh1 = new SQLHandler(sql_handler.get_uname(), sql_handler.get_pword());
       rs1 = sqlh1.runSQLQuery(query);
       rs1.next();
       src1 = rs1.getString("src");
