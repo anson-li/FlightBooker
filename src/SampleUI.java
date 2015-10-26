@@ -735,4 +735,5 @@ class UI
         valid = input.equals(output); 
     } catch (Exception ignore) {}
     return valid;
+  }
 }
