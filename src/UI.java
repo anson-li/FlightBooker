@@ -837,8 +837,6 @@ class UI
     String query = "select b.tno, p.name, to_char(b.dep_date, 'yyyy-MM-dd') as dep_date, t.paid_price " +
       "from bookings b, tickets t, passengers p " +
       "where b.tno = t.tno and t.name = p.name and t.email = p.email and t.email = '" + pub_email + "'";
-    System.out.println("Please select a booking by ID to view more information, "
-                        + "or (e)xit.\n");
     ResultSet rs = sql_handler.runSQLQuery(query);
     int intId = 0;
     ArrayList<String> tnolist = new ArrayList<>();
@@ -858,7 +856,9 @@ class UI
       System.out.println("Dep. Date:  " + depdate);
       System.out.println("Price:      " + price);
     }
-    System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
+    System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+\n");
+    System.out.println("Please select a booking by ID to view more information, "
+                        + "or (e)xit.\n");
     while(true) {
       String i = scan.nextLine();
       if (isInteger(i, 10)) {
