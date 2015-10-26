@@ -147,7 +147,7 @@ class UI
     else
     {
       String statement = "insert into users values('" + email +  "',"
-                        + "'" + password
+                        + "'" + password +"',"
                         + "sysdate )";
 
       System.out.println(statement);
