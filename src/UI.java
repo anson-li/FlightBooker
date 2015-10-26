@@ -58,44 +58,11 @@ class UI
       "from available_flights a1, available_flights a2 " +
       "where a1.dst=a2.src and a1.arr_time +1.5/24 <=a2.dep_time and a1.arr_time +5/24 >=a2.dep_time " +
       "group by a1.src, a2.dst, a1.dep_date, a1.flightno, a2.flightno, a2.dep_time, a1.arr_time ";
-    String createDepTrips = "create view good_dep_trips (flightno1, flightno2, layover, price) as " +
-                    "select flightno1, flightno2, layover, price " +
-                    "from ( " +
-                    "select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
-                    "from " +
-                    "(select flightno1, flightno2, layover, price " +
-                    "from good_connections " +
-                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='"+srcACode.toUpperCase()+"' and dst='"+destACode.toUpperCase()+"' " +
-                    "union " +
-                    "select flightno flightno1, '' flightno2, 0 layover, price " +
-                    "from available_flights " +
-                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='"+srcACode.toUpperCase()+"' and dst='"+destACode.toUpperCase()+"')) " +
-                    "order by price";
-    
-    String createRetTrips =  "create view good_ret_trips (flightno1, flightno2, layover, price) as " +
-                    "select flightno1, flightno2, layover, price " +
-                    "from ( " +
-                    "select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
-                    "from " +
-                    "(select flightno1, flightno2, layover, price " +
-                    "from good_connections " +
-                    "where to_char(dep_date,'DD/MM/YYYY')='"+ retDate +"' and src='"+destACode.toUpperCase()+"' and dst='"+srcACode.toUpperCase()+"' " +
-                    "union " +
-                    "select flightno flightno1, '' flightno2, 0 layover, price " +
-                    "from available_flights " +
-                    "where to_char(dep_date,'DD/MM/YYYY')='"+ retDate +"' and src='"+destACode.toUpperCase()+"' and dst='"+srcACode.toUpperCase()+"')) " +
-                    "order by price";
-    try {
-      sql_handler.runSQLStatement("drop view good_dep_trips");
-      sql_handler.runSQLStatement("drop view good_ret_trips");
-      sql_handler.runSQLStatement(dropAvailableFlights);
-      sql_handler.runSQLStatement(dropGoodConnections);
-    } catch (SQLException sqle) {}
-    sql_handler.runSQLStatement(createAvailableFlights);
-    sql_handler.runSQLStatement(createGoodConnections);
-    sql_handler.runSQLStatement(createDepTrips);
-    sql_handler.runSQLStatement(createRepTrips);
 
+    sql_handler.runSQLStatement(dropAvailableFlights);
+    sql_handler.runSQLStatement(createAvailableFlights);
+    sql_handler.runSQLStatement(dropGoodConnections);
+    sql_handler.runSQLStatement(createGoodConnections);
   }
 
   /**
@@ -1159,7 +1126,40 @@ class UI
     System.out.println("Please enter your return date in format DD/MMM/YYYY - eg: 01/10/2015 for October 10, 2015");
     retDate = scan.nextLine();
     
-    GenerateViews();
+    try {
+      sql_handler.runSQLStatement("drop view good_dep_trips");
+      sql_handler.runSQLStatement("drop view good_ret_trips");
+    } catch (SQLException sqle) {
+      
+    }
+    
+    String stmt1 = "create view good_dep_trips (flightno1, flightno2, layover, price) as " +
+                    "select flightno1, flightno2, layover, price " +
+                    "from ( " +
+                    "select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
+                    "from " +
+                    "(select flightno1, flightno2, layover, price " +
+                    "from good_connections " +
+                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='"+srcACode.toUpperCase()+"' and dst='"+destACode.toUpperCase()+"' " +
+                    "union " +
+                    "select flightno flightno1, '' flightno2, 0 layover, price " +
+                    "from available_flights " +
+                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='"+srcACode.toUpperCase()+"' and dst='"+destACode.toUpperCase()+"')) " +
+                    "order by price";
+    
+    String stmt2 =  "create view good_ret_trips (flightno1, flightno2, layover, price) as " +
+                    "select flightno1, flightno2, layover, price " +
+                    "from ( " +
+                    "select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
+                    "from " +
+                    "(select flightno1, flightno2, layover, price " +
+                    "from good_connections " +
+                    "where to_char(dep_date,'DD/MM/YYYY')='"+ retDate +"' and src='"+destACode.toUpperCase()+"' and dst='"+srcACode.toUpperCase()+"' " +
+                    "union " +
+                    "select flightno flightno1, '' flightno2, 0 layover, price " +
+                    "from available_flights " +
+                    "where to_char(dep_date,'DD/MM/YYYY')='"+ retDate +"' and src='"+destACode.toUpperCase()+"' and dst='"+srcACode.toUpperCase()+"')) " +
+                    "order by price";
     
     String query =  "select gdt.flightno1 as dep_flightno1, gdt.flightno2 as dep_flightno2, gdt.layover as dep_layover, " +
                     "grt.flightno1 as ret_flightno1, grt.flightno2 as ret_flightno2, grt.layover as ret_layover, " +
