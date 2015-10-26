@@ -1167,7 +1167,9 @@ class UI
                     "from good_dep_trips gdt, good_ret_trips grt " +
                     "group by gdt.flightno1, gdt.flightno2, gdt.layover, gdt.price, grt.flightno1, grt.flightno2, grt.layover, grt.price " +
                     "order by price";
-  
+    
+    sql_handler.runSQLStatement(stmt1);
+    sql_handler.runSQLStatement(stmt2);
     ResultSet rs = sql_handler.runSQLQuery(query);
     System.out.println("The following flight plans match your criteria:\n");
     ArrayList<String> flightnolist1 = new ArrayList<>();
