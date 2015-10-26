@@ -584,15 +584,19 @@ class UI
           + "set act_dep_time = (TO_DATE('" + deptime + "', 'yyyy/mm/dd hh24:mi:ss')) "
           + "where flightno = '"+flightno.toUpperCase()+"'"; 
           sql_handler.runSQLStatement(statement);
+          System.out.println("Flight departure time successfully updated.");
+          MainHub();
         } catch (ParseException e) {}
       } else if (deptime.equals("C") || deptime.equals("c")) {
         statement = "update sch_flights "
         + "set act_dep_time = sysdate "
         + "where flightno = '"+flightno.toUpperCase()+"'";
         sql_handler.runSQLStatement(statement);
+        System.out.println("Flight departure time successfully updated.");
+        MainHub();
+      } else {
+        System.out.println("Incorrect input - please try again.")
       }
-      System.out.println("Flight departure time successfully updated.");
-      MainHub();
     }
   }
 
@@ -619,15 +623,19 @@ class UI
           + "set act_arr_time = (TO_DATE('" + arrtime + "', 'yyyy/mm/dd hh24:mi:ss')) "
           + "where flightno = '"+flightno.toUpperCase()+"'"; 
           sql_handler.runSQLStatement(statement);
+          System.out.println("Flight arrival time successfully updated.");
+          MainHub();
         } catch (ParseException e) {}
       } else if (arrtime.equals("C") || arrtime.equals("c")) {
         statement = "update sch_flights "
         + "set act_arr_time = sysdate "
         + "where flightno = '"+flightno.toUpperCase()+"'";
         sql_handler.runSQLStatement(statement);
+        System.out.println("Flight arrival time successfully updated.");
+        MainHub();
+      } else {
+        System.out.println("Incorrect input - please try again.")
       }
-      System.out.println("Flight arrival time successfully updated.");
-      MainHub();
     }
   }
 
