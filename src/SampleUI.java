@@ -815,7 +815,6 @@ class UI
       "where b.tno = t.tno and t.email = p.email and t.email = '" + pub_email + "' and p.name = t.name";
     ResultSet rs = sql_handler.runSQLQuery(query);
     while (rs.next()) {
-      String tno = rs.getString("tno");
       String flightno = rs.getString("flightno");
       String fare = rs.getString("fare");
       String name = rs.getString("name");
