@@ -7,7 +7,7 @@ Satyen Alkolkar and Anson Li
 * [FIXED] consistent styling (+-=-=-=-=-+ system?)
 * removing ghost sql statements
 * refactoring?
-* descriptive message if the sql query fails for rollbacks... (re: bookings)
+* [FIXED] descriptive message if the sql query fails for rollbacks... (re: bookings)
 * [FIXED] regenerate views after bookings is cancelled 
 * in general, more descriptive error messages in catch exceptions.
 * check if flight number is valid in airlineagent - flight arrival and departure

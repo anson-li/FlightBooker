@@ -616,7 +616,7 @@ class UI
       return;
       
     } catch (SQLException sqle) {
-      System.out.println("Error: Booking Failed.");
+      System.out.println("Error: Booking failed - please see error for more information! \nYour request has been fully reverted.");
       System.out.println(sqle);
       sql_handler.con.rollback();
     }
@@ -856,7 +856,7 @@ class UI
       System.out.println("Dep. Date:  " + depdate);
       System.out.println("Price:      " + price);
     }
-    System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+\n");
+    System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
     System.out.println("Please select a booking by ID to view more information, "
                         + "or (e)xit.\n");
     while(true) {
@@ -955,7 +955,7 @@ class UI
       System.out.println("Booking has been deleted.");
       GenerateViews();
     } catch (SQLException e) {
-      System.out.println("Error: can't delete entries - rollback completed.");
+      System.out.println("Error: Booking cancellation failed - please see error for more information! \nYour request has been fully reverted.");
       System.out.println(e);
       sql_handler.con.rollback();
     }
