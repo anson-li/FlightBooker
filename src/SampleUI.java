@@ -367,13 +367,13 @@ class UI
       String dst1 = rs1.getString("dst");
       String dep1 = rs1.getString("dept");
       String arr1 = rs1.getString("arrt");
-      String sea1 = rs1.getString("seats");
+      int sea1 = Integer.parseInt(rs1.getString("seats"));
       
       String src2 = "-";
       String dst2 = "-";
       String dep2 = "-";
       String arr2 = "-";
-      String sea2 = "-";
+      int sea2 = 0;
       
       if (has_sec_flight)
       {
@@ -385,7 +385,7 @@ class UI
         dst2 = rs2.getString("dst");
         dep2 = rs2.getString("dept");
         arr2 = rs2.getString("arrt");
-        sea2 = rs2.getString("seats");
+        sea2 = Integer.parseInt(rs2.getString("seats"));
       }
       
       System.out.println  ("-----------------------------------------");
@@ -396,6 +396,7 @@ class UI
       {
         System.out.println("1");
         System.out.println("Layover Time: " + layover);
+        System.out.println("Num Seats: " + Math.min(sea1, sea2));
         System.out.println("Flight Info:   Flight 1          Flight 2");
         System.out.println("               --------          --------");
         System.out.println("    Flight #:  "+flightno1+"          "+flightno2);
@@ -407,6 +408,7 @@ class UI
       else
       {
         System.out.println("0");
+        System.out.println("Num Seats: " + sea1);
         System.out.println("Flight Info:");
         System.out.println("    Flight #:  "+flightno1);
         System.out.println("    Source:    "+src1);
