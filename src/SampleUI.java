@@ -297,6 +297,8 @@ class UI
     String srcACode = "";
     String destACode = "";
     String depDate = "";
+    
+    GenerateViews();
 
     while (!validAcode(srcACode))
     {
@@ -388,7 +390,7 @@ class UI
         Integer intIndex = Integer.parseInt(i);
         if (intIndex <= flightnolist.size() && intIndex > 0) {
           intIndex = intIndex - 1;
-          MakeABooking(flightnolist.get(intIndex), flightnolist2.get(intIndex));
+          MakeABooking(flightnolist.get(intIndex), flightnolist2.get(intIndex), null, null);
         } else {
           System.out.println("Invalid entry - please try again.");
         }
@@ -509,13 +511,41 @@ class UI
   within a transaction. Finally the system should return the
   ticket number and a confirmation message if a ticket is
   issued or a descriptive message if a ticket cannot be
-  issued for any reason.
+  issued for any reason.*/
 
 
   // if seat is empty..
   // insert into passengers values ('EMAIL', 'NAME', 'COUNTRY')
   // insert into tickets values (tno (gen), 'EMAIL', 'PAID PRICE')
   // insert into bookings values (tno (gen), flight_no, fare, dep_date, seat)
+
+  private void BookFlight(String flightno, String name) throws SQLException
+  {
+    int tno = 0;
+    String findTno = "select max(tno) as tno from tickets";
+    ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
+    tnoVal.next();
+    String tmpTno = tnoVal.getString("tno");
+    if (tmpTno == null)
+      tno = Integer.parseInt(tmpTno);
+    tno += 100;
+      
+    GenerateViews();
+    String query = "select * from available_flights where flightno='"+flightno+"'";
+    ResultSet rs = sql_handler.runSQLQuery(query);
+    String addToTickets = "insert into tickets values (" + tno + ", '" + name + "', '" + pub_email + "', " + rs.getString("PRICE") + ")";
+    sql_handler.runSQLStatement(addToTickets);
+    String addToBookings = "insert into bookings values ("+ tno 
+                                                          + ", '" + flightno 
+                                                          + "', '" + rs.getString("FARE") 
+                                                          + "', '" + rs.getString("DEP_DATE") 
+                                                          + "', '" + rs.getString("SEATS")+")";
+    sql_handler.runSQLStatement(addToBookings);
+    System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
+    System.out.println("Success - you have booked your flight!");
+    System.out.println("Your ticket number is: " + tno);
+    System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+\n");
+  }
 
   /**
    *
@@ -524,20 +554,14 @@ class UI
    * @param flightno2
    * @throws SQLException
    */
-  public void MakeABooking(String flightno1, String flightno2) throws SQLException {
-    System.out.println(flightno1 + " " + flightno2);
-    // public static void MakeABooking(int Id)
-    // select a flight
-    // is user listed in the flight?
-    // if so, don't let the rebook.
-    // if not, book. add the name & country of the passenger (ask here...)
-    String passengerquery = "select * from passengers where email = '" + pub_email + "'"; 
-    ResultSet passengerRs = sql_handler.runSQLQuery(passengerquery);
+  public void MakeABooking(String flightno1, String flightno2, String flightno3, String flightno4) throws SQLException {
     String name = "", country = "";
+    System.out.println("Please enter the name of the passenger:");
+    name = scan.nextLine();
+    String passengerquery = "select * from passengers where email = '" + pub_email + "' and name = '" + name + "'"; 
+    ResultSet passengerRs = sql_handler.runSQLQuery(passengerquery);
+        
     if (!passengerRs.next()) {
-      System.out.println("You do not have a name and country currently - please add one: ");
-      System.out.println("Please enter the name of the passenger:");
-      name = scan.nextLine();
       System.out.println("Please enter the country of the passenger:");
       country = scan.nextLine();
       String addToPassengers = "insert into passengers values ('" + pub_email + "', '" + name + "', '" + country + "')";
@@ -549,9 +573,44 @@ class UI
         country = passengerRs1.getString("country");
       }
     }
+    
+    boolean has_dep_flight     = (flightno1 != null);
+    boolean has_dep_sec_flight = (flightno2 != null);
+    boolean has_round_trip     = (flightno3 != null);
+    boolean has_ret_sec_flight = (flightno4 != null);
+    
+    try{
+      sql_handler.con.setAutoCommit(false);
+      if (has_dep_flight)
+      {
+        BookFlight(flightno1, name);
+        if (has_dep_sec_flight)
+          BookFlight(flightno2, name);
+      }
+      
+      if (has_round_trip)
+      {
+        BookFlight(flightno3, name);
+        if (has_ret_sec_flight)
+          BookFlight(flightno4, name);
+      }
+      sql_handler.con.commit();
+      
+      return;
+      
+    } catch (SQLException sqle) {
+      System.out.println("Error: Booking Failed.");
+      System.out.println(sqle);
+      sql_handler.con.rollback();
+    }
+    
+    return;
+    /*
     // process...
     if (flightno2 == null) {
       System.out.println("Only one flight selected - please confirm your booking: ");
+      
+      /*
       String query1 = "select src, dst, dep_date, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, fare, seats, price " +
               "from available_flights where flightno='"+flightno1+"'";
       ResultSet rs = sql_handler.runSQLQuery(query1);
@@ -587,31 +646,23 @@ class UI
       System.out.println("    Name:      "+name);
       System.out.println("    Country:   "+country);
       System.out.println("-----------------------------------------");
-
+      
       System.out.println("\nDo you want to (B)ook this flight? Or (R)eturn to main page?");
       String confirm = scan.nextLine();
-      int maxTno = 0;
-      if (confirm.equals("B") || confirm.equals("b")) {
-        String findTno = "select max(tno) as tno from tickets";
-        ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
-        while (tnoVal.next()) {
-          try { 
-            String tmpTno = tnoVal.getString("tno");
-            if (tmpTno != null) {
-              maxTno = Integer.parseInt(tmpTno);
-            }
-          } catch (SQLException e) {}
-        }
-        maxTno = maxTno + 100;
+      
         try {
           sql_handler.con.setAutoCommit(false);
           GenerateViews();
           //String checkFlightExists = "select flightno from available_flights where flightno = '" + flightno1 "'";
           //no way to do queries in a transaction - use a catch { sql_handler.con.rollback(); }
+          String query = "select * from available_flights where flightno='"+flightno1+"'";
+          sql_handler.runSQLQuery(query);
           String addToTickets = "insert into tickets values (" + maxTno + ", '" + name + "', '" + pub_email + "', " + price + ")";
           sql_handler.runSQLStatement(addToTickets);
           String addToBookings = "insert into bookings values (" + maxTno + ", '" + flightno1 + "', '" + fare + "', '" + convdate + "', null)";
           sql_handler.runSQLStatement(addToBookings);
+          if ()
+          
           sql_handler.con.commit();
           System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
           System.out.println("Success - you have booked your flight!");
@@ -742,7 +793,7 @@ class UI
         MainHub();
       }
     }
-    MainHub();
+    MainHub();*/
   }
 
   /* List existing bookings. A user should be able to list all
@@ -1219,6 +1270,7 @@ class UI
     }
     System.out.println("Round-trips are currently being sorted by number of connections, and price.");
     String i = scan.nextLine();
+    
     MainHub();
   }
 
