@@ -581,7 +581,7 @@ class UI
           java.util.Date depDate = new java.util.Date();
           depDate = df.parse(deptime);
           statement = "update sch_flights "
-          + "set act_dep_time = '" + depDate + "' "
+          + "set act_dep_time = TO_DATE(('" + deptime + "', 'yyyy/mm/dd hh24:mi:ss') "
           + "where flightno = '"+flightno.toUpperCase()+"'"; 
         } catch (ParseException e) {}
       } else if (deptime.equals("C") || deptime.equals("c")) {
