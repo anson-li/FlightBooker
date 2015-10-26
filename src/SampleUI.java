@@ -563,9 +563,7 @@ class UI
         DateFormat initialdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
           depdate = depdate.substring(0, 10);
-          System.out.println("Substring1 :  " + depdate);
           convdate = df.format(initialdf.parse(depdate));
-          System.out.println("convdate... " + convdate);
         } catch (ParseException e) { System.out.println(e); }
       }
       System.out.println("-----------------------------------------");
