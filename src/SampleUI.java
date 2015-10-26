@@ -604,7 +604,7 @@ class UI
   // rs.updateString(4, INPUT_DATE)
 
   public void RecordArrival() throws SQLException {
-    ystem.out.println("Flight number: ");
+    System.out.println("Flight number: ");
     String flightno = scan.nextLine();
     System.out.println("Arrival time: - format is 'yyyy/mm/dd hh24:mi:ss', example: 2003/05/03 21:02:44 or select (C)urrent time.");
     while(true) {
