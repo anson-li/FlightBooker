@@ -553,7 +553,7 @@ class UI
                                                           + "'" + flightno + "', "
                                                           + "'" + fare + "', "
                                                           + "'" + convdate + "', "
-                                                          + seat +",)";
+                                                          + seat +")";
     System.out.println(addToBookings);
     sql_handler.runSQLStatement(addToBookings);
     System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
