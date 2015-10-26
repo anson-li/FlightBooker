@@ -586,7 +586,9 @@ class UI
         String findTno = "select max(tno) as tno from tickets";
         ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
         while (tnoVal.next()) {
-          maxTno = Integer.parseInt(tnoVal.getString("tno"));
+          try { 
+            maxTno = Integer.parseInt(tnoVal.getString("tno"));
+          } catch (ParseException e) {}
         }
         maxTno = maxTno + 100;
         try {

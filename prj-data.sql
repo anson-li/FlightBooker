@@ -53,6 +53,12 @@ create table flight_fares (
   foreign key (flightno) references flights,
   foreign key (fare) references fares
 );
+create table passengers (
+  email		char(20),
+  name		char(20),
+  country	char(10),
+  primary key (email,name)
+);
 create table tickets (
   tno		int,
   name		char(20),
