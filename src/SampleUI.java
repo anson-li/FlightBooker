@@ -96,14 +96,17 @@ class UI
    */
   /*
   Sample users table generation:
-  create table users ( email varchar(20), password varchar(8), role varchar(6), last_login date)
+  create table users ( email varchar(20), password varchar(8), last_login date)
+  create table airline_agents (email varchar(20), name varchar(20))
+  insert into users values('dude@ggg.com', '1234', sysdate);
+  insert into airline_agents values('dude@ggg.com', 'dude mcman');
   */
   public void Register() throws SQLException {
 
     String email = "";
     String password = "";
 
-    System.out.println("Registration (password must be 4(or less) alpha-numeric characters):");
+    System.out.println("Registration (password must be 4 (or less) alpha-numeric characters):");
     try {
       email = con.readLine("Email: ");
       char[] pwArray1 = con.readPassword("Password: ");
@@ -186,7 +189,7 @@ class UI
         return;
       }
 
-      String query = "select email, pass from users where email='"+email+"'";
+      String query = "select email, password from users where email='"+email+"'";
       ResultSet rs = sql_handler.runSQLQuery(query);
 
       if (!rs.next())
@@ -200,7 +203,7 @@ class UI
       if (rs.next())
       {
         role = "poweruser";
-        System.out.println("Ariline Agent: " + rs.getString("NAME") );
+        System.out.println("Airline Agent: " + rs.getString("NAME") );
       }
       else
       {
@@ -280,21 +283,6 @@ class UI
   number of connections (with direct flights listed first) as
   the primary sort criterion and the price as the
   secondary sort criterion.
-
-
-  // select f.flightno, a1.acode, a2.acode, dep_time, dep_time + est_dur (not right...) as arr_time, 0 as num_conn, 0 as layover_time, ff1.price, ff1.limit - COUNT(b.seat) as open_seats
-  // from flights f, flight_fares ff1, airports a1, airports a2, bookings b
-  // where (f.src like 'SRC' or a1.name like 'SRC')
-  // and (f.dst like 'DST' or a2.name like 'DST')
-  // and (f.dep_time like 'DEP_TIME')
-  // and f.src like a1.acode and f.dst like a2.acode and f.flightno like ff1.flightno
-  // and b.flightno like f.flightno and b.fare like ff1.fare
-  // UNION
-  // (add the 1-connection flights ...)
-  // GROUP BY flightno, ...
-  // ORDER BY PRICE
-
-  // after the requery - ORDER BY num_conn
 
   /**
    *
