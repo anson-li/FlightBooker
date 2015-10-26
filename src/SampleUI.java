@@ -531,7 +531,7 @@ class UI
       System.out.println("Only one flight selected - please confirm your booking: ");
       String query1 = "select src, dst, dep_date, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, fare, seats, price " +
               "from available_flights where flightno='"+flightno1+"'";
-      ResultSet rs = sql_handler.runSQLQuery(query);
+      ResultSet rs = sql_handler.runSQLQuery(query1);
       while (rs.next()) {
         String src = rs.getString("src");
         String depdate = rs.getString("dep_date");
@@ -558,7 +558,7 @@ class UI
         int maxTno = 0;
         if (confirm.equals("B") || confirm.equals("b")) {
           String findTno = "select max(tno) from tickets";
-          ResultSet tnoVal = sql_handler.runSQLQuery(query);
+          ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
           while (tnoVal.next()) {
             maxTno = Integer.parseInt(tnoVal.getString("tno"));
           }
