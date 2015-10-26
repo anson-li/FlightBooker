@@ -532,6 +532,7 @@ class UI
       String query1 = "select src, dst, dep_date, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, fare, seats, price " +
               "from available_flights where flightno='"+flightno1+"'";
       ResultSet rs = sql_handler.runSQLQuery(query1);
+      
       while (rs.next()) {
         String src = rs.getString("src");
         String depdate = rs.getString("dep_date");
@@ -541,48 +542,47 @@ class UI
         String fare = rs.getString("fare");
         String seats = rs.getString("seats");
         String price = rs.getString("price");
+      }
 
-        System.out.println("-----------------------------------------");
-        System.out.println("Flight Info:");
-        System.out.println("    Flight #:  "+flightno1);
-        System.out.println("    Source:    "+src);
-        System.out.println("    Dest.:     "+dst);
-        System.out.println("    Dep. Time: "+dept);
-        System.out.println("    Arr. Time: "+arrt);
-        System.out.println("    Name:      "+name);
-        System.out.println("    Country:   "+country);
-        System.out.println("-----------------------------------------");
+      System.out.println("-----------------------------------------");
+      System.out.println("Flight Info:");
+      System.out.println("    Flight #:  "+flightno1);
+      System.out.println("    Source:    "+src);
+      System.out.println("    Dest.:     "+dst);
+      System.out.println("    Dep. Time: "+dept);
+      System.out.println("    Arr. Time: "+arrt);
+      System.out.println("    Name:      "+name);
+      System.out.println("    Country:   "+country);
+      System.out.println("-----------------------------------------");
 
-        System.out.println("\nDo you want to (B)ook this flight? Or (R)eturn to main page?");
-        String confirm = scan.nextLine();
-        int maxTno = 0;
-        if (confirm.equals("B") || confirm.equals("b")) {
-          String findTno = "select max(tno) as tno from tickets";
-          ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
-          while (tnoVal.next()) {
-            maxTno = Integer.parseInt(tnoVal.getString("tno"));
-          }
-          maxTno = maxTno + 1;
-          try {
-            sql_handler.con.setAutoCommit(false);
-            GenerateViews();
-            //String checkFlightExists = "select flightno from available_flights where flightno = '" + flightno1 "'";
-            //no way to do queries in a transaction - use a catch { sql_handler.con.rollback(); }
-            String addToPassengers = "insert into passengers values ('" + pub_email + "', '" + name + "', '" + country + "')";
-            sql_handler.runSQLStatement(addToPassengers);
-            String addToBookings = "insert into bookings values (" + maxTno + ", '" + flightno1 + "', '" + fare + "', '" + depdate + "', null)";
-            sql_handler.runSQLStatement(addToBookings);
-            String addToTickets = "insert into tickets values (" + maxTno + ", '" + pub_email + "', " + price + ")";
-            sql_handler.runSQLStatement(addToTickets);
-            sql_handler.con.commit();
-          } catch (SQLException e) {
-            System.out.println("Error: Invalid submission value - transaction exited.");
-            sql_handler.con.rollback();
-          }
-        } else if (confirm.equals("R") || confirm.equals("r")) {
-          MainHub();
+      System.out.println("\nDo you want to (B)ook this flight? Or (R)eturn to main page?");
+      String confirm = scan.nextLine();
+      int maxTno = 0;
+      if (confirm.equals("B") || confirm.equals("b")) {
+        String findTno = "select max(tno) as tno from tickets";
+        ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
+        while (tnoVal.next()) {
+          maxTno = Integer.parseInt(tnoVal.getString("tno"));
         }
-
+        maxTno = maxTno + 1;
+        try {
+          sql_handler.con.setAutoCommit(false);
+          GenerateViews();
+          //String checkFlightExists = "select flightno from available_flights where flightno = '" + flightno1 "'";
+          //no way to do queries in a transaction - use a catch { sql_handler.con.rollback(); }
+          String addToPassengers = "insert into passengers values ('" + pub_email + "', '" + name + "', '" + country + "')";
+          sql_handler.runSQLStatement(addToPassengers);
+          String addToBookings = "insert into bookings values (" + maxTno + ", '" + flightno1 + "', '" + fare + "', '" + depdate + "', null)";
+          sql_handler.runSQLStatement(addToBookings);
+          String addToTickets = "insert into tickets values (" + maxTno + ", '" + pub_email + "', " + price + ")";
+          sql_handler.runSQLStatement(addToTickets);
+          sql_handler.con.commit();
+        } catch (SQLException e) {
+          System.out.println("Error: Invalid submission value - transaction exited.");
+          sql_handler.con.rollback();
+        }
+      } else if (confirm.equals("R") || confirm.equals("r")) {
+        MainHub();
       }
       // run query only once here
     } else {
