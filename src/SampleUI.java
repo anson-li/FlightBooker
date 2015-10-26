@@ -569,15 +569,28 @@ class UI
   // rs.updateString(3, INPUT_DATE);
 
   public void RecordDeparture() throws SQLException {
-    System.out.println("Flight number:");
+    System.out.println("Flight number: ");
     String flightno = scan.nextLine();
-    System.out.println("Departure time:");
-    String deptime = scan.nextLine();
-    String statement = "update sch_flights "
-      + "set act_dep_date = sysdate "
-      + "where flightno = '"+flightno.toUpperCase()+"'";
-
-    MainHub();
+    System.out.println("Departure time: - format is 'yyyy/mm/dd hh24:mi:ss', example: 2003/05/03 21:02:44 or select (C)urrent time.");
+    while(true) {
+      String statement;
+      String deptime = scan.nextLine();
+      if (isValidDate(deptime)) {
+        DateFormat df = new SimpleDateFormat("yyyy/mm/dd hh:mm:ss");
+        java.util.Date depDate = new java.util.Date();
+        depDate = df.parse(strDate);
+        statement = "update sch_flights "
+        + "set act_dep_date = '" + depDate + "' "
+        + "where flightno = '"+flightno.toUpperCase()+"'"; 
+      } else if (deptime.equals("C") || deptime.equals("c")) {
+        statement = "update sch_flights "
+        + "set act_dep_date = sysdate "
+        + "where flightno = '"+flightno.toUpperCase()+"'";
+      }
+      sql_handler.runSQLStatement(statement);
+      System.out.println("Flight departure time successfully updated.");
+      MainHub();
+    }
   }
 
   /* AIRLINE AGENT ONLY: Record a flight arrival. After a landing, the user may
@@ -710,5 +723,16 @@ class UI
         if(Character.digit(s.charAt(i),radix) < 0) return false;
     }
     return true;
-}
+  }
+
+  // code taken from http://stackoverflow.com/questions/11480542/fastest-way-to-tell-if-a-string-is-a-valid-date
+  // by victor.hernandez
+  public static boolean isValidDate(String input) {
+    boolean valid = false;
+    try {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/mm/dd hh:mm:ss");
+        String output = dateFormat.parse(input).format("yyyy/mm/dd hh:mm:ss");
+        valid = input.equals(output); 
+    } catch (Exception ignore) {}
+    return valid;
 }
