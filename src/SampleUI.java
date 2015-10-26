@@ -583,13 +583,14 @@ class UI
           statement = "update sch_flights "
           + "set act_dep_time = (TO_DATE('" + deptime + "', 'yyyy/mm/dd hh24:mi:ss')) "
           + "where flightno = '"+flightno.toUpperCase()+"'"; 
+          sql_handler.runSQLStatement(statement);
         } catch (ParseException e) {}
       } else if (deptime.equals("C") || deptime.equals("c")) {
         statement = "update sch_flights "
         + "set act_dep_time = sysdate "
         + "where flightno = '"+flightno.toUpperCase()+"'";
+        sql_handler.runSQLStatement(statement);
       }
-      sql_handler.runSQLStatement(statement);
       System.out.println("Flight departure time successfully updated.");
       MainHub();
     }
@@ -603,14 +604,31 @@ class UI
   // rs.updateString(4, INPUT_DATE)
 
   public void RecordArrival() throws SQLException {
-    // search for a flight
-    // enter the flight arrival time
-    // exit
-    System.out.println("Flight number:");
+    ystem.out.println("Flight number: ");
     String flightno = scan.nextLine();
-    System.out.println("Arrival time:");
-    String arrtime = scan.nextLine();
-    MainHub();
+    System.out.println("Arrival time: - format is 'yyyy/mm/dd hh24:mi:ss', example: 2003/05/03 21:02:44 or select (C)urrent time.");
+    while(true) {
+      String statement = "";
+      String arrtime = scan.nextLine();
+      if (isValidDate(arrtime)) {
+        DateFormat df = new SimpleDateFormat("yyyy/mm/dd hh:mm:ss");
+        try { 
+          java.util.Date arrDate = new java.util.Date();
+          arrDate = df.parse(arrtime);
+          statement = "update sch_flights "
+          + "set act_arr_time = (TO_DATE('" + arrtime + "', 'yyyy/mm/dd hh24:mi:ss')) "
+          + "where flightno = '"+flightno.toUpperCase()+"'"; 
+          sql_handler.runSQLStatement(statement);
+        } catch (ParseException e) {}
+      } else if (arrtime.equals("C") || arrtime.equals("c")) {
+        statement = "update sch_flights "
+        + "set act_arr_time = sysdate "
+        + "where flightno = '"+flightno.toUpperCase()+"'";
+        sql_handler.runSQLStatement(statement);
+      }
+      System.out.println("Flight arrival time successfully updated.");
+      MainHub();
+    }
   }
 
   /* CHOOSE ONE OF THREE OPTIONS:
