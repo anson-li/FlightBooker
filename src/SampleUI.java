@@ -360,13 +360,13 @@ class UI
       
       query = "select src, dst, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, seats " +
               "from available_flights where flightno='"+flightno1+"'";
-      rs = sql_handler.runSQLQuery(query);
-      rs.next();
-      String src1 = rs.getString("src");
-      String dst1 = rs.getString("dst");
-      String dep1 = rs.getString("dept");
-      String arr1 = rs.getString("arrt");
-      String sea1 = rs.getString("seats");
+      ResultSet rs1 = sql_handler.runSQLQuery(query);
+      rs1.next();
+      String src1 = rs1.getString("src");
+      String dst1 = rs1.getString("dst");
+      String dep1 = rs1.getString("dept");
+      String arr1 = rs1.getString("arrt");
+      String sea1 = rs1.getString("seats");
       
       String src2 = "-";
       String dst2 = "-";
@@ -378,13 +378,13 @@ class UI
       {
         query = "select src, dst, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, seats " +
             "from available_flights where flightno='"+flightno2+"'";
-        rs = sql_handler.runSQLQuery(query);
+        ResultSet rs2 = sql_handler.runSQLQuery(query);
         rs.next();
-        src2 = rs.getString("src");
-        dst2 = rs.getString("dst");
-        dep2 = rs.getString("dept");
-        arr2 = rs.getString("arrt");
-        sea2 = rs.getString("seats");
+        src2 = rs2.getString("src");
+        dst2 = rs2.getString("dst");
+        dep2 = rs2.getString("dept");
+        arr2 = rs2.getString("arrt");
+        sea2 = rs2.getString("seats");
       }
       
       System.out.println  ("-----------------------------------------");
