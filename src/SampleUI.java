@@ -544,11 +544,11 @@ class UI
       depdate = depdate.substring(0, 10);
       convdate = df.format(initialdf.parse(depdate));
     } catch (ParseException e) { System.out.println(e); }
-    String addToBookings = "insert into bookings values ("+ tno 
-                                                          + ", '" + flightno 
-                                                          + "', '" + rs.getString("FARE") 
-                                                          + "', " + convdate
-                                                          + "', '" + rs.getInt("SEATS")+"')";
+    String addToBookings = "insert into bookings values ("+ tno + ", "
+                                                          + "'" + flightno + "', "
+                                                          + "'" + rs.getString("FARE") + "', "
+                                                          + convdate + ", "
+                                                          + "'" + rs.getInt("SEATS")+"')";
     sql_handler.runSQLStatement(addToBookings);
     System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
     System.out.println("Success - you have booked your flight!");
@@ -567,7 +567,7 @@ class UI
     String name = "", country = "";
     System.out.println("Please enter the name of the passenger:");
     name = scan.nextLine();
-    String passengerquery = "select * from passengers where email = '" + pub_email + "' and name = '" + name + "'"; 
+    String passengerquery = "select * from passengers where email = '" + pub_email + "' and regexp_like(name, '"+name+"', 'i')"; 
     ResultSet passengerRs = sql_handler.runSQLQuery(passengerquery);
         
     if (!passengerRs.next()) {
