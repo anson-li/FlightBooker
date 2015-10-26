@@ -561,6 +561,7 @@ class UI
         price = rs.getString("price");
         DateFormat df = new SimpleDateFormat("dd-MMM-yy");
         try {
+          depdate = depdate.substring(0, 10);
           convdate = df.format(df.parse(depdate));
         } catch (ParseException e) { System.out.println(e); }
       }
