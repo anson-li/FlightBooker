@@ -535,6 +535,7 @@ class UI
     ResultSet rs = sql_handler.runSQLQuery(query);
     rs.next();
     String addToTickets = "insert into tickets values (" + tno + ", '" + name + "', '" + pub_email + "', " + rs.getFloat("PRICE") + ")";
+    System.out.println(addToTickets);
     sql_handler.runSQLStatement(addToTickets);
     
     DateFormat df = new SimpleDateFormat("dd-MMM-yy");
