@@ -14,6 +14,7 @@ class UI
   
   UI(SQLHandler sql_handler, Console con)
   {
+    
     num_uis += 1;
     this.sql_handler = sql_handler;
     this.con = con;
@@ -67,14 +68,9 @@ class UI
     // check if user already in DB
     // add user to DB
     
-    /* need to implement verification system...
-    while (isValidEmailAddress(email) != true) {
-      System.out.println("Invalid email... Please enter your email: ");
-      email = scan.next();
-    }*/
     MainHub();
   }
-
+  
   private void Login() {
     System.out.println("Login.");
     String email = "";
