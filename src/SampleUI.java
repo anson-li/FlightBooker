@@ -562,7 +562,7 @@ class UI
         DateFormat df = new SimpleDateFormat("dd-MMM-yy");
         try {
           convdate = df.format(df.parse(depdate));
-        } catch (ParseException e) {}
+        } catch (ParseException e) { System.out.println(e); }
       }
       System.out.println("-----------------------------------------");
       System.out.println("Flight Info:");
