@@ -534,20 +534,23 @@ class UI
     String query = "select * from available_flights where flightno='"+flightno+"'";
     ResultSet rs = sql_handler.runSQLQuery(query);
     rs.next();
+    String depdate = rs.getString("DEP_DATE"), convdate = "";
+    String fare = rs.getString("FARE");
+    
+    
     String addToTickets = "insert into tickets values (" + tno + ", '" + name + "', '" + pub_email + "', " + rs.getFloat("PRICE") + ")";
     System.out.println(addToTickets);
     sql_handler.runSQLStatement(addToTickets);
     
     DateFormat df = new SimpleDateFormat("dd-MMM-yy");
     DateFormat initialdf = new SimpleDateFormat("yyyy-MM-dd");
-    String depdate = rs.getString("DEP_DATE"), convdate = "";
     try {
       depdate = depdate.substring(0, 10);
       convdate = df.format(initialdf.parse(depdate));
     } catch (ParseException e) { System.out.println(e); }
     String addToBookings = "insert into bookings values ("+ tno + ", "
                                                           + "'" + flightno + "', "
-                                                          + "'" + rs.getString("FARE") + "', "
+                                                          + "'" + fare + "', "
                                                           + convdate + ", "
                                                           + "null)";
     System.out.println(addToBookings);
