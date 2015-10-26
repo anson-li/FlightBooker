@@ -2,9 +2,9 @@
 Satyen Alkolkar and Anson Li
 
 #### To-do List:
-* case-insensitive acodes
+* [FIXED] case-insensitive acodes
 * return immediately after booking 
-* consistent styling (+-=-=-=-=-+ system?)
+* [FIXED] consistent styling (+-=-=-=-=-+ system?)
 * removing ghost sql statements
 * refactoring?
 * descriptive message if the sql query fails for rollbacks... (re: bookings)

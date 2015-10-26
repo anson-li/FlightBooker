@@ -454,7 +454,7 @@ class UI
         sea2 = Integer.parseInt(rs2.getString("seats"));
       }
 
-      System.out.println  ("-----------------------------------------");
+      System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
       System.out.println  ("Flight Plan: " + planId);
       System.out.println  ("Price: " + price);
       System.out.print    ("Number of Stops: " );
@@ -464,7 +464,7 @@ class UI
         System.out.println("Layover Time: " + (Integer.parseInt(layover)*1440) +" minutes.");
         System.out.println("Num Seats: " + Math.min(sea1, sea2));
         System.out.println("Flight Info:   Flight 1          Flight 2");
-        System.out.println("               --------          --------");
+        System.out.println("               +=-=-=-+          +=-=-=-+");
         System.out.println("    Flight #:  "+flightno1+"          "+flightno2);
         System.out.println("    Source:    "+src1+"             "+src2);
         System.out.println("    Dest.:     "+dst1+"             "+dst2);
@@ -490,7 +490,7 @@ class UI
       System.out.println("No available flights matching criteria.");
 
     if (startId != planId)
-      System.out.println("-----------------------------------------");
+      System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
 
     return planId;
   }
@@ -1414,7 +1414,7 @@ class UI
     if (ac.equals(""))
       return false;
 
-    String query = "select * from airports where acode='"+ac+"'";
+    String query = "select * from airports where acode='"+ac.toUpperCase()+"'";
     ResultSet rs = sql_handler.runSQLQuery(query);
 
     if (rs.next())
