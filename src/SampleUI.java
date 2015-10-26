@@ -580,8 +580,10 @@ class UI
           String addToTickets = "insert into tickets values (" + maxTno + ", '" + pub_email + "', " + price + ")";
           sql_handler.runSQLStatement(addToTickets);
           sql_handler.con.commit();
+          System.out.println("Success - you have booked your flight!");
         } catch (SQLException e) {
-          System.out.println("Error: Invalid submission value - transaction exited.");
+          System.out.println("Error: Invalid submission value - rollback completed.");
+          System.out.println(e);
           sql_handler.con.rollback();
         }
       } else if (confirm.equals("R") || confirm.equals("r")) {
@@ -591,8 +593,8 @@ class UI
     } else {
       System.out.println("Two flights to be booked!");
       // run query twice through here
+      // not done yet.........
     }
-    System.out.println("Success - you have booked your flight!");
     MainHub();
   }
 
