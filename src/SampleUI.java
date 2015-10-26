@@ -341,32 +341,68 @@ class UI
                     "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='"+srcACode.toUpperCase()+"' and dst='"+destACode.toUpperCase()+"')) " +
                     "order by price";
 
-    //System.out.println(query);
     ResultSet rs = sql_handler.runSQLQuery(query);
-    // search flights for direct flights and flights w one connection
-    // provide information. ask user if they want to sort
-    // if sort, then sort
-    System.out.println("The flight plans that match your description are as follows:");
-    System.out.println("------------------------------------------------------------\n");
+    System.out.println("The flight plans that match your description are as follows:\n");
+    ArrayList<String> flightnolist = new ArrayList<>();
+    ArrayList<String> flightnolist2 = new ArrayList<>();
     
     for (int planId = 1; rs.next(); planId++) 
     {
-      
-      System.out.println("\nID  FLIGHTNO  FLIGHTNO2   LAYOVER  PRICE");
-      System.out.println  ("--  --------  ---------   -------  -----");
-      ArrayList<String> flightnolist = new ArrayList<>();
-      ArrayList<String> flightnolist2 = new ArrayList<>();
-      int intId = 0;
+
       String flightno1 = rs.getString("FLIGHTNO1");
       String flightno2 = rs.getString("FLIGHTNO2");
-      flightnolist.add(flightno1);
-      flightnolist2.add(flightno2);
-
       String layover = rs.getString("LAYOVER");
       String price = rs.getString("PRICE");
-      intId++;
+      boolean has_sec_flight = flightno2.equals("null");
 
-      System.out.println(intId + "    " + flightno1 + "       " + flightno2 +"      " +layover+"        " +price);
+      flightnolist.add(flightno1);
+      flightnolist2.add(flightno2);
+      
+      query = "select src, dst, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, seats " +
+              "from available_flights where flightno='"+flightno1+"'";
+      rs = sql_handler.runSQLQuery(query);
+      String src1 = rs.getString("src");
+      String dst1 = rs.getString("dst");
+      String dep1 = rs.getString("dept");
+      String arr1 = rs.getString("arrt");
+      String sea1 = rs.getString("seats");
+      
+      String src2 = "-";
+      String dst2 = "-";
+      String dep2 = "-";
+      String arr2 = "-";
+      String sea2 = "-";
+      
+      if (has_sec_flight)
+      {
+        query = "select src, dst, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, seats " +
+            "from available_flights where flightno='"+flightno2+"'";
+        rs = sql_handler.runSQLQuery(query);
+        src2 = rs.getString("src");
+        dst2 = rs.getString("dst");
+        dep2 = rs.getString("dept");
+        arr2 = rs.getString("arrt");
+        sea2 = rs.getString("seats");
+      }
+      
+      System.out.println  ("-----------------------------------------");
+      System.out.println  ("Flight Plan: " + planId);
+      System.out.println  ("Price: " + price);
+      System.out.print    ("Number of Stops: " );
+      if (has_sec_flight)
+      {
+        System.out.println("1");
+        System.out.println("Layover Time: " + layover);
+        System.out.println("Flight Info:   Flight 1          Flight 2");
+        System.out.println("               --------          --------");
+        System.out.println("    Flight #:  "+flightno1+"          "+flightno2);
+        System.out.println("    Source:    "+src1+"             "+src2);
+        System.out.println("    Dest.:     "+dst1+"             "+dst2);
+        System.out.println("    Dep. Time: "+dep1+"           "+dep2);
+        System.out.println("    Arr. Time: "+arr1+"           "+arr2);
+      }
+
+      System.out.println("-----------------------------------------\n");
     }
 
     System.out.println("\nFlights are currently being sorted by price:"
