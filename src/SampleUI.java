@@ -536,10 +536,18 @@ class UI
     rs.next();
     String addToTickets = "insert into tickets values (" + tno + ", '" + name + "', '" + pub_email + "', " + rs.getString("PRICE") + ")";
     sql_handler.runSQLStatement(addToTickets);
+    
+    DateFormat df = new SimpleDateFormat("dd-MMM-yy");
+    DateFormat initialdf = new SimpleDateFormat("yyyy-MM-dd");
+    String depdate = "", convdate = "";
+    try {
+      depdate = depdate.substring(0, 10);
+      convdate = df.format(initialdf.parse(depdate));
+    } catch (ParseException e) { System.out.println(e); }
     String addToBookings = "insert into bookings values ("+ tno 
                                                           + ", '" + flightno 
                                                           + "', '" + rs.getString("FARE") 
-                                                          + "', to_date('" + rs.getString("DEP_DATE") + "', DD/MM/YYYY)"
+                                                          + "', " + convdate
                                                           + "', '" + rs.getInt("SEATS")+")";
     sql_handler.runSQLStatement(addToBookings);
     System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
