@@ -70,10 +70,12 @@ class UI
    * @throws SQLException
    */
   public void WelcomeScreen() throws SQLException {
+    System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
     System.out.println("Welcome to Air Kappa!");
     while(true) {
       System.out.println("Please (L)ogin or (R)egister to use our services, "
                        + "\nor (E)xit the program.");
+      System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
       String i = scan.nextLine();
       if (i.equals("l") || i.equals("L")) {
         Login();
@@ -167,7 +169,7 @@ class UI
    * @throws SQLException
    */
   private void Login() throws SQLException {
-    System.out.println("Login.");
+    System.out.println("Login:");
     String email = "";
     String pword = "";
     String role = "";
@@ -1431,7 +1433,7 @@ class UI
       {
         System.out.println("Did you mean one of the following airports?");
         System.out.println("\nCode    Ariport Name");
-        System.out.println  ("----    ------------");
+        System.out.println  ("+--+    +-=-=-=-=-=+");
       }
 
       System.out.println(rs.getString("ACODE") + "     " + rs.getString("name"));
