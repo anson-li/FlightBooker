@@ -479,8 +479,12 @@ class UI
       sqlh1.close();
       planId++;
     }
+    if (planId == 1)
+      System.out.println("No available flights matching criteria.");
+    
     if (startId != planId)
       System.out.println("-----------------------------------------");
+    
     return planId;
   }
 
