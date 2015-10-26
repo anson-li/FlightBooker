@@ -548,7 +548,7 @@ class UI
       ResultSet rs = sql_handler.runSQLQuery(query1);
 
       String src = "", depdate = "01-JAN-90", dst = "", dept = "", arrt = "", fare = "", seats = "", price = "";
-      java.util.Date dateCv = new java.util.Date();
+      DateTime dateCv = new DateTime();
 
       while (rs.next()) {
         src = rs.getString("src");
