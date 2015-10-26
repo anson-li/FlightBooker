@@ -293,7 +293,7 @@ class UI
    * @param role
    * @throws SQLException
    */
-  public void SearchForFlights(String role) throws SQLException {
+  public void SearchForFlights() throws SQLException {
     String srcACode = "";
     String destACode = "";
     String depDate = "";
