@@ -830,7 +830,19 @@ class UI
   public void CancelBooking(String tno) throws SQLException { // pass in booking value in here?
     // delete the booking
     // return to mainhub
-    System.out.println("Booking has been deleted.");
+    try {
+      sql_handler.con.setAutoCommit(false);
+      String delbookings = "delete from bookings where tno = " + tno;
+      String delticket = "delete from tickets where tno = " + tno;
+      sql_handler.runSQLStatement(delbookings);
+      sql_handler.runSQLStatement(delticket);
+      sql_handler.con.commit();
+      System.out.println("Booking has been deleted.");
+    } catch (SQLException e) {
+      System.out.println("Error: can't delete entries - rollback completed.");
+      System.out.println(e);
+      sql_handler.con.rollback();
+    }
     MainHub();
   }
 
@@ -852,7 +864,6 @@ class UI
                      + "where email='"+pub_email+"'";
 
     sql_handler.runSQLStatement(statement);
-
     System.out.println("You have now been logged out.");
     WelcomeScreen();
   }
