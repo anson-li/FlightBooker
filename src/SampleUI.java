@@ -587,7 +587,8 @@ class UI
         ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
         while (tnoVal.next()) {
           try { 
-            maxTno = Integer.parseInt(tnoVal.getString("tno"));
+            String tmpTno = tnoVal.getString("tno");
+            maxTno = Integer.parseInt(tmpTno);
           } catch (SQLException e) {}
         }
         maxTno = maxTno + 100;
@@ -691,7 +692,10 @@ class UI
         String findTno = "select max(tno) as tno from tickets";
         ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
         while (tnoVal.next()) {
-          maxTno1 = Integer.parseInt(tnoVal.getString("tno"));
+          try { 
+            String tmpTno = tnoVal.getString("tno");
+            maxTno1 = Integer.parseInt(tmpTno);
+          } catch (SQLException e) {}
         }
         maxTno1 = maxTno1 + 100;
         maxTno2 = maxTno1 + 1;
