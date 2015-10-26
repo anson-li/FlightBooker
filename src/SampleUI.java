@@ -551,7 +551,9 @@ class UI
       System.out.println("    Flight #:  "+flightno1);
       System.out.println("    Source:    "+src);
       System.out.println("    Dest.:     "+dst);
-      System.out.println("    Dep. Date: "+df.parse(depdate));
+      try { 
+        System.out.println("    Dep. Date: "+df.parse(depdate));
+      } catch (ParseException e) {}
       System.out.println("    Dep. Time: "+dept);
       System.out.println("    Arr. Time: "+arrt);
       System.out.println("    Name:      "+name);
