@@ -832,7 +832,7 @@ class UI
     // put them in a list, sep. by number index
     // System.out.println("pub_email: " + pub_email);
     System.out.println("Your current bookings for this account are: ");
-    String query = "select b.tno, p.name, b.dep_date, t.paid_price " +
+    String query = "select b.tno, p.name, to_char(b.dep_date, 'yyyy-MM-dd') as dep_date, t.paid_price " +
       "from bookings b, tickets t, passengers p " +
       "where b.tno = t.tno and t.name = p.name and t.email = p.email and t.email = '" + pub_email + "'";
     System.out.println("Please select a booking by ID to view more information, "
@@ -886,7 +886,6 @@ class UI
    * @throws SQLException
    */
   public void BookingDetail(String tno) throws SQLException {
-    System.out.println("Booking tno: " + tno);
     Scanner scan = new Scanner(System.in);
     System.out.println("Your booking details is as follows: ");
     String query = "select b.tno, b.flightno, b.fare, p.name, p.email, p.country, to_char(b.dep_date, 'yyyy-MM-dd') as dep_date, t.paid_price " +
