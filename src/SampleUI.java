@@ -588,7 +588,9 @@ class UI
         while (tnoVal.next()) {
           try { 
             String tmpTno = tnoVal.getString("tno");
-            maxTno = Integer.parseInt(tmpTno);
+            if (tmpTno != null) {
+              maxTno = Integer.parseInt(tmpTno);
+            }
           } catch (SQLException e) {}
         }
         maxTno = maxTno + 100;
@@ -694,7 +696,9 @@ class UI
         while (tnoVal.next()) {
           try { 
             String tmpTno = tnoVal.getString("tno");
-            maxTno1 = Integer.parseInt(tmpTno);
+            if (tmpTno != null) {
+              maxTno1 = Integer.parseInt(tmpTno);
+            }
           } catch (SQLException e) {}
         }
         maxTno1 = maxTno1 + 100;
