@@ -353,7 +353,7 @@ class UI
       String flightno2 = rs.getString("FLIGHTNO2");
       String layover = rs.getString("LAYOVER");
       String price = rs.getString("PRICE");
-      boolean has_sec_flight = (flightno2 == null);
+      boolean has_sec_flight = (flightno2 != null);
 
       flightnolist.add(flightno1);
       flightnolist2.add(flightno2);
