@@ -533,7 +533,7 @@ class UI
               "from available_flights where flightno='"+flightno1+"'";
       ResultSet rs = sql_handler.runSQLQuery(query1);
 
-      String src, depdate, dst, dept, arrt, fare, seats, price;
+      String src = "", depdate = "", dst = "", dept = "", arrt = "", fare = "", seats = "", price = "";
 
       while (rs.next()) {
         src = rs.getString("src");
