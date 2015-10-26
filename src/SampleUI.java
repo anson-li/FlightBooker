@@ -403,6 +403,16 @@ class UI
         System.out.println("    Dep. Time: "+dep1+"           "+dep2);
         System.out.println("    Arr. Time: "+arr1+"           "+arr2);
       }
+      else
+      {
+        System.out.println("0");
+        System.out.println("Flight Info:");
+        System.out.println("    Flight #:  "+flightno1);
+        System.out.println("    Source:    "+src1);
+        System.out.println("    Dest.:     "+dst1);
+        System.out.println("    Dep. Time: "+dep1);
+        System.out.println("    Arr. Time: "+arr1);
+      }
 
       System.out.println("-----------------------------------------\n");
     }
