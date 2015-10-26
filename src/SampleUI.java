@@ -599,7 +599,7 @@ class UI
           GenerateViews();
           //String checkFlightExists = "select flightno from available_flights where flightno = '" + flightno1 "'";
           //no way to do queries in a transaction - use a catch { sql_handler.con.rollback(); }
-          String addToTickets = "insert into tickets values (" + maxTno + ", '" + pub_email + "', " + price + ")";
+          String addToTickets = "insert into tickets values (" + maxTno + ", '" + name + "', '" pub_email + "', " + price + ")";
           sql_handler.runSQLStatement(addToTickets);
           String addToBookings = "insert into bookings values (" + maxTno + ", '" + flightno1 + "', '" + fare + "', '" + convdate + "', null)";
           sql_handler.runSQLStatement(addToBookings);
@@ -708,8 +708,8 @@ class UI
           GenerateViews();
           //String checkFlightExists = "select flightno from available_flights where flightno = '" + flightno1 "'";
           //no way to do queries in a transaction - use a catch { sql_handler.con.rollback(); }
-          String addToTickets1 = "insert into tickets values (" + maxTno1 + ", '" + name + ", " + pub_email + "', " + price1 + ")";
-          String addToTickets2 = "insert into tickets values (" + maxTno2 + ", '" + name + ", " + pub_email + "', " + price2 + ")";
+          String addToTickets1 = "insert into tickets values (" + maxTno1 + ", '" + name + "', '" + pub_email + "', " + price1 + ")";
+          String addToTickets2 = "insert into tickets values (" + maxTno2 + ", '" + name + "', '" + pub_email + "', " + price2 + ")";
           sql_handler.runSQLStatement(addToTickets1);
           sql_handler.runSQLStatement(addToTickets2);
 
