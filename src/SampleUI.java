@@ -534,7 +534,7 @@ class UI
     String query = "select * from available_flights where flightno='"+flightno+"'";
     ResultSet rs = sql_handler.runSQLQuery(query);
     rs.next();
-    String addToTickets = "insert into tickets values (" + tno + ", '" + name + "', '" + pub_email + "', " + rs.getString("PRICE") + ")";
+    String addToTickets = "insert into tickets values (" + tno + ", '" + name + "', '" + pub_email + "', " + rs.getFloat("PRICE") + ")";
     sql_handler.runSQLStatement(addToTickets);
     
     DateFormat df = new SimpleDateFormat("dd-MMM-yy");
