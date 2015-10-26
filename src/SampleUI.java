@@ -557,7 +557,7 @@ class UI
         String confirm = scan.nextLine();
         int maxTno = 0;
         if (confirm.equals("B") || confirm.equals("b")) {
-          String findTno = "select max(tno) from tickets";
+          String findTno = "select max(tno) as tno from tickets";
           ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
           while (tnoVal.next()) {
             maxTno = Integer.parseInt(tnoVal.getString("tno"));
