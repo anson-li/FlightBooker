@@ -1284,9 +1284,29 @@ class UI
       planId++;
     }
     System.out.println("Round-trips are currently being sorted by number of connections, and price.");
-    String i = scan.nextLine();
     
-    MainHub();
+    while(true) {
+      System.out.println("(R)eturn to main menu.");
+      System.out.println("Or select a booking with the corresponding ID (eg. 1, 2, ...)");
+
+      String i = scan.nextLine();
+      if (i.equals("R") || i.equals("r")) {
+        MainHub();
+      } else if (isInteger(i,10)) {
+        Integer intIndex = Integer.parseInt(i);
+        if (intIndex <= flightnolist1.size() && intIndex > 0) {
+          intIndex = intIndex - 1;
+          MakeABooking(flightnolist1.get(intIndex), 
+                       flightnolist2.get(intIndex),
+                       flightnolist3.get(intIndex),
+                       flightnolist4.get(intIndex));
+        } else {
+          System.out.println("Invalid entry - please try again.");
+        }
+      } else {
+        System.out.println("Invalid entry - please try again.");
+      }
+    }
   }
 
   /**
