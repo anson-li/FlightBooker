@@ -532,16 +532,18 @@ class UI
       String query1 = "select src, dst, dep_date, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, fare, seats, price " +
               "from available_flights where flightno='"+flightno1+"'";
       ResultSet rs = sql_handler.runSQLQuery(query1);
-      
+
+      String src, depdate, dst, dept, arrt, fare, seats, price;
+
       while (rs.next()) {
-        String src = rs.getString("src");
-        String depdate = rs.getString("dep_date");
-        String dst = rs.getString("dst");
-        String dept = rs.getString("dept");
-        String arrt = rs.getString("arrt");
-        String fare = rs.getString("fare");
-        String seats = rs.getString("seats");
-        String price = rs.getString("price");
+        src = rs.getString("src");
+        depdate = rs.getString("dep_date");
+        dst = rs.getString("dst");
+        dept = rs.getString("dept");
+        arrt = rs.getString("arrt");
+        fare = rs.getString("fare");
+        seats = rs.getString("seats");
+        price = rs.getString("price");
       }
 
       System.out.println("-----------------------------------------");
@@ -549,6 +551,7 @@ class UI
       System.out.println("    Flight #:  "+flightno1);
       System.out.println("    Source:    "+src);
       System.out.println("    Dest.:     "+dst);
+      System.out.println("    Dep. Date: "+depdate);
       System.out.println("    Dep. Time: "+dept);
       System.out.println("    Arr. Time: "+arrt);
       System.out.println("    Name:      "+name);
