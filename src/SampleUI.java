@@ -534,9 +534,10 @@ class UI
       String addToPassengers = "insert into passengers values ('" + pub_email + "', '" + name + "', '" + country + "')";
       sql_handler.runSQLStatement(addToPassengers);
     } else {
-      while (passengerRs.next()) {
-        name = passengerRs.getString("name");
-        country = passengerRs.getString("country");
+      ResultSet passengerRs1 = sql_handler.runSQLQuery(passengerquery);
+      while (passengerRs1.next()) {
+        name = passengerRs1.getString("name");
+        country = passengerRs1.getString("country");
       }
     }
     // process...
