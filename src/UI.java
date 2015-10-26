@@ -102,7 +102,8 @@ class UI
     String email = "";
     String password = "";
 
-    System.out.println("Registration (password must be 4 (or less) alpha-numeric characters):");
+    System.out.println("Registration "
+        + "(password must be 4 (or less) alpha-numeric characters):");
     try {
       email = con.readLine("Email: ");
       char[] pwArray1 = con.readPassword("Password: ");
@@ -145,15 +146,10 @@ class UI
       String statement = "insert into users values('" + email +  "',"
                         + "'" + password +"',"
                         + "sysdate )";
-
-      System.out.println(statement);
       sql_handler.runSQLStatement(statement);
     }
-
-    // TODO: how is the user's role selected? are they predetermined?
-    String role = "user";
     pub_email = email;
-    pub_role = role;
+    pub_role = "user";
   }
 
   /**
@@ -584,21 +580,25 @@ class UI
    * @throws SQLException
    */
   public void ExistingBookings() throws SQLException {
-    // search for user bookings
-    // put them in a list, sep. by number index
-    // System.out.println("pub_email: " + pub_email);
     System.out.println("Your current bookings for this account are: ");
     String query = "select b.tno, p.name, b.dep_date, t.paid_price " +
       "from bookings b, tickets t, passengers p " +
       "where b.tno = t.tno and t.email like p.email and t.email = '" + pub_email + "'";
     System.out.println("Please select a booking by ID to view more information, "
                         + "or (e)xit.\n");
-    System.out.println("ID  TNO  NAME                 DEP_DATE               PRICE");
-    System.out.println("--  ---  -----------------    ---------------------  -----");
     ResultSet rs = sql_handler.runSQLQuery(query);
     int intId = 0;
     ArrayList<String> tnolist = new ArrayList<>();
-
+    if (rs.isBeforeFirst())
+    {
+      System.out.println("ID  TNO  NAME                 DEP_DATE               PRICE");
+      System.out.println("--  ---  -----------------    ---------------------  -----");
+    }
+    else
+    {
+      System.out.println("There are no existing bookings.");
+      return;
+    }
     while (rs.next()) {
       String tno = rs.getString("tno");
       String name = rs.getString("name");
@@ -616,8 +616,7 @@ class UI
         if (intIndex <= tnolist.size() && intIndex > 0) {
           intIndex = intIndex - 1;
           int bd = BookingDetail(tnolist.get(intIndex));
-          if (bd == 0)
-            return;
+          return;
         } else {
           System.out.println("Invalid entry - please try again.");
         }
@@ -682,9 +681,7 @@ class UI
     }
   }
 
-  public void CancelBooking(String tno) throws SQLException { // pass in booking value in here?
-    // delete the booking
-    // return to mainhub
+  public void CancelBooking(String tno) throws SQLException {
     try {
       sql_handler.con.setAutoCommit(false);
       String delbookings = "delete from bookings where tno = " + tno;
@@ -718,14 +715,6 @@ class UI
     System.out.println("You have now been logged out.");
   }
 
-  /* AIRLINE AGENT ONLY: Record a flight departure. After a plane takes off,
-  the user may want to record the departure. Your system should support the
-  task and make necessary updates such as updating the act_dep_time.
-  */
-
-  // select * from sch_flights // flightno, dep_date, act_dep_time, act_arr_time
-  // rs.updateString(3, INPUT_DATE);
-
   public void RecordDeparture() throws SQLException {
     System.out.println("Flight number: ");
     String flightno = scan.nextLine();
@@ -757,13 +746,6 @@ class UI
       }
     }
   }
-
-  /* AIRLINE AGENT ONLY: Record a flight arrival. After a landing, the user may
-  want to record the arrival and your system should support the task.
-  */
-
-  // select * from sch_flights // flightno, dep_date, act_dep_time, act_arr_time
-  // rs.updateString(4, INPUT_DATE)
 
   public void RecordArrival() throws SQLException {
     System.out.println("Flight number: ");
