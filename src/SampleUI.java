@@ -345,15 +345,72 @@ class UI
     System.out.println("The flight plans that match your description are as follows:\n");
     ArrayList<String> flightnolist = new ArrayList<>();
     ArrayList<String> flightnolist2 = new ArrayList<>();
-    
-    for (int planId = 1; rs.next(); planId++) 
-    {
+    int planId = 1;
+    planId = printFlightPlans(rs, planId, flightnolist, flightnolist2);
 
+    System.out.println("\nFlights are currently being sorted by price:"
+                    + "\n(S)ort the result based on number of connections, or (R)eturn to main menu.");
+    System.out.println("Or select a booking with the corresponding ID (eg. 1, 2, ...)");
+    while(true) {
+      String i = scan.nextLine();
+      if (i.equals("S") || i.equals("s")) {
+        
+        flightnolist = new ArrayList<>();
+        flightnolist2 = new ArrayList<>();
+        planId = 1;
+                
+        System.out.println("The flight plans that match your description are as follows:\n");
+                
+        String q =  "select flightno1, flightno2, layover, price " +
+                    "from ( " +
+                    "select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
+                    "from " +
+                    "(select flightno flightno1, '' flightno2, 0 layover, price " +
+                    "from available_flights " +
+                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='"+srcACode.toUpperCase()+"' and dst='"+destACode.toUpperCase()+"')) " +
+                    "order by price ";
+        
+        rs = sql_handler.runSQLQuery(q);
+        planId = printFlightPlans(rs, planId, flightnolist, flightnolist2);
+        
+        q = "select flightno1, flightno2, layover, price " +
+            "from ( " +
+            "select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
+            "from " +
+            "(select flightno1, flightno2, layover, price " +
+            "from good_connections " +
+            "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='"+srcACode.toUpperCase()+"' and dst='"+destACode.toUpperCase()+"')) " +
+            "order by price ";
+        
+        rs = sql_handler.runSQLQuery(q);
+        planId = printFlightPlans(rs, planId, flightnolist, flightnolist2);
+        
+      } else if (i.equals("R") || i.equals("r")) {
+        MainHub(role);
+      } else if (isInteger(i,10)) {
+        Integer intIndex = Integer.parseInt(i); 
+        if (intIndex <= flightnolist.size() && intIndex > 0) {
+          intIndex = intIndex - 1;
+          MakeABooking(role, flightnolist.get(intIndex), flightnolist2.get(intIndex));
+        } else {
+          System.out.println("Invalid entry - please try again.");
+        }
+      } else {
+        System.out.println("Invalid entry - please try again.");
+      }
+    }
+  }
+  
+  private int printFlightPlans(ResultSet rs, int planId, ArrayList<String> flightnolist, ArrayList<String> flightnolist2) throws SQLException
+  {
+    while(rs.next()) 
+    {
       String flightno1 = rs.getString("FLIGHTNO1");
       String flightno2 = rs.getString("FLIGHTNO2");
       String layover = rs.getString("LAYOVER");
       String price = rs.getString("PRICE");
       boolean has_sec_flight = (flightno2 != null);
+      String query = "";
 
       flightnolist.add(flightno1);
       flightnolist2.add(flightno2);
@@ -417,31 +474,11 @@ class UI
         System.out.println("    Arr. Time: "+arr1);
       }
 
-      System.out.println("-----------------------------------------\n");
       sqlh1.close();
+      planId++;
     }
-
-    System.out.println("\nFlights are currently being sorted by price:"
-                        + "\n(S)ort the result based on number of connections, or (R)eturn to main menu.");
-    System.out.println("Or select a booking with the corresponding ID (eg. 1, 2, ...)");
-    while(true) {
-      String i = scan.nextLine();
-      if (i.equals("S") || i.equals("s")) {
-        // nothing done yet
-      } else if (i.equals("R") || i.equals("r")) {
-        MainHub(role);
-      } else if (isInteger(i,10)) {
-        Integer intIndex = Integer.parseInt(i); 
-        if (intIndex <= flightnolist.size() && intIndex > 0) {
-          intIndex = intIndex - 1;
-          MakeABooking(role, flightnolist.get(intIndex), flightnolist2.get(intIndex));
-        } else {
-          System.out.println("Invalid entry - please try again.");
-        }
-      } else {
-        System.out.println("Invalid entry - please try again.");
-      }
-    }
+    System.out.println("-----------------------------------------");
+    return planId;
   }
 
   /* Make a booking. A user should be able to select a flight
