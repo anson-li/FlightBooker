@@ -203,7 +203,9 @@ class UI
       if (rs.next())
       {
         role = "poweruser";
-        System.out.println("Airline Agent: " + rs.getString("name") );
+        String email = rs.getString("email");
+        String name = rs.getString("name");
+        System.out.println("Airline Agent: " + name );
       }
       else
       {
