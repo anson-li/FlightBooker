@@ -577,11 +577,13 @@ class UI
       String deptime = scan.nextLine();
       if (isValidDate(deptime)) {
         DateFormat df = new SimpleDateFormat("yyyy/mm/dd hh:mm:ss");
-        java.util.Date depDate = new java.util.Date();
-        depDate = df.parse(deptime);
-        statement = "update sch_flights "
-        + "set act_dep_date = '" + depDate + "' "
-        + "where flightno = '"+flightno.toUpperCase()+"'"; 
+        try { 
+          java.util.Date depDate = new java.util.Date();
+          depDate = df.parse(deptime);
+          statement = "update sch_flights "
+          + "set act_dep_date = '" + depDate + "' "
+          + "where flightno = '"+flightno.toUpperCase()+"'"; 
+        } catch (ParseException e) {}
       } else if (deptime.equals("C") || deptime.equals("c")) {
         statement = "update sch_flights "
         + "set act_dep_date = sysdate "
