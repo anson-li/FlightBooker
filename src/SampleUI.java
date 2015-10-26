@@ -311,7 +311,7 @@ class UI
     }
 
     // add departure date
-    System.out.println("Please enter your departure date in format DD/MMM/YYYY - eg: 01/10/2015 for October 10, 2015");
+    System.out.println("Please enter your departure date in format DD/MM/YYYY - eg: 01/10/2015 for October 10, 2015");
     depDate = scan.nextLine();
     /*DateFormat df = new SimpleDateFormat("dd-MMM-yy");
     java.util.Date depDate = new java.util.Date();
@@ -573,12 +573,12 @@ class UI
           GenerateViews();
           //String checkFlightExists = "select flightno from available_flights where flightno = '" + flightno1 "'";
           //no way to do queries in a transaction - use a catch { sql_handler.con.rollback(); }
+          String addToTickets = "insert into tickets values (" + maxTno + ", '" + pub_email + "', " + price + ")";
+          sql_handler.runSQLStatement(addToTickets);
           String addToPassengers = "insert into passengers values ('" + pub_email + "', '" + name + "', '" + country + "')";
           sql_handler.runSQLStatement(addToPassengers);
           String addToBookings = "insert into bookings values (" + maxTno + ", '" + flightno1 + "', '" + fare + "', '" + depdate + "', null)";
           sql_handler.runSQLStatement(addToBookings);
-          String addToTickets = "insert into tickets values (" + maxTno + ", '" + pub_email + "', " + price + ")";
-          sql_handler.runSQLStatement(addToTickets);
           sql_handler.con.commit();
           System.out.println("Success - you have booked your flight!");
         } catch (SQLException e) {
