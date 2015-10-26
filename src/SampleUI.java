@@ -573,7 +573,7 @@ class UI
     String flightno = scan.nextLine();
     System.out.println("Departure time: - format is 'yyyy/mm/dd hh24:mi:ss', example: 2003/05/03 21:02:44 or select (C)urrent time.");
     while(true) {
-      String statement;
+      String statement = "";
       String deptime = scan.nextLine();
       if (isValidDate(deptime)) {
         DateFormat df = new SimpleDateFormat("yyyy/mm/dd hh:mm:ss");
