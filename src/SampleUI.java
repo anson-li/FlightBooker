@@ -398,6 +398,15 @@ class UI
     }
   }
 
+  /**
+   * FIXME: add logic to return if no flights
+   * @param rs
+   * @param planId
+   * @param flightnolist
+   * @param flightnolist2
+   * @return
+   * @throws SQLException
+   */
   private int printFlightPlans(ResultSet rs, int planId, ArrayList<String> flightnolist, ArrayList<String> flightnolist2) throws SQLException
   {
     int startId = planId;
@@ -780,6 +789,10 @@ class UI
   // GROUP BY flightno, ...
   // ORDER BY PRICE
 
+  /**
+   * FIXME: kappa
+   * @throws SQLException
+   */
   public void RoundTrips() throws SQLException {
     // get the user source
     // get the user destination
