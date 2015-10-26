@@ -76,7 +76,8 @@ class UI
                        + "\nor (E)xit the program.");
       String i = scan.nextLine();
       if (i.equals("l") || i.equals("L")) {
-        Login();
+        if(!Login())
+          continue;
         MainHub();
       } else if (i.equals("r") || i.equals("R")) {
         Register();
@@ -159,7 +160,7 @@ class UI
    * FIXME: my dream is to be a complete comment
    * @throws SQLException
    */
-  private void Login() throws SQLException {
+  private boolean Login() throws SQLException {
     System.out.println("Login.");
     String email = "";
     String pword = "";
@@ -173,13 +174,13 @@ class UI
       if (!validEmail(email))
       {
         System.out.println("Invalid email.");
-        return;
+        return false;
       }
 
       if (!validPassword(pword))
       {
         System.out.println("Invalid password.");
-        return;
+        return false;
       }
 
       String query = "select email, pass from users where email='"+email+"'";
@@ -188,7 +189,7 @@ class UI
       if (!rs.next())
       {
         System.out.println("Invalid email/password combination.");
-        return;
+        return false;
       }
 
       query = "select * from airline_agents where email='"+email+"'";
@@ -216,6 +217,8 @@ class UI
 
       pub_email = email;
       pub_role = role;
+      
+      return true;
     }
   }
 
@@ -355,12 +358,13 @@ class UI
 
 
       } else if (i.equals("R") || i.equals("r")) {
-        MainHub();
+        return;
       } else if (isInteger(i,10)) {
         Integer intIndex = Integer.parseInt(i);
         if (intIndex <= flightnolist.size() && intIndex > 0) {
           intIndex = intIndex - 1;
           MakeABooking(flightnolist.get(intIndex), flightnolist2.get(intIndex), null, null);
+          return;
         } else {
           System.out.println("Invalid entry - please try again.");
         }
@@ -739,7 +743,7 @@ class UI
           + "where flightno = '"+flightno.toUpperCase()+"'";
           sql_handler.runSQLStatement(statement);
           System.out.println("Flight departure time successfully updated.");
-          MainHub();
+          return;
         } catch (ParseException e) {}
       } else if (deptime.equals("C") || deptime.equals("c")) {
         statement = "update sch_flights "
@@ -747,7 +751,7 @@ class UI
         + "where flightno = '"+flightno.toUpperCase()+"'";
         sql_handler.runSQLStatement(statement);
         System.out.println("Flight departure time successfully updated.");
-        MainHub();
+        return;
       } else {
         System.out.println("Incorrect input - please try again.");
       }
@@ -778,7 +782,7 @@ class UI
           + "where flightno = '"+flightno.toUpperCase()+"'";
           sql_handler.runSQLStatement(statement);
           System.out.println("Flight arrival time successfully updated.");
-          MainHub();
+          return;
         } catch (ParseException e) {}
       } else if (arrtime.equals("C") || arrtime.equals("c")) {
         statement = "update sch_flights "
@@ -786,7 +790,7 @@ class UI
         + "where flightno = '"+flightno.toUpperCase()+"'";
         sql_handler.runSQLStatement(statement);
         System.out.println("Flight arrival time successfully updated.");
-        MainHub();
+        return;
       } else {
         System.out.println("Incorrect input - please try again.");
       }
