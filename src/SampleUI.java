@@ -297,6 +297,8 @@ class UI
     String srcACode = "";
     String destACode = "";
     String depDate = "";
+    
+    GenerateViews();
 
     while (!validAcode(srcACode))
     {
@@ -388,7 +390,7 @@ class UI
         Integer intIndex = Integer.parseInt(i);
         if (intIndex <= flightnolist.size() && intIndex > 0) {
           intIndex = intIndex - 1;
-          MakeABooking(flightnolist.get(intIndex), flightnolist2.get(intIndex));
+          MakeABooking(flightnolist.get(intIndex), flightnolist2.get(intIndex), null, null);
         } else {
           System.out.println("Invalid entry - please try again.");
         }
@@ -398,6 +400,15 @@ class UI
     }
   }
 
+  /**
+   * FIXME: add logic to return if no flights
+   * @param rs
+   * @param planId
+   * @param flightnolist
+   * @param flightnolist2
+   * @return
+   * @throws SQLException
+   */
   private int printFlightPlans(ResultSet rs, int planId, ArrayList<String> flightnolist, ArrayList<String> flightnolist2) throws SQLException
   {
     int startId = planId;
@@ -450,7 +461,7 @@ class UI
       if (has_sec_flight)
       {
         System.out.println("1");
-        System.out.println("Layover Time: " + layover);
+        System.out.println("Layover Time: " + (Integer.parseInt(layover)*1440) +" minutes.");
         System.out.println("Num Seats: " + Math.min(sea1, sea2));
         System.out.println("Flight Info:   Flight 1          Flight 2");
         System.out.println("               --------          --------");
@@ -500,13 +511,56 @@ class UI
   within a transaction. Finally the system should return the
   ticket number and a confirmation message if a ticket is
   issued or a descriptive message if a ticket cannot be
-  issued for any reason.
+  issued for any reason.*/
 
 
   // if seat is empty..
   // insert into passengers values ('EMAIL', 'NAME', 'COUNTRY')
   // insert into tickets values (tno (gen), 'EMAIL', 'PAID PRICE')
   // insert into bookings values (tno (gen), flight_no, fare, dep_date, seat)
+
+  private void BookFlight(String flightno, String name) throws SQLException
+  {
+    int tno = 0;
+    String findTno = "select max(tno) as tno from tickets";
+    ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
+    tnoVal.next();
+    String tmpTno = tnoVal.getString("tno");
+    if (tmpTno != null)
+      tno = Integer.parseInt(tmpTno);
+    tno += 100;
+      
+    GenerateViews();
+    String query = "select * from available_flights where flightno='"+flightno+"'";
+    ResultSet rs = sql_handler.runSQLQuery(query);
+    rs.next();
+    String depdate = rs.getString("DEP_DATE"), convdate = "";
+    String fare = rs.getString("FARE");
+    int seat = rs.getInt("SEATS");
+    
+    
+    String addToTickets = "insert into tickets values (" + tno + ", '" + name + "', '" + pub_email + "', " + rs.getFloat("PRICE") + ")";
+    System.out.println(addToTickets);
+    sql_handler.runSQLStatement(addToTickets);
+    
+    DateFormat df = new SimpleDateFormat("dd-MMM-yy");
+    DateFormat initialdf = new SimpleDateFormat("yyyy-MM-dd");
+    try {
+      depdate = depdate.substring(0, 10);
+      convdate = df.format(initialdf.parse(depdate));
+    } catch (ParseException e) { System.out.println(e); }
+    String addToBookings = "insert into bookings values ("+ tno + ", "
+                                                          + "'" + flightno + "', "
+                                                          + "'" + fare + "', "
+                                                          + "'" + convdate + "', "
+                                                          + seat +")";
+    System.out.println(addToBookings);
+    sql_handler.runSQLStatement(addToBookings);
+    System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
+    System.out.println("Success - you have booked your flight!");
+    System.out.println("Your ticket number is: " + tno);
+    System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+\n");
+  }
 
   /**
    *
@@ -515,20 +569,14 @@ class UI
    * @param flightno2
    * @throws SQLException
    */
-  public void MakeABooking(String flightno1, String flightno2) throws SQLException {
-    System.out.println(flightno1 + " " + flightno2);
-    // public static void MakeABooking(int Id)
-    // select a flight
-    // is user listed in the flight?
-    // if so, don't let the rebook.
-    // if not, book. add the name & country of the passenger (ask here...)
-    String passengerquery = "select * from passengers where email = '" + pub_email + "'"; 
-    ResultSet passengerRs = sql_handler.runSQLQuery(passengerquery);
+  public void MakeABooking(String flightno1, String flightno2, String flightno3, String flightno4) throws SQLException {
     String name = "", country = "";
+    System.out.println("Please enter the name of the passenger:");
+    name = scan.nextLine();
+    String passengerquery = "select * from passengers where email = '" + pub_email + "' and regexp_like(name, '"+name+"', 'i')"; 
+    ResultSet passengerRs = sql_handler.runSQLQuery(passengerquery);
+        
     if (!passengerRs.next()) {
-      System.out.println("You do not have a name and country currently - please add one: ");
-      System.out.println("Please enter the name of the passenger:");
-      name = scan.nextLine();
       System.out.println("Please enter the country of the passenger:");
       country = scan.nextLine();
       String addToPassengers = "insert into passengers values ('" + pub_email + "', '" + name + "', '" + country + "')";
@@ -540,9 +588,44 @@ class UI
         country = passengerRs1.getString("country");
       }
     }
+    
+    boolean has_dep_flight     = (flightno1 != null);
+    boolean has_dep_sec_flight = (flightno2 != null);
+    boolean has_round_trip     = (flightno3 != null);
+    boolean has_ret_sec_flight = (flightno4 != null);
+    
+    try{
+      sql_handler.con.setAutoCommit(false);
+      if (has_dep_flight)
+      {
+        BookFlight(flightno1, name);
+        if (has_dep_sec_flight)
+          BookFlight(flightno2, name);
+      }
+      
+      if (has_round_trip)
+      {
+        BookFlight(flightno3, name);
+        if (has_ret_sec_flight)
+          BookFlight(flightno4, name);
+      }
+      sql_handler.con.commit();
+      
+      return;
+      
+    } catch (SQLException sqle) {
+      System.out.println("Error: Booking Failed.");
+      System.out.println(sqle);
+      sql_handler.con.rollback();
+    }
+    
+    return;
+    /*
     // process...
     if (flightno2 == null) {
       System.out.println("Only one flight selected - please confirm your booking: ");
+      
+      /*
       String query1 = "select src, dst, dep_date, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, fare, seats, price " +
               "from available_flights where flightno='"+flightno1+"'";
       ResultSet rs = sql_handler.runSQLQuery(query1);
@@ -578,31 +661,23 @@ class UI
       System.out.println("    Name:      "+name);
       System.out.println("    Country:   "+country);
       System.out.println("-----------------------------------------");
-
+      
       System.out.println("\nDo you want to (B)ook this flight? Or (R)eturn to main page?");
       String confirm = scan.nextLine();
-      int maxTno = 0;
-      if (confirm.equals("B") || confirm.equals("b")) {
-        String findTno = "select max(tno) as tno from tickets";
-        ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
-        while (tnoVal.next()) {
-          try { 
-            String tmpTno = tnoVal.getString("tno");
-            if (tmpTno != null) {
-              maxTno = Integer.parseInt(tmpTno);
-            }
-          } catch (SQLException e) {}
-        }
-        maxTno = maxTno + 100;
+      
         try {
           sql_handler.con.setAutoCommit(false);
           GenerateViews();
           //String checkFlightExists = "select flightno from available_flights where flightno = '" + flightno1 "'";
           //no way to do queries in a transaction - use a catch { sql_handler.con.rollback(); }
+          String query = "select * from available_flights where flightno='"+flightno1+"'";
+          sql_handler.runSQLQuery(query);
           String addToTickets = "insert into tickets values (" + maxTno + ", '" + name + "', '" + pub_email + "', " + price + ")";
           sql_handler.runSQLStatement(addToTickets);
           String addToBookings = "insert into bookings values (" + maxTno + ", '" + flightno1 + "', '" + fare + "', '" + convdate + "', null)";
           sql_handler.runSQLStatement(addToBookings);
+          if ()
+          
           sql_handler.con.commit();
           System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
           System.out.println("Success - you have booked your flight!");
@@ -733,7 +808,7 @@ class UI
         MainHub();
       }
     }
-    MainHub();
+    MainHub();*/
   }
 
   /* List existing bookings. A user should be able to list all
@@ -1015,34 +1090,248 @@ class UI
   // GROUP BY flightno, ...
   // ORDER BY PRICE
 
-  public void RoundTrips() throws SQLException {
-    // get the user source
-    // get the user destination
-    // get the start date
-    // get the end date
-    // return the round-trips, sorted by the sum of the price.
-    // user inputs a number (1,2,...) and the index is logged and booked (2 bookings, for the round trip!)
-    // ask user if they want to enter the airport code for source
-    System.out.println("Please enter the airport code for your source:");
-    String SrcACode = scan.nextLine();
-    // if not valid airport code, search airport by name (partial match '%val%')
-    // complete process for destination airport
-    System.out.println("Please enter the airport code for your destination:");
-    String DestACode = scan.nextLine();
+  /**
+   * FIXME: kappa
+   * @throws SQLException
+   */
+  public void RoundTrips() throws SQLException 
+  { 
+    String srcACode = "";
+    String destACode = "";
+    String depDate = "";
+    String retDate = "";
+
+    while (!validAcode(srcACode))
+    {
+      System.out.println("Please enter the airport code for your source:");
+      srcACode = scan.nextLine();
+    }
+
+    while (!validAcode(destACode))
+    {
+      System.out.println("Please enter the airport code for your destination:");
+      destACode = scan.nextLine();
+    }
+
     // add departure date
-    System.out.println("Please enter your departure date in format MM/DD/YYYY");
-    String DepDate = scan.nextLine();
-    // add return date
-    System.out.println("Please enter your return date in format MM/DD/YYYY");
-    String ReturnDate = scan.nextLine();
-    // search flights for direct flights and flights w one connection
-    // provide information. ask user if they want to sort
-    // if sort, then sort
-    System.out.println("The round-trip flights that match your description are as follows:");
-    // system.out.println(flightslist)
+    System.out.println("Please enter your departure date in format DD/MMM/YYYY - eg: 01/10/2015 for October 10, 2015");
+    depDate = scan.nextLine();
+    
+    System.out.println("Please enter your return date in format DD/MMM/YYYY - eg: 01/10/2015 for October 10, 2015");
+    retDate = scan.nextLine();
+    
+    try {
+      sql_handler.runSQLStatement("drop view good_dep_trips");
+      sql_handler.runSQLStatement("drop view good_ret_trips");
+    } catch (SQLException sqle) {
+      
+    }
+    
+    String stmt1 = "create view good_dep_trips (flightno1, flightno2, layover, price) as " +
+                    "select flightno1, flightno2, layover, price " +
+                    "from ( " +
+                    "select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
+                    "from " +
+                    "(select flightno1, flightno2, layover, price " +
+                    "from good_connections " +
+                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='"+srcACode.toUpperCase()+"' and dst='"+destACode.toUpperCase()+"' " +
+                    "union " +
+                    "select flightno flightno1, '' flightno2, 0 layover, price " +
+                    "from available_flights " +
+                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='"+srcACode.toUpperCase()+"' and dst='"+destACode.toUpperCase()+"')) " +
+                    "order by price";
+    
+    String stmt2 =  "create view good_ret_trips (flightno1, flightno2, layover, price) as " +
+                    "select flightno1, flightno2, layover, price " +
+                    "from ( " +
+                    "select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
+                    "from " +
+                    "(select flightno1, flightno2, layover, price " +
+                    "from good_connections " +
+                    "where to_char(dep_date,'DD/MM/YYYY')='"+ retDate +"' and src='"+destACode.toUpperCase()+"' and dst='"+srcACode.toUpperCase()+"' " +
+                    "union " +
+                    "select flightno flightno1, '' flightno2, 0 layover, price " +
+                    "from available_flights " +
+                    "where to_char(dep_date,'DD/MM/YYYY')='"+ retDate +"' and src='"+destACode.toUpperCase()+"' and dst='"+srcACode.toUpperCase()+"')) " +
+                    "order by price";
+    
+    String query =  "select gdt.flightno1 as dep_flightno1, gdt.flightno2 as dep_flightno2, gdt.layover as dep_layover, " +
+                    "grt.flightno1 as ret_flightno1, grt.flightno2 as ret_flightno2, grt.layover as ret_layover, " +
+                    "gdt.price+grt.price as price " +
+                    "from good_dep_trips gdt, good_ret_trips grt " +
+                    "group by gdt.flightno1, gdt.flightno2, gdt.layover, gdt.price, grt.flightno1, grt.flightno2, grt.layover, grt.price " +
+                    "order by price";
+    
+    sql_handler.runSQLStatement(stmt1);
+    sql_handler.runSQLStatement(stmt2);
+    ResultSet rs = sql_handler.runSQLQuery(query);
+    System.out.println("The following flight plans match your criteria:\n");
+    ArrayList<String> flightnolist1 = new ArrayList<>();
+    ArrayList<String> flightnolist2 = new ArrayList<>();
+    ArrayList<String> flightnolist3= new ArrayList<>();
+    ArrayList<String> flightnolist4 = new ArrayList<>();
+    int planId = 1;    
+    while(rs.next())
+    {
+      String dep_flightno1 = rs.getString("DEP_FLIGHTNO1");
+      String dep_flightno2 = rs.getString("DEP_FLIGHTNO2");
+      String dep_layover = rs.getString("DEP_LAYOVER");
+      boolean has_sec_dep_flight = (dep_flightno2 != null);
+      
+      String ret_flightno1 = rs.getString("RET_FLIGHTNO1");
+      String ret_flightno2 = rs.getString("RET_FLIGHTNO2");
+      String ret_layover = rs.getString("RET_LAYOVER");
+      boolean has_sec_ret_flight = (ret_flightno2 != null);
+      
+      String price = rs.getString("PRICE");
+      
+      flightnolist1.add(dep_flightno1);
+      flightnolist2.add(dep_flightno2);
+
+      query = "select src, dst, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, seats " +
+              "from available_flights where flightno='"+dep_flightno1+"'";
+      SQLHandler sqlh1 = new SQLHandler(sql_handler.get_uname(), sql_handler.get_pword());
+      ResultSet rs1 = sqlh1.runSQLQuery(query);
+      rs1.next();
+      String src1 = rs1.getString("src");
+      String dst1 = rs1.getString("dst");
+      String dep1 = rs1.getString("dept");
+      String arr1 = rs1.getString("arrt");
+      int sea1 = Integer.parseInt(rs1.getString("seats"));
+
+      String src2 = "-";
+      String dst2 = "-";
+      String dep2 = "-";
+      String arr2 = "-";
+      int sea2 = 0;
+
+      if (has_sec_dep_flight)
+      {
+        query = "select src, dst, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, seats " +
+            "from available_flights where flightno='"+dep_flightno2+"'";
+        ResultSet rs2 = sqlh1.runSQLQuery(query);
+        rs2.next();
+        src2 = rs2.getString("src");
+        dst2 = rs2.getString("dst");
+        dep2 = rs2.getString("dept");
+        arr2 = rs2.getString("arrt");
+        sea2 = Integer.parseInt(rs2.getString("seats"));
+      }
+
+      System.out.println  ("-----------------------------------------");
+      System.out.println  ("Flight Plan: " + planId);
+      System.out.println  ("Price: " + price);
+      if (has_sec_dep_flight)
+      {
+        System.out.println("Departing Flight Info:");
+        System.out.println("    Number of Stops: 1");
+        System.out.println("    Layover Time: " + (Integer.parseInt(dep_layover)*1440) +" minutes.");
+        System.out.println("    Num Seats: " + Math.min(sea1, sea2));
+        System.out.println("               Flight 1          Flight 2");
+        System.out.println("               --------          --------");
+        System.out.println("    Flight #:  "+dep_flightno1+"          "+dep_flightno2);
+        System.out.println("    Source:    "+src1+"             "+src2);
+        System.out.println("    Dest.:     "+dst1+"             "+dst2);
+        System.out.println("    Dep. Time: "+dep1+"           "+dep2);
+        System.out.println("    Arr. Time: "+arr1+"           "+arr2);
+      }
+      else
+      {
+        System.out.println("Departing Flight Info:");
+        System.out.println("    Number of Stops: 0");
+        System.out.println("    Num Seats: " + sea1);
+        System.out.println("    Flight #:  "+dep_flightno1);
+        System.out.println("    Source:    "+src1);
+        System.out.println("    Dest.:     "+dst1);
+        System.out.println("    Dep. Time: "+dep1);
+        System.out.println("    Arr. Time: "+arr1);
+      }
+      
+      flightnolist3.add(ret_flightno1);
+      flightnolist4.add(ret_flightno2);
+
+      query = "select src, dst, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, seats " +
+              "from available_flights where flightno='"+ret_flightno1+"'";
+      rs1 = sqlh1.runSQLQuery(query);
+      rs1.next();
+      src1 = rs1.getString("src");
+      dst1 = rs1.getString("dst");
+      dep1 = rs1.getString("dept");
+      arr1 = rs1.getString("arrt");
+      sea1 = Integer.parseInt(rs1.getString("seats"));
+
+      src2 = "-";
+      dst2 = "-";
+      dep2 = "-";
+      arr2 = "-";
+      sea2 = 0;
+
+      if (has_sec_ret_flight)
+      {
+        query = "select src, dst, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, seats " +
+            "from available_flights where flightno='"+ret_flightno2+"'";
+        ResultSet rs2 = sqlh1.runSQLQuery(query);
+        rs2.next();
+        src2 = rs2.getString("src");
+        dst2 = rs2.getString("dst");
+        dep2 = rs2.getString("dept");
+        arr2 = rs2.getString("arrt");
+        sea2 = Integer.parseInt(rs2.getString("seats"));
+      }
+
+      if (has_sec_ret_flight)
+      {
+        System.out.println("Return Flight Info:");
+        System.out.println("    Number of Stops: 1");
+        System.out.println("    Layover Time: " + (Integer.parseInt(ret_layover)*1440) +" minutes.");
+        System.out.println("    Num Seats: " + Math.min(sea1, sea2));
+        System.out.println("               Flight 1          Flight 2");
+        System.out.println("               --------          --------");
+        System.out.println("    Flight #:  "+ret_flightno1+"          "+ret_flightno2);
+        System.out.println("    Source:    "+src1+"             "+src2);
+        System.out.println("    Dest.:     "+dst1+"             "+dst2);
+        System.out.println("    Dep. Time: "+dep1+"           "+dep2);
+        System.out.println("    Arr. Time: "+arr1+"           "+arr2);
+      }
+      else
+      {
+        System.out.println("Return Flight Info:");
+        System.out.println("    Number of Stops: 0");
+        System.out.println("    Num Seats: " + sea1);
+        System.out.println("    Flight #:  "+ret_flightno1);
+        System.out.println("    Source:    "+src1);
+        System.out.println("    Dest.:     "+dst1);
+        System.out.println("    Dep. Time: "+dep1);
+        System.out.println("    Arr. Time: "+arr1);
+      }
+
+      sqlh1.close();
+      planId++;
+    }
     System.out.println("Round-trips are currently being sorted by number of connections, and price.");
-    String i = scan.nextLine();
-    MainHub();
+    
+    while(true) {
+      System.out.println("(R)eturn to main menu.");
+      System.out.println("Or select a booking with the corresponding ID (eg. 1, 2, ...)");
+
+      String i = scan.nextLine();
+      if (i.equals("R") || i.equals("r")) {
+        MainHub();
+      } else if (isInteger(i,10)) {
+        Integer intIndex = Integer.parseInt(i);
+        if (intIndex <= flightnolist1.size() && intIndex > 0) {
+          intIndex = intIndex - 1;
+          MakeABooking(flightnolist1.get(intIndex), 
+                       flightnolist2.get(intIndex),
+                       flightnolist3.get(intIndex),
+                       flightnolist4.get(intIndex));
+        } else {
+          System.out.println("Invalid entry - please try again.");
+        }
+      } else {
+        System.out.println("Invalid entry - please try again.");
+      }
+    }
   }
 
   /**
