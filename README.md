@@ -13,6 +13,7 @@ Satyen Alkolkar and Anson Li
 * check if flight number is valid in airlineagent - flight arrival and departure
 * add comments 
 * remove commented-out code
+* 0 flight plans should say something else (round trip & regular flights)
 
 #### References:
 * http://www.tutorialspoint.com/jdbc/jdbc-sample-code.htm
