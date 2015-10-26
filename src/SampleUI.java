@@ -536,6 +536,7 @@ class UI
     rs.next();
     String depdate = rs.getString("DEP_DATE"), convdate = "";
     String fare = rs.getString("FARE");
+    int seat = rs.getInt("SEATS");
     
     
     String addToTickets = "insert into tickets values (" + tno + ", '" + name + "', '" + pub_email + "', " + rs.getFloat("PRICE") + ")";
@@ -551,8 +552,8 @@ class UI
     String addToBookings = "insert into bookings values ("+ tno + ", "
                                                           + "'" + flightno + "', "
                                                           + "'" + fare + "', "
-                                                          + convdate + ", "
-                                                          + "null)";
+                                                          + "'" + convdate + "', "
+                                                          + seat +",)";
     System.out.println(addToBookings);
     sql_handler.runSQLStatement(addToBookings);
     System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
