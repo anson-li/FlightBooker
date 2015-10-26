@@ -581,12 +581,12 @@ class UI
           java.util.Date depDate = new java.util.Date();
           depDate = df.parse(deptime);
           statement = "update sch_flights "
-          + "set act_dep_date = '" + depDate + "' "
+          + "set act_dep_time = '" + depDate + "' "
           + "where flightno = '"+flightno.toUpperCase()+"'"; 
         } catch (ParseException e) {}
       } else if (deptime.equals("C") || deptime.equals("c")) {
         statement = "update sch_flights "
-        + "set act_dep_date = sysdate "
+        + "set act_dep_time = sysdate "
         + "where flightno = '"+flightno.toUpperCase()+"'";
       }
       sql_handler.runSQLStatement(statement);
