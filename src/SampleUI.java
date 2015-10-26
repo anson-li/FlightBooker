@@ -189,7 +189,7 @@ class UI
         return;
       }
 
-      String query = "select email, password from users where email='"+email+"'";
+      String query = "select email, pass from users where email='"+email+"'";
       ResultSet rs = sql_handler.runSQLQuery(query);
 
       if (!rs.next())
