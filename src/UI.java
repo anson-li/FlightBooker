@@ -848,15 +848,15 @@ class UI
       String price = rs.getString("PAID_PRICE");
       tnolist.add(tno);
       intId++;
-      
-      System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+")
+
+      System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
       System.out.println("Booking ID: " + intId);
       System.out.println("Ticket No.: " + tno);
       System.out.println("Name:       " + name);
       System.out.println("Dep. Date:  " + depdate);
       System.out.println("Price:      " + price);
     }
-    System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+")
+    System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
     while(true) {
       String i = scan.nextLine();
       if (isInteger(i, 10)) {
