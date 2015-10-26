@@ -555,11 +555,12 @@ class UI
 
         System.out.println("\nDo you want to (B)ook this flight? Or (R)eturn to main page?");
         String confirm = scan.nextLine();
+        int maxTno = 0;
         if (confirm.equals("B") || confirm.equals("b")) {
           String findTno = "select max(tno) from tickets";
           ResultSet tnoVal = sql_handler.runSQLQuery(query);
           while (tnoVal.next()) {
-            int maxTno = Integer.parseInt(tnoVal.getString("tno"));
+            maxTno = Integer.parseInt(tnoVal.getString("tno"));
           }
           maxTno = maxTno + 1;
           try {
@@ -576,7 +577,7 @@ class UI
             sql_handler.con.commit();
           } catch (SQLException e) {
             System.out.println("Error: Invalid submission value - transaction exited.");
-            dbConnection.rollback();
+            sql_handler.con.rollback();
           }
         } else if (confirm.equals("R") || confirm.equals("r")) {
           MainHub();
