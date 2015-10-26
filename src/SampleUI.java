@@ -539,8 +539,8 @@ class UI
     String addToBookings = "insert into bookings values ("+ tno 
                                                           + ", '" + flightno 
                                                           + "', '" + rs.getString("FARE") 
-                                                          + "', '" + rs.getString("DEP_DATE") 
-                                                          + "', '" + rs.getString("SEATS")+")";
+                                                          + "', to_date('" + rs.getString("DEP_DATE") + "', DD/MM/YYYY)"
+                                                          + "', '" + rs.getInt("SEATS")+")";
     sql_handler.runSQLStatement(addToBookings);
     System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
     System.out.println("Success - you have booked your flight!");
