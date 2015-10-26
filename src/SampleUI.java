@@ -522,10 +522,23 @@ class UI
     // is user listed in the flight?
     // if so, don't let the rebook.
     // if not, book. add the name & country of the passenger (ask here...)
-    System.out.println("Please enter the name of the passenger:");
-    String name = scan.nextLine();
-    System.out.println("Please enter the country of the passenger:");
-    String country = scan.nextLine();
+    String passengerquery = "select * from passengers where email = '" + pub_email + "'"; 
+    ResultSet passengerRs = sql_handler.runSQLQuery(passengerquery);
+    String name = "", country = "";
+    if (!passengerRs.next()) {
+      System.out.println("You do not have a name and country currently - please add one: ");
+      System.out.println("Please enter the name of the passenger:");
+      name = scan.nextLine();
+      System.out.println("Please enter the country of the passenger:");
+      country = scan.nextLine();
+      String addToPassengers = "insert into passengers values ('" + pub_email + "', '" + name + "', '" + country + "')";
+      sql_handler.runSQLStatement(addToPassengers);
+    } else {
+      while (rs.next()) {
+        name = rs.getString("name");
+        country = rs.getString("country");
+      }
+    }
     // process...
     if (flightno2 == null) {
       System.out.println("Only one flight selected - please confirm your booking: ");
@@ -577,8 +590,6 @@ class UI
           //no way to do queries in a transaction - use a catch { sql_handler.con.rollback(); }
           String addToTickets = "insert into tickets values (" + maxTno + ", '" + pub_email + "', " + price + ")";
           sql_handler.runSQLStatement(addToTickets);
-          String addToPassengers = "insert into passengers values ('" + pub_email + "', '" + name + "', '" + country + "')";
-          sql_handler.runSQLStatement(addToPassengers);
           String addToBookings = "insert into bookings values (" + maxTno + ", '" + flightno1 + "', '" + fare + "', '" + depdate + "', null)";
           sql_handler.runSQLStatement(addToBookings);
           sql_handler.con.commit();
