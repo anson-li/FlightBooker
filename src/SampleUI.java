@@ -324,9 +324,6 @@ class UI
     } catch (ParseException e) {
         e.printStackTrace();
     }*/
-    // SAMPLE QUERY: YEG/LAX/22-DEC-2015
-    // MISSING THE NUMBER OF SEATS...
-    // and missing the secondary query with acodes.
 
     String query =  "select flightno1, flightno2, layover, price " +
                     "from ( " +
@@ -347,11 +344,13 @@ class UI
     ArrayList<String> flightnolist2 = new ArrayList<>();
     int planId = 1;
     planId = printFlightPlans(rs, planId, flightnolist, flightnolist2);
-
-    System.out.println("\nFlights are currently being sorted by price:"
-                    + "\n(S)ort the result based on number of connections, or (R)eturn to main menu.");
-    System.out.println("Or select a booking with the corresponding ID (eg. 1, 2, ...)");
+    System.out.print("\nFlights are currently being sorted by price:"
+        + "\n(S)ort the result based on number of connections, or ");
+    
     while(true) {
+      System.out.println("(R)eturn to main menu.");
+      System.out.println("Or select a booking with the corresponding ID (eg. 1, 2, ...)");
+      
       String i = scan.nextLine();
       if (i.equals("S") || i.equals("s")) {
         
@@ -385,6 +384,8 @@ class UI
         rs = sql_handler.runSQLQuery(q);
         planId = printFlightPlans(rs, planId, flightnolist, flightnolist2);
         
+        
+        
       } else if (i.equals("R") || i.equals("r")) {
         MainHub(role);
       } else if (isInteger(i,10)) {
@@ -403,7 +404,8 @@ class UI
   
   private int printFlightPlans(ResultSet rs, int planId, ArrayList<String> flightnolist, ArrayList<String> flightnolist2) throws SQLException
   {
-    while(rs.next()) 
+    int startId = planId;
+    while(rs.next())
     {
       String flightno1 = rs.getString("FLIGHTNO1");
       String flightno2 = rs.getString("FLIGHTNO2");
@@ -477,7 +479,8 @@ class UI
       sqlh1.close();
       planId++;
     }
-    System.out.println("-----------------------------------------");
+    if (startId != planId)
+      System.out.println("-----------------------------------------");
     return planId;
   }
 
