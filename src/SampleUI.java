@@ -560,7 +560,7 @@ class UI
         seats = rs.getString("seats");
         price = rs.getString("price");
         DateFormat df = new SimpleDateFormat("dd-MMM-yy");
-        DateFormat initialdf = new SimpleDateFormat("yyyy-mm-dd");
+        DateFormat initialdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
           depdate = depdate.substring(0, 10);
           System.out.println("Substring1 :  " + depdate);
