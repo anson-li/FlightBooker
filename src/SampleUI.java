@@ -1007,10 +1007,6 @@ class UI
       sqlh1.close();
       planId++;
     }
-    
-    
-    System.out.println("The round-trip flights that match your description are as follows:");
-    // system.out.println(flightslist)
     System.out.println("Round-trips are currently being sorted by number of connections, and price.");
     String i = scan.nextLine();
     MainHub();
