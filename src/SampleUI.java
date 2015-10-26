@@ -526,7 +526,7 @@ class UI
     ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
     tnoVal.next();
     String tmpTno = tnoVal.getString("tno");
-    if (tmpTno == null)
+    if (tmpTno != null)
       tno = Integer.parseInt(tmpTno);
     tno += 100;
       
