@@ -2,7 +2,7 @@ import java.sql.*;
 
 public class SQLHandler
 {
-  private Connection con;
+  public Connection con;
   private String url;
   private String username;
   private String password;
