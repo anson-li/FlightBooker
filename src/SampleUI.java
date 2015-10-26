@@ -548,6 +548,7 @@ class UI
       ResultSet rs = sql_handler.runSQLQuery(query1);
 
       String src = "", depdate = "01-JAN-90", dst = "", dept = "", arrt = "", fare = "", seats = "", price = "";
+      java.util.Date dateCv = = new java.util.Date();
 
       while (rs.next()) {
         src = rs.getString("src");
@@ -561,7 +562,7 @@ class UI
       }
       DateFormat df = new SimpleDateFormat("dd-MMM-YY");
       try {
-        java.util.Date dateCv = df.parse(depdate);
+        dateCv = df.parse(depdate);
       } catch (ParseException e) {}
       System.out.println("-----------------------------------------");
       System.out.println("Flight Info:");
