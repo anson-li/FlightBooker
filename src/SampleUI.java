@@ -907,7 +907,7 @@ class UI
       System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-User Details-=-=-=-=-=-=-=-=-=-=-=-+");
       System.out.println("Email:         " + email);
       System.out.println("Name:          " + name);
-      System.out.println("Country:       " + email);
+      System.out.println("Country:       " + country);
       System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-+");
 
     }
