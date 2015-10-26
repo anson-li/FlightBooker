@@ -810,7 +810,7 @@ class UI
     System.out.println("Booking tno: " + tno);
     Scanner scan = new Scanner(System.in);
     System.out.println("Your booking details is as follows: ");
-    String query = "select b.tno, b.flightno, b.fare, p.name, p.email, p.country, to_char(b.dep_date, 'yyyy-MM-dd'), t.paid_price " +
+    String query = "select b.tno, b.flightno, b.fare, p.name, p.email, p.country, to_char(b.dep_date, 'yyyy-MM-dd') as dep_date, t.paid_price " +
       "from bookings b, tickets t, passengers p " +
       "where b.tno = t.tno and t.email = p.email and t.email = '" + pub_email + "' and p.name = t.name";
     ResultSet rs = sql_handler.runSQLQuery(query);
