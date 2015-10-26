@@ -547,7 +547,7 @@ class UI
               "from available_flights where flightno='"+flightno1+"'";
       ResultSet rs = sql_handler.runSQLQuery(query1);
 
-      String src = "", depdate = "", dst = "", dept = "", arrt = "", fare = "", seats = "", price = "";
+      String src = "", depdate = "01-JAN-90", dst = "", dept = "", arrt = "", fare = "", seats = "", price = "";
 
       while (rs.next()) {
         src = rs.getString("src");
@@ -559,13 +559,17 @@ class UI
         seats = rs.getString("seats");
         price = rs.getString("price");
       }
-      DateFormat df = new SimpleDateFormat("yyyy/mm/dd");
+      DateFormat df = new SimpleDateFormat("dd-MMM-YY");
+      try {
+        java.util.Date dateCv = df.parse(depdate);
+      } catch (ParseException e) {}
       System.out.println("-----------------------------------------");
       System.out.println("Flight Info:");
       System.out.println("    Flight #:  "+flightno1);
+      System.out.println("    Price:     "+price)
       System.out.println("    Source:    "+src);
       System.out.println("    Dest.:     "+dst);
-      System.out.println("    Dep. Date: "+depdate);
+      System.out.println("    Dep. Date: "+dateCv);
       System.out.println("    Dep. Time: "+dept);
       System.out.println("    Arr. Time: "+arrt);
       System.out.println("    Name:      "+name);
@@ -589,7 +593,7 @@ class UI
           //no way to do queries in a transaction - use a catch { sql_handler.con.rollback(); }
           String addToTickets = "insert into tickets values (" + maxTno + ", '" + pub_email + "', " + price + ")";
           sql_handler.runSQLStatement(addToTickets);
-          String addToBookings = "insert into bookings values (" + maxTno + ", '" + flightno1 + "', '" + fare + "', '" + depdate + "', null)";
+          String addToBookings = "insert into bookings values (" + maxTno + ", '" + flightno1 + "', '" + fare + "', '" + dateCv + "', null)";
           sql_handler.runSQLStatement(addToBookings);
           sql_handler.con.commit();
           System.out.println("Success - you have booked your flight!");
