@@ -953,6 +953,7 @@ class UI
       sql_handler.runSQLStatement(delticket);
       sql_handler.con.commit();
       System.out.println("Booking has been deleted.");
+      GenerateViews();
     } catch (SQLException e) {
       System.out.println("Error: can't delete entries - rollback completed.");
       System.out.println(e);

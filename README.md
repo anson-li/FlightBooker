@@ -8,7 +8,7 @@ Satyen Alkolkar and Anson Li
 * removing ghost sql statements
 * refactoring?
 * descriptive message if the sql query fails for rollbacks... (re: bookings)
-* regenerate views after bookings is cancelled 
+* [FIXED] regenerate views after bookings is cancelled 
 * in general, more descriptive error messages in catch exceptions.
 * check if flight number is valid in airlineagent - flight arrival and departure
 * add comments 
