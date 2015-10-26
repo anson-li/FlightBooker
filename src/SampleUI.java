@@ -548,7 +548,8 @@ class UI
       ResultSet rs = sql_handler.runSQLQuery(query1);
 
       String src = "", depdate = "01-JAN-90", dst = "", dept = "", arrt = "", fare = "", seats = "", price = "";
-      DateTime dateCv = new DateTime();
+      java.util.Date dateCv = new java.util.Date();
+      String convdate = "01-JAN-90";
 
       while (rs.next()) {
         src = rs.getString("src");
@@ -562,8 +563,8 @@ class UI
       }
       DateFormat df = new SimpleDateFormat("dd-MMM-yy");
       try {
-        dateCv = df.parse(depdate);
-        dateCv = df.format(dateCv);
+        convdate = df.format(df.parse(depdate));
+        System.out.println(df.format(df.parse(depdate)));
       } catch (ParseException e) {}
       System.out.println("-----------------------------------------");
       System.out.println("Flight Info:");
@@ -595,7 +596,7 @@ class UI
           //no way to do queries in a transaction - use a catch { sql_handler.con.rollback(); }
           String addToTickets = "insert into tickets values (" + maxTno + ", '" + pub_email + "', " + price + ")";
           sql_handler.runSQLStatement(addToTickets);
-          String addToBookings = "insert into bookings values (" + maxTno + ", '" + flightno1 + "', '" + fare + "', '" + dateCv + "', null)";
+          String addToBookings = "insert into bookings values (" + maxTno + ", '" + flightno1 + "', '" + fare + "', '" + convdate + "', null)";
           sql_handler.runSQLStatement(addToBookings);
           sql_handler.con.commit();
           System.out.println("Success - you have booked your flight!");
