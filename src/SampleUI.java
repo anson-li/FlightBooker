@@ -588,7 +588,7 @@ class UI
         while (tnoVal.next()) {
           try { 
             maxTno = Integer.parseInt(tnoVal.getString("tno"));
-          } catch (ParseException e) {}
+          } catch (SQLException e) {}
         }
         maxTno = maxTno + 100;
         try {
