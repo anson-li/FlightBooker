@@ -560,7 +560,7 @@ class UI
         seats = rs.getString("seats");
         price = rs.getString("price");
       }
-      DateFormat df = new SimpleDateFormat("dd-MMM-YY");
+      DateFormat df = new SimpleDateFormat("dd-MMM-yy");
       try {
         dateCv = df.parse(depdate);
       } catch (ParseException e) {}
