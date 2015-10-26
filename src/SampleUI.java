@@ -548,7 +548,7 @@ class UI
                                                           + "'" + flightno + "', "
                                                           + "'" + rs.getString("FARE") + "', "
                                                           + convdate + ", "
-                                                          + "'" + rs.getInt("SEATS")+"')";
+                                                          + "null)";
     sql_handler.runSQLStatement(addToBookings);
     System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
     System.out.println("Success - you have booked your flight!");
