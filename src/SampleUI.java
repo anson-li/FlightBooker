@@ -327,31 +327,18 @@ class UI
     // SAMPLE QUERY: YEG/LAX/22-DEC-2015
     // MISSING THE NUMBER OF SEATS...
     // and missing the secondary query with acodes.
-    /*
-    String query = "select flightno1, flightno2, layover, price " +
-                   "from ( select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
-                     "from ( select flightno1, flightno2, layover, price " +
-                     "from good_connections " +
-                       "where dep_date ='" + df.format(depDate).toString().toUpperCase() + 
-                       "' and src='" + srcACode + "' and dst='" + destACode + "' " +
-                   "union " +
-                   "select flightno flightno1, '' flightno2, 0 layover, price " +
-                   "from available_flights " +
-                   "where dep_date ='" + df.format(depDate).toString().toUpperCase() + 
-                   "' and src='" + srcACode + "' and dst='" + destACode + "')) " +
-                   "order by price";
-    */
+
     String query =  "select flightno1, flightno2, layover, price " +
                     "from ( " +
                     "select flightno1, flightno2, layover, price, row_number() over (order by price asc) rn " +
                     "from " +
                     "(select flightno1, flightno2, layover, price " +
                     "from good_connections " +
-                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='" + srcACode.toUpperCase() + "' and dst='" + destACode.toUpperCase() + "' " +
+                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='"+srcACode.toUpperCase()+"' and dst='"+destACode.toUpperCase()+"' " +
                     "union " +
                     "select flightno flightno1, '' flightno2, 0 layover, price " +
                     "from available_flights " +
-                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='YEG' and dst='LAX')) " +
+                    "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='"+srcACode.toUpperCase()+"' and dst='"+destACode.toUpperCase()+"')) " +
                     "order by price";
 
     //System.out.println(query);
@@ -359,14 +346,17 @@ class UI
     // search flights for direct flights and flights w one connection
     // provide information. ask user if they want to sort
     // if sort, then sort
-    System.out.println("The flights that match your description are as follows:");
-    // system.out.println(flightslist)
-    System.out.println("\nID  FLIGHTNO  FLIGHTNO2   LAYOVER  PRICE");
-    System.out.println  ("--  --------  ---------   -------  -----");
-    ArrayList<String> flightnolist = new ArrayList<>();
-    ArrayList<String> flightnolist2 = new ArrayList<>();
-    int intId = 0;
-    while (rs.next()) {
+    System.out.println("The flight plans that match your description are as follows:");
+    System.out.println("------------------------------------------------------------\n");
+    
+    for (int planId = 1; rs.next(); planId++) 
+    {
+      
+      System.out.println("\nID  FLIGHTNO  FLIGHTNO2   LAYOVER  PRICE");
+      System.out.println  ("--  --------  ---------   -------  -----");
+      ArrayList<String> flightnolist = new ArrayList<>();
+      ArrayList<String> flightnolist2 = new ArrayList<>();
+      int intId = 0;
       String flightno1 = rs.getString("FLIGHTNO1");
       String flightno2 = rs.getString("FLIGHTNO2");
       flightnolist.add(flightno1);
@@ -375,10 +365,6 @@ class UI
       String layover = rs.getString("LAYOVER");
       String price = rs.getString("PRICE");
       intId++;
-      //String src = rs.getString("SRC");
-      //String dst = rs.getString("DST");
-      //java.sql.Date deptime = rs.getDate("DEP_TIME");
-      //int estdur = rs.getInt("EST_DUR");
 
       System.out.println(intId + "    " + flightno1 + "       " + flightno2 +"      " +layover+"        " +price);
     }
