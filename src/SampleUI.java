@@ -539,7 +539,7 @@ class UI
     
     DateFormat df = new SimpleDateFormat("dd-MMM-yy");
     DateFormat initialdf = new SimpleDateFormat("yyyy-MM-dd");
-    String depdate = "", convdate = "";
+    String depdate = rs.getString("DEP_DATE"), convdate = "";
     try {
       depdate = depdate.substring(0, 10);
       convdate = df.format(initialdf.parse(depdate));
@@ -549,6 +549,7 @@ class UI
                                                           + "'" + rs.getString("FARE") + "', "
                                                           + convdate + ", "
                                                           + "null)";
+    System.out.println(addToBookings);
     sql_handler.runSQLStatement(addToBookings);
     System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
     System.out.println("Success - you have booked your flight!");
