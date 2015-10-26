@@ -361,6 +361,7 @@ class UI
       query = "select src, dst, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, seats " +
               "from available_flights where flightno='"+flightno1+"'";
       rs = sql_handler.runSQLQuery(query);
+      rs.next();
       String src1 = rs.getString("src");
       String dst1 = rs.getString("dst");
       String dep1 = rs.getString("dept");
@@ -378,6 +379,7 @@ class UI
         query = "select src, dst, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, seats " +
             "from available_flights where flightno='"+flightno2+"'";
         rs = sql_handler.runSQLQuery(query);
+        rs.next();
         src2 = rs.getString("src");
         dst2 = rs.getString("dst");
         dep2 = rs.getString("dept");
