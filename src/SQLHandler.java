@@ -47,12 +47,22 @@ public class SQLHandler
   {
     statement.executeUpdate(s);
   }
+  
+  public String get_uname()
+  {
+    return username;
+  }
+  
+  public String get_pword()
+  {
+    return password;
+  }
 
   public ResultSet runSQLQuery(String q) throws SQLException
   {
     return statement.executeQuery(q);
   }
-
+  
   public void close() throws SQLException
   {
     statement.close();

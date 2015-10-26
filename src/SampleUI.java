@@ -360,7 +360,8 @@ class UI
       
       query = "select src, dst, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, seats " +
               "from available_flights where flightno='"+flightno1+"'";
-      ResultSet rs1 = sql_handler.runSQLQuery(query);
+      SQLHandler sqlh1 = new SQLHandler(sql_handler.get_uname(), sql_handler.get_pword());
+      ResultSet rs1 = sqlh1.runSQLQuery(query);
       rs1.next();
       String src1 = rs1.getString("src");
       String dst1 = rs1.getString("dst");
@@ -378,8 +379,8 @@ class UI
       {
         query = "select src, dst, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, seats " +
             "from available_flights where flightno='"+flightno2+"'";
-        ResultSet rs2 = sql_handler.runSQLQuery(query);
-        rs.next();
+        ResultSet rs2 = sqlh1.runSQLQuery(query);
+        rs2.next();
         src2 = rs2.getString("src");
         dst2 = rs2.getString("dst");
         dep2 = rs2.getString("dept");
@@ -415,6 +416,7 @@ class UI
       }
 
       System.out.println("-----------------------------------------\n");
+      sqlh1.close();
     }
 
     System.out.println("\nFlights are currently being sorted by price:"
