@@ -595,7 +595,7 @@ class UI
         System.out.println("Flight departure time successfully updated.");
         MainHub();
       } else {
-        System.out.println("Incorrect input - please try again.")
+        System.out.println("Incorrect input - please try again.");
       }
     }
   }
@@ -634,7 +634,7 @@ class UI
         System.out.println("Flight arrival time successfully updated.");
         MainHub();
       } else {
-        System.out.println("Incorrect input - please try again.")
+        System.out.println("Incorrect input - please try again.");
       }
     }
   }
