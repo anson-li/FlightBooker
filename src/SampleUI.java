@@ -311,7 +311,7 @@ class UI
     }
 
     // add departure date
-    System.out.println("Please enter your departure date in format DD/MMM/YYYY - eg: 01/10/2015 for October 10, 2015");
+    System.out.println("Please enter your departure date in format DD/MM/YYYY - eg: 01/10/2015 for October 10, 2015");
     depDate = scan.nextLine();
     /*DateFormat df = new SimpleDateFormat("dd-MMM-yy");
     java.util.Date depDate = new java.util.Date();
@@ -531,19 +531,217 @@ class UI
     // is user listed in the flight?
     // if so, don't let the rebook.
     // if not, book. add the name & country of the passenger (ask here...)
+    String passengerquery = "select * from passengers where email = '" + pub_email + "'"; 
+    ResultSet passengerRs = sql_handler.runSQLQuery(passengerquery);
+    String name = "", country = "";
+    if (!passengerRs.next()) {
+      System.out.println("You do not have a name and country currently - please add one: ");
+      System.out.println("Please enter the name of the passenger:");
+      name = scan.nextLine();
+      System.out.println("Please enter the country of the passenger:");
+      country = scan.nextLine();
+      String addToPassengers = "insert into passengers values ('" + pub_email + "', '" + name + "', '" + country + "')";
+      sql_handler.runSQLStatement(addToPassengers);
+    } else {
+      ResultSet passengerRs1 = sql_handler.runSQLQuery(passengerquery);
+      while (passengerRs1.next()) {
+        name = passengerRs1.getString("name");
+        country = passengerRs1.getString("country");
+      }
+    }
+    // process...
     if (flightno2 == null) {
-      System.out.println("Only one flight selected.");
+      System.out.println("Only one flight selected - please confirm your booking: ");
+      String query1 = "select src, dst, dep_date, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, fare, seats, price " +
+              "from available_flights where flightno='"+flightno1+"'";
+      ResultSet rs = sql_handler.runSQLQuery(query1);
+
+      String src = "", depdate = "01-JAN-90", dst = "", dept = "", arrt = "", fare = "", seats = "", price = "";
+      String convdate = "01-JAN-90";
+
+      while (rs.next()) {
+        src = rs.getString("src");
+        depdate = rs.getString("dep_date");
+        dst = rs.getString("dst");
+        dept = rs.getString("dept");
+        arrt = rs.getString("arrt");
+        fare = rs.getString("fare");
+        seats = rs.getString("seats");
+        price = rs.getString("price");
+        DateFormat df = new SimpleDateFormat("dd-MMM-yy");
+        DateFormat initialdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+          depdate = depdate.substring(0, 10);
+          convdate = df.format(initialdf.parse(depdate));
+        } catch (ParseException e) { System.out.println(e); }
+      }
+      System.out.println("-----------------------------------------");
+      System.out.println("Flight Info:");
+      System.out.println("    Flight #:  "+flightno1);
+      System.out.println("    Price:     "+price);
+      System.out.println("    Source:    "+src);
+      System.out.println("    Dest.:     "+dst);
+      System.out.println("    Dep. Date: "+convdate);
+      System.out.println("    Dep. Time: "+dept);
+      System.out.println("    Arr. Time: "+arrt);
+      System.out.println("    Name:      "+name);
+      System.out.println("    Country:   "+country);
+      System.out.println("-----------------------------------------");
+
+      System.out.println("\nDo you want to (B)ook this flight? Or (R)eturn to main page?");
+      String confirm = scan.nextLine();
+      int maxTno = 0;
+      if (confirm.equals("B") || confirm.equals("b")) {
+        String findTno = "select max(tno) as tno from tickets";
+        ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
+        while (tnoVal.next()) {
+          try { 
+            String tmpTno = tnoVal.getString("tno");
+            if (tmpTno != null) {
+              maxTno = Integer.parseInt(tmpTno);
+            }
+          } catch (SQLException e) {}
+        }
+        maxTno = maxTno + 100;
+        try {
+          sql_handler.con.setAutoCommit(false);
+          GenerateViews();
+          //String checkFlightExists = "select flightno from available_flights where flightno = '" + flightno1 "'";
+          //no way to do queries in a transaction - use a catch { sql_handler.con.rollback(); }
+          String addToTickets = "insert into tickets values (" + maxTno + ", '" + name + "', '" + pub_email + "', " + price + ")";
+          sql_handler.runSQLStatement(addToTickets);
+          String addToBookings = "insert into bookings values (" + maxTno + ", '" + flightno1 + "', '" + fare + "', '" + convdate + "', null)";
+          sql_handler.runSQLStatement(addToBookings);
+          sql_handler.con.commit();
+          System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
+          System.out.println("Success - you have booked your flight!");
+          System.out.println("Your ticket number is: " + maxTno);
+          System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+\n");
+        } catch (SQLException e) {
+          System.out.println("Error: Invalid submission value - rollback completed.");
+          System.out.println(e);
+          sql_handler.con.rollback();
+        }
+      } else if (confirm.equals("R") || confirm.equals("r")) {
+        MainHub();
+      }
       // run query only once here
     } else {
-      System.out.println("Two flights to be booked!");
-      // run query twice through here
+      System.out.println("Two flights to be booked - please confirm your bookings:");
+      String query1 = "select src, dst, dep_date, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, fare, seats, price " +
+              "from available_flights where flightno='"+flightno1+"'";
+      String query2 = "select src, dst, dep_date, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, fare, seats, price " +
+              "from available_flights where flightno='"+flightno1+"'";
+      ResultSet rs1 = sql_handler.runSQLQuery(query1);
+      ResultSet rs2 = sql_handler.runSQLQuery(query2);
+
+      String src1 = "", depdate1 = "01-JAN-90", dst1 = "", dept1 = "", arrt1 = "", fare1 = "", seats1 = "", price1 = "", convdate1 = "01-JAN-90";
+      String src2 = "", depdate2 = "01-JAN-90", dst2 = "", dept2 = "", arrt2 = "", fare2 = "", seats2 = "", price2 = "", convdate2 = "01-JAN-90";
+
+      DateFormat df = new SimpleDateFormat("dd-MMM-yy");
+      DateFormat initialdf = new SimpleDateFormat("yyyy-MM-dd");
+
+      while (rs1.next()) {
+        src1 = rs1.getString("src");
+        depdate1 = rs1.getString("dep_date");
+        dst1 = rs1.getString("dst");
+        dept1 = rs1.getString("dept");
+        arrt1 = rs1.getString("arrt");
+        fare1 = rs1.getString("fare");
+        seats1 = rs1.getString("seats");
+        price1 = rs1.getString("price");
+        try {
+          depdate1 = depdate1.substring(0, 10);
+          convdate1 = df.format(initialdf.parse(depdate1));
+        } catch (ParseException e) { System.out.println(e); }
+      }
+
+      while (rs2.next()) {
+        src2 = rs2.getString("src");
+        depdate2 = rs2.getString("dep_date");
+        dst2 = rs2.getString("dst");
+        dept2 = rs2.getString("dept");
+        arrt2 = rs2.getString("arrt");
+        fare2 = rs2.getString("fare");
+        seats2 = rs2.getString("seats");
+        price2 = rs2.getString("price");
+        try {
+          depdate2 = depdate2.substring(0, 10);
+          convdate2 = df.format(initialdf.parse(depdate2));
+        } catch (ParseException e) { System.out.println(e); }
+      }
+
+      System.out.println("-----------------------------------------");
+      System.out.println("Flight #1 Info:");
+      System.out.println("    Flight #:  "+flightno1);
+      System.out.println("    Price:     "+price1);
+      System.out.println("    Source:    "+src1);
+      System.out.println("    Dest.:     "+dst1);
+      System.out.println("    Dep. Date: "+convdate1);
+      System.out.println("    Dep. Time: "+dept1);
+      System.out.println("    Arr. Time: "+arrt1);
+      System.out.println("    Name:      "+name);
+      System.out.println("    Country:   "+country);
+      System.out.println("-----------------------------------------");
+      System.out.println("Flight #2 Info:");
+      System.out.println("    Flight #:  "+flightno2);
+      System.out.println("    Price:     "+price2);
+      System.out.println("    Source:    "+src2);
+      System.out.println("    Dest.:     "+dst2);
+      System.out.println("    Dep. Date: "+convdate2);
+      System.out.println("    Dep. Time: "+dept2);
+      System.out.println("    Arr. Time: "+arrt2);
+      System.out.println("    Name:      "+name);
+      System.out.println("    Country:   "+country);
+      System.out.println("-----------------------------------------");
+
+      System.out.println("\nDo you want to (B)ook these flight? Or (R)eturn to main page?");
+      String confirm = scan.nextLine();
+      int maxTno1 = 0;
+      int maxTno2 = 0;
+      if (confirm.equals("B") || confirm.equals("b")) {
+        String findTno = "select max(tno) as tno from tickets";
+        ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
+        while (tnoVal.next()) {
+          try { 
+            String tmpTno = tnoVal.getString("tno");
+            if (tmpTno != null) {
+              maxTno1 = Integer.parseInt(tmpTno);
+            }
+          } catch (SQLException e) {}
+        }
+        maxTno1 = maxTno1 + 100;
+        maxTno2 = maxTno1 + 1;
+        try {
+          sql_handler.con.setAutoCommit(false);
+          GenerateViews();
+          //String checkFlightExists = "select flightno from available_flights where flightno = '" + flightno1 "'";
+          //no way to do queries in a transaction - use a catch { sql_handler.con.rollback(); }
+          String addToTickets1 = "insert into tickets values (" + maxTno1 + ", '" + name + "', '" + pub_email + "', " + price1 + ")";
+          String addToTickets2 = "insert into tickets values (" + maxTno2 + ", '" + name + "', '" + pub_email + "', " + price2 + ")";
+          sql_handler.runSQLStatement(addToTickets1);
+          sql_handler.runSQLStatement(addToTickets2);
+
+          String addToBookings1 = "insert into bookings values (" + maxTno1 + ", '" + flightno1 + "', '" + fare1 + "', '" + convdate1 + "', null)";
+          String addToBookings2 = "insert into bookings values (" + maxTno2 + ", '" + flightno2 + "', '" + fare2 + "', '" + convdate2 + "', null)";
+          sql_handler.runSQLStatement(addToBookings1);
+          sql_handler.runSQLStatement(addToBookings2);
+
+          sql_handler.con.commit();
+          System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
+          System.out.println("Success - you have booked your flight!");
+          System.out.println("Your ticket number for flight 1 is: " + maxTno1);
+          System.out.println("Your ticket number for flight 1 is: " + maxTno2);
+          System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+\n");
+        } catch (SQLException e) {
+          System.out.println("Error: Invalid submission value - rollback completed.");
+          System.out.println(e);
+          sql_handler.con.rollback();
+        }
+      } else if (confirm.equals("R") || confirm.equals("r")) {
+        MainHub();
+      }
     }
-    System.out.println("Please enter the name of the passenger:");
-    String name = scan.nextLine();
-    System.out.println("Please enter the country of the passenger:");
-    String country = scan.nextLine();
-    // process...
-    System.out.println("Success - you have booked your flight!");
     MainHub();
   }
 
@@ -621,6 +819,7 @@ class UI
     System.out.println("Booking tno: " + tno);
     Scanner scan = new Scanner(System.in);
     System.out.println("Your booking details is as follows: ");
+    // missing booking detail
     System.out.println("Return to (b)ookings list, (c)ancel booking or (e)xit bookings page?");
     while(true) {
       String i = scan.nextLine();
@@ -650,7 +849,19 @@ class UI
   public void CancelBooking(String tno) throws SQLException { // pass in booking value in here?
     // delete the booking
     // return to mainhub
-    System.out.println("Booking has been deleted.");
+    try {
+      sql_handler.con.setAutoCommit(false);
+      String delbookings = "delete from bookings where tno = " + tno;
+      String delticket = "delete from tickets where tno = " + tno;
+      sql_handler.runSQLStatement(delbookings);
+      sql_handler.runSQLStatement(delticket);
+      sql_handler.con.commit();
+      System.out.println("Booking has been deleted.");
+    } catch (SQLException e) {
+      System.out.println("Error: can't delete entries - rollback completed.");
+      System.out.println(e);
+      sql_handler.con.rollback();
+    }
     MainHub();
   }
 
@@ -672,7 +883,6 @@ class UI
                      + "where email='"+pub_email+"'";
 
     sql_handler.runSQLStatement(statement);
-
     System.out.println("You have now been logged out.");
     WelcomeScreen();
   }
