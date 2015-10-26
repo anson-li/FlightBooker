@@ -559,11 +559,11 @@ class UI
         fare = rs.getString("fare");
         seats = rs.getString("seats");
         price = rs.getString("price");
+        DateFormat df = new SimpleDateFormat("dd-MMM-yy");
+        try {
+          convdate = df.format(df.parse(depdate));
+        } catch (ParseException e) {}
       }
-      DateFormat df = new SimpleDateFormat("dd-MMM-yy");
-      try {
-        convdate = df.format(df.parse(depdate));
-      } catch (ParseException e) {}
       System.out.println("-----------------------------------------");
       System.out.println("Flight Info:");
       System.out.println("    Flight #:  "+flightno1);
