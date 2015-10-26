@@ -578,7 +578,7 @@ class UI
       if (isValidDate(deptime)) {
         DateFormat df = new SimpleDateFormat("yyyy/mm/dd hh:mm:ss");
         java.util.Date depDate = new java.util.Date();
-        depDate = df.parse(strDate);
+        depDate = df.parse(deptime);
         statement = "update sch_flights "
         + "set act_dep_date = '" + depDate + "' "
         + "where flightno = '"+flightno.toUpperCase()+"'"; 
@@ -731,9 +731,9 @@ class UI
     boolean valid = false;
     try {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/mm/dd hh:mm:ss");
-        String output = dateFormat.parse(input).format("yyyy/mm/dd hh:mm:ss");
-        valid = input.equals(output); 
-    } catch (Exception ignore) {}
+        String output = dateFormat.parse(input);
+        valid = true; 
+    } catch (ParseException e) {}
     return valid;
   }
 }
