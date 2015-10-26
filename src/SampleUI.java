@@ -566,7 +566,7 @@ class UI
       System.out.println("-----------------------------------------");
       System.out.println("Flight Info:");
       System.out.println("    Flight #:  "+flightno1);
-      System.out.println("    Price:     "+price)
+      System.out.println("    Price:     "+price);
       System.out.println("    Source:    "+src);
       System.out.println("    Dest.:     "+dst);
       System.out.println("    Dep. Date: "+dateCv);
