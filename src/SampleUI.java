@@ -198,13 +198,13 @@ class UI
         return;
       }
 
-      query = "select email from airline_agents where email='"+email+"'";
+      query = "select * from airline_agents where email='"+email+"'";
       rs = sql_handler.runSQLQuery(query);
       if (rs.next())
       {
         role = "poweruser";
-        String airline_email = rs.getString("email");
-        String airline_name = rs.getString("name");
+        String airline_email = rs.getString("EMAIL");
+        String airline_name = rs.getString("NAME");
         System.out.println("Airline Agent: " + airline_name );
       }
       else
