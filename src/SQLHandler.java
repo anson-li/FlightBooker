@@ -13,7 +13,8 @@ public class SQLHandler
     try {
       loadDriver();
     } catch (ClassNotFoundException cnfe) {
-      System.err.println("Could not load driver.");
+      System.err.println("Error: Could not load driver.");
+      System.err.println(cnfe.getMessage());
     }
 
     setURL();
@@ -22,20 +23,21 @@ public class SQLHandler
 
     makeConnection();
 
-    // Changed to reflect changes made in the result set and to make these changes permanent to the database too
+    // Changed to reflect changes made in the result 
+    // set and to make these changes permanent to the database too
     statement = con.createStatement( ResultSet.TYPE_SCROLL_SENSITIVE,
-                                            ResultSet.CONCUR_UPDATABLE);
+                                     ResultSet.CONCUR_UPDATABLE);
   }
 
   private void loadDriver() throws ClassNotFoundException
   {
     String driver_name = "oracle.jdbc.driver.OracleDriver";
-    /*Class driver_class =*/ Class.forName(driver_name);
+    Class.forName(driver_name);
   }
 
   private void setURL()
   {
-    url = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS"; // or System.getenv("DB_URL");
+    url = "jdbc:oracle:thin:@gwynne.cs.ualberta.ca:1521:CRS";
   }
 
   private void makeConnection() throws SQLException

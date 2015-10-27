@@ -8,8 +8,6 @@ import java.text.*;
 
 class UI
 {
-
-  private int num_uis;
   private SQLHandler sql_handler;
   private Scanner scan;
   private Console con;
@@ -18,16 +16,18 @@ class UI
 
   UI(SQLHandler sql_handler, Console con)
   {
-    num_uis += 1;
     this.sql_handler = sql_handler;
     this.con = con;
     this.scan = new Scanner(System.in);
     try {
       GenerateViews();
-      WelcomeScreen();
     } catch (SQLException e) {
-      e.printStackTrace();
+      System.err.println("Error: Unable to generate views");
+      System.err.println(e.getMessage());
+      return;
     }
+    
+    WelcomeScreen();
   };
 
   /**
@@ -72,7 +72,7 @@ class UI
    * first main screen of application
    * @throws SQLException
    */
-  public void WelcomeScreen() throws SQLException {
+  public void WelcomeScreen() {
     System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
     System.out.println("Welcome to Air Kappa!");
     while(true) {
@@ -92,7 +92,7 @@ class UI
         System.out.println("System is exiting; "
                          + "Thank you for visiting Air Kappa!");
         scan.close();
-        System.exit(0);
+        return;
       } else {
         System.out.println("Invalid entry - please try again.");
       }
@@ -106,7 +106,7 @@ class UI
    * Simulation of a registration screen.
    * @throws SQLException
    */
-  public boolean Register() throws SQLException {
+  public boolean Register() {
 
     String email = "";
     String password = "";
@@ -136,11 +136,15 @@ class UI
     else
     {
       String query = "select * from users where email='"+email+"'";
-      ResultSet rs = sql_handler.runSQLQuery(query);
-
-      if (rs.next())
-      {
-        System.out.println("Registration failed. User exists.");
+      try {
+        ResultSet rs = sql_handler.runSQLQuery(query);
+        if (rs.next())
+        {
+          System.out.println("Registration failed. User exists.");
+          return false;
+        }
+      } catch (SQLException e) {
+        System.err.println("Error: Unable to search for existing user.");
         return false;
       }
     }
@@ -155,20 +159,24 @@ class UI
       String statement = "insert into users values('" + email +  "',"
                         + "'" + password +"',"
                         + "sysdate )";
-      sql_handler.runSQLStatement(statement);
+      try {
+        sql_handler.runSQLStatement(statement);
+      } catch (SQLException e) {
+        System.err.println("Error: Unable to insert new user into table.");
+        return false;
+      }
     }
     pub_email = email;
     pub_role = "user";
     
     String query = "select * from airline_agents where email='"+email+"'";
-    ResultSet rs = sql_handler.runSQLQuery(query);
-    if (rs.next())
-    {
-      pub_role = "poweruser";
-    }
-    else
-    {
-      pub_role = "user";
+    try {
+      ResultSet rs = sql_handler.runSQLQuery(query);
+      if (rs.next())
+        pub_role = "poweruser";
+    } catch (SQLException e) {
+      System.err.println("Error: Register unable to check if user is ariline agent.");
+      return false;
     }
     
     return true;
@@ -182,7 +190,7 @@ class UI
    * Simulates traditional login system.
    * @throws SQLException
    */
-  private boolean Login() throws SQLException {
+  private boolean Login() {
     System.out.println("Login:");
     String email = "";
     String pword = "";
@@ -204,39 +212,51 @@ class UI
         System.out.println("Invalid password.");
         return false;
       }
+      
+      ResultSet rs = null;
 
       String query = "select email, pass from users where email='"+email+"'";
-      ResultSet rs = sql_handler.runSQLQuery(query);
-
-      if (!rs.next())
-      {
-        System.out.println("Invalid email/password combination.");
+      try {
+        rs = sql_handler.runSQLQuery(query);
+        if (!rs.next())
+        {
+          System.out.println("Invalid email/password combination.");
+          return false;
+        }
+      } catch (SQLException e) {
+        System.err.println("Error: Unable to retrieve user from table.");
         return false;
       }
-
-      query = "select * from airline_agents where email='"+email+"'";
-      rs = sql_handler.runSQLQuery(query);
-      if (rs.next())
-      {
-        role = "poweruser";
-        String airline_email = rs.getString("EMAIL");
-        String airline_name = rs.getString("NAME");
-        System.out.println("Airline Agent: " + airline_name );
-      }
-      else
-      {
-        role = "user";
-        System.out.println("Standard User.");
+      
+      try {
+        query = "select * from airline_agents where email='"+email+"'";
+        rs = sql_handler.runSQLQuery(query);
+        if (rs.next())
+        {
+          role = "poweruser";
+          String airline_name = rs.getString("NAME");
+          System.out.println("Airline Agent: " + airline_name );
+        }
+        else
+        {
+          role = "user";
+          System.out.println("Standard User.");
+        }
+      } catch (SQLException e) {
+        System.err.println("Error: Login unable to check if user is airline agent.");
+        return false;
       }
 
       String statement = "update users "
           + "set last_login=sysdate "
           + "where email='"+pub_email+"'";
-
-      sql_handler.runSQLStatement(statement);
+      try {
+        sql_handler.runSQLStatement(statement);
+      } catch (SQLException e) {
+        System.err.println("Error: Unable to update user login time.");
+      }
 
       System.out.println("Login Successful. ");
-
       pub_email = email;
       pub_role = role;
 
@@ -253,8 +273,7 @@ class UI
    * @param role
    * @throws SQLException
    */
-  public void MainHub() throws SQLException {
-    Scanner scan = new Scanner(System.in);
+  public void MainHub() {
     while(true) {
       System.out.println("\n+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
       System.out.println("            Welcome to Air Kappa's Main Menu                ");
@@ -272,18 +291,36 @@ class UI
       System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
       String input = scan.nextLine();
       if (input.equals("S") || input.equals("s")) {
-        SearchForFlights(); // TODO:
+        try { SearchForFlights(); }
+        catch (SQLException e) {
+          System.err.println("Error: Unable to Search For Flights.");
+        }
       } else if (input.equals("E") || input.equals("e")) {
-        ExistingBookings(); // TODO:
+        try { ExistingBookings(); }
+        catch (SQLException e) {
+          System.err.println("Error: Unable to handle Existing Bookings.");
+        }
       } else if (input.equals("R") || input.equals("r")) {
-        RoundTrips(); // TODO:
+        try { RoundTrips(); }
+        catch (SQLException e) {
+          System.err.println("Error: Unable to handle Round Trips.");
+        }
       } else if (input.equals("L") || input.equals("l")) {
-        Logout(); // TODO:
+        try { Logout(); }
+        catch (SQLException e) {
+          System.err.println("Error: Unable to set logout time in users table.");
+        }
         return;
       } else if ((input.equals("D") || input.equals("d")) && pub_role.equals("poweruser")) {
-        RecordDeparture(); // TODO:
+        try { RecordDeparture(); }
+        catch (SQLException e) {
+          System.err.println("Error: Unable to Record Deparrture time.");
+        }
       } else if ((input.equals("A") || input.equals("a")) && pub_role.equals("poweruser")) {
-        RecordArrival(); // TODO:
+        try { RecordArrival(); }
+        catch (SQLException e) {
+          System.err.println("Error: Unable to Record Arrival time.");
+        }
       } else {
         System.out.println("Invalid entry - please try again.");
       }
@@ -317,7 +354,8 @@ class UI
     }
 
     // add departure date
-    System.out.println("Please enter your departure date in format DD/MM/YYYY\n   eg: 01/10/2015 for October 10, 2015");
+    System.out.println("Please enter your departure date in format DD/MM/YYYY\n"
+        + "   eg: 01/10/2015 for October 10, 2015");
     depDate = scan.nextLine();
     /*DateFormat df = new SimpleDateFormat("dd-MMM-yy");
     java.util.Date depDate = new java.util.Date();
@@ -619,7 +657,8 @@ class UI
       return;
 
     } catch (SQLException sqle) { //FIXME
-      System.out.println("Booking failed - please see error for more information!\nYour request has been fully reverted.");
+      System.out.println("Booking failed - please see error for more information!"
+          + "\nYour request has been fully reverted.");
       System.out.println(sqle);
       sql_handler.con.rollback();
     }
@@ -704,7 +743,6 @@ class UI
    * @throws SQLException
    */
   public int BookingDetail(String tno) throws SQLException {
-    Scanner scan = new Scanner(System.in);
     System.out.println("Your booking details is as follows: ");
     String query = "select b.tno, b.flightno, b.fare, p.name, p.email, p.country, to_char(b.dep_date, 'yyyy-MM-dd') as dep_date, t.paid_price " +
       "from bookings b, tickets t, passengers p " +
@@ -766,7 +804,9 @@ class UI
       System.out.println("Booking has been deleted.");
       GenerateViews();
     } catch (SQLException e) { // FIXME
-      System.out.println("Booking cancellation failed - please see error for more information!\nYour request has been fully reverted.");
+      System.out.println("Booking cancellation failed - "
+          + "please see error for more information!"
+          + "\nYour request has been fully reverted.");
       System.out.println(e);
       sql_handler.con.rollback();
     }
@@ -809,7 +849,8 @@ class UI
         break;
       }
     }
-    System.out.println("Departure time: - format is 'yyyy/mm/dd hh24:mi:ss', example: 2003/05/03 21:02:44 or select (C)urrent time.");
+    System.out.println("Departure time: - format is 'yyyy/mm/dd hh24:mi:ss', "
+        + "example: 2003/05/03 21:02:44 or select (C)urrent time.");
     while(true) {
       String statement = "";
       String deptime = scan.nextLine();
@@ -883,7 +924,8 @@ class UI
         break;
       }
     }
-    System.out.println("Arrival time: - format is 'yyyy/mm/dd hh24:mi:ss', example: 2003/05/03 21:02:44 or select (C)urrent time.");
+    System.out.println("Arrival time: - format is 'yyyy/mm/dd hh24:mi:ss', "
+        + "example: 2003/05/03 21:02:44 or select (C)urrent time.");
     while(true) {
       String statement = "";
       String arrtime = scan.nextLine();
@@ -963,10 +1005,12 @@ class UI
     }
 
     // add departure date
-    System.out.println("Please enter your departure date in format DD/MMM/YYYY\n  eg: 01/10/2015 for October 10, 2015");
+    System.out.println("Please enter your departure date in format DD/MMM/YYYY\n"
+        + "  eg: 01/10/2015 for October 10, 2015");
     depDate = scan.nextLine();
 
-    System.out.println("Please enter your return date in format DD/MMM/YYYY\n  eg: 01/10/2015 for October 10, 2015");
+    System.out.println("Please enter your return date in format DD/MMM/YYYY\n"
+        + "  eg: 01/10/2015 for October 10, 2015");
     retDate = scan.nextLine();
 
     try {
@@ -1259,12 +1303,12 @@ class UI
    * @param input
    * @return valid
    */
-  public static boolean isValidDate(String input) {
+  public boolean isValidDate(String input) {
     boolean valid = false;
     try {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/mm/dd HH:mm:ss");
         dateFormat.setLenient(false);
-        java.util.Date output = dateFormat.parse(input);
+        dateFormat.parse(input);
         valid = true;
     } catch (ParseException e) {}
     return valid;
