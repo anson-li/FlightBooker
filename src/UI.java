@@ -1188,6 +1188,8 @@ class UI
    * dependent on the dateformat specified (consistent between our processes).
    * code taken from http://stackoverflow.com/questions/11480542/fastest-way-to-tell-if-a-string-is-a-valid-date
    * by victor.hernandez
+   * code for setLenient take from http://stackoverflow.com/questions/4528047/checking-the-validity-of-a-date
+   * by Pangea
    * @param input
    * @return valid
    */
@@ -1195,6 +1197,7 @@ class UI
     boolean valid = false;
     try {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/mm/dd hh:mm:ss");
+        dateFormat.setLenient(false);
         java.util.Date output = dateFormat.parse(input);
         valid = true;
     } catch (ParseException e) {}
