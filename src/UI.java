@@ -504,7 +504,6 @@ class UI
 
 
     String addToTickets = "insert into tickets values (" + tno + ", '" + name + "', '" + pub_email + "', " + rs.getFloat("PRICE") + ")";
-    System.out.println(addToTickets);
     sql_handler.runSQLStatement(addToTickets);
 
     DateFormat df = new SimpleDateFormat("dd-MMM-yy");
@@ -518,7 +517,6 @@ class UI
                                                           + "'" + fare + "', "
                                                           + "'" + convdate + "', "
                                                           + seat +")";
-    System.out.println(addToBookings);
     sql_handler.runSQLStatement(addToBookings);
     System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
     System.out.println("Success - you have booked your flight!");
@@ -592,58 +590,59 @@ class UI
    * @throws SQLException
    */
   public void ExistingBookings() throws SQLException {
-    System.out.println("Your current bookings for this account are: ");
-    String query = "select b.tno, p.name, to_char(b.dep_date, 'yyyy-MM-dd') as dep_date, t.paid_price " +
-      "from bookings b, tickets t, passengers p " +
-      "where b.tno = t.tno and t.name = p.name and t.email = p.email and t.email = '" + pub_email + "'";
-    System.out.println("Please select a booking by ID to view more information, "
-                        + "or (e)xit.\n");
-    ResultSet rs = sql_handler.runSQLQuery(query);
-    int intId = 0;
-    ArrayList<String> tnolist = new ArrayList<>();
-    if (rs.isBeforeFirst())
+    existing:
+    while(true)
     {
-      System.out.println("ID  TNO  NAME                 DEP_DATE               PRICE");
-      System.out.println("--  ---  -----------------    ---------------------  -----");
-    }
-    else
-    {
-      System.out.println("There are no existing bookings.");
-      return;
-    }
-    while (rs.next()) {
-      String tno = rs.getString("tno");
-      String name = rs.getString("name");
-      String depdate = rs.getString("dep_date");
-      String price = rs.getString("PAID_PRICE");
-      tnolist.add(tno);
-      intId++;
-
+      System.out.println("Your current bookings for this account are: ");
+      String query = "select b.tno, p.name, to_char(b.dep_date, 'yyyy-MM-dd') as dep_date, t.paid_price " +
+        "from bookings b, tickets t, passengers p " +
+        "where b.tno = t.tno and t.name = p.name and t.email = p.email and t.email = '" + pub_email + "'";
+      System.out.println("Please select a booking by ID to view more information, "
+                          + "or (e)xit.\n");
+      ResultSet rs = sql_handler.runSQLQuery(query);
+      int intId = 0;
+      ArrayList<String> tnolist = new ArrayList<>();
+      if (!rs.isBeforeFirst())
+      {
+        System.out.println("There are no existing bookings.");
+        return;
+      }
+      while (rs.next()) {
+        String tno = rs.getString("tno");
+        String name = rs.getString("name");
+        String depdate = rs.getString("dep_date");
+        String price = rs.getString("PAID_PRICE");
+        tnolist.add(tno);
+        intId++;
+  
+        System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
+        System.out.println("Booking ID: " + intId);
+        System.out.println("Ticket No.: " + tno);
+        System.out.println("Name:       " + name);
+        System.out.println("Dep. Date:  " + depdate);
+        System.out.println("Price:      " + price);
+      }
       System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
-      System.out.println("Booking ID: " + intId);
-      System.out.println("Ticket No.: " + tno);
-      System.out.println("Name:       " + name);
-      System.out.println("Dep. Date:  " + depdate);
-      System.out.println("Price:      " + price);
-    }
-    System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
-    System.out.println("Please select a booking by ID to view more information, "
-                        + "or (e)xit.\n");
-    while(true) {
-      String i = scan.nextLine();
-      if (isInteger(i, 10)) {
-        Integer intIndex = Integer.parseInt(i);
-        if (intIndex <= tnolist.size() && intIndex > 0) {
-          intIndex = intIndex - 1;
-          int bd = BookingDetail(tnolist.get(intIndex));
+      System.out.println("Please select a booking by ID to view more information, "
+                          + "or (e)xit.\n");
+      while(true) {
+        String i = scan.nextLine();
+        if (isInteger(i, 10)) {
+          Integer intIndex = Integer.parseInt(i);
+          if (intIndex <= tnolist.size() && intIndex > 0) {
+            intIndex = intIndex - 1;
+            int bd = BookingDetail(tnolist.get(intIndex));
+            if (bd == 1)
+              continue existing;
+            return;
+          } else {
+            System.out.println("Invalid entry - please try again.");
+          }
+        } else if (i.equals("e") || i.equals("E")) {
           return;
         } else {
           System.out.println("Invalid entry - please try again.");
         }
-      } else if (i.equals("e") || i.equals("E")) {
-        return;
-      } else {
-        System.out.println("Invalid entry - please try again.");
       }
     }
   }
