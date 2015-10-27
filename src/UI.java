@@ -243,7 +243,10 @@ class UI
       System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
       System.out.println("(S)earch for flights & make a booking, \nView or cancel (E)xisting bookings, \nFind (R)ound trips, \n(L)og out.");
       if (pub_role.equals("poweruser")) {
-        System.out.println("AIRLINE AGENT: \nRecord (D)eparture, \nRecord (A)rrival for a scheduled flight.");
+        System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
+        System.out.println("AIRLINE AGENT: Select from the following additional commands:");
+        System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
+        System.out.println("Record (D)eparture, \nRecord (A)rrival for a scheduled flight.");
       }
       System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
       String input = scan.nextLine();
