@@ -849,8 +849,8 @@ class UI
         break;
       }
     }
-    System.out.println("Departure time: - format is 'yyyy/mm/dd hh24:mi:ss', "
-        + "example: 2003/05/03 21:02:44 or select (C)urrent time.");
+    System.out.println("Departure time: - format is 'yyyy/mm/dd hh24:mi:ss' \n"
+        + "Example: 2003/05/03 21:02:44 or select (C)urrent time.");
     while(true) {
       String statement = "";
       String deptime = scan.nextLine();
@@ -924,8 +924,8 @@ class UI
         break;
       }
     }
-    System.out.println("Arrival time: - format is 'yyyy/mm/dd hh24:mi:ss', "
-        + "example: 2003/05/03 21:02:44 or select (C)urrent time.");
+    System.out.println("Arrival time: - format is 'yyyy/mm/dd hh24:mi:ss'\n"
+        + "Example: 2003/05/03 21:02:44 or select (C)urrent time.");
     while(true) {
       String statement = "";
       String arrtime = scan.nextLine();
