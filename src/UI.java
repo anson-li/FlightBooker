@@ -819,6 +819,17 @@ class UI
           java.util.Date depDate = new java.util.Date();
           depDate = df.parse(deptime);
           java.sql.Date sqlDate = new java.sql.Date(depDate.getTime());
+          
+          String query = "select * from sch_flights "
+              + "where flightno='"+flightno+"' "
+              + "and to_char(dep_date, 'yyyy-mm-dd')='"+sqlDate.toString()+"'";
+          ResultSet rs = sql_handler.runSQLQuery(query);
+          if (!rs.isBeforeFirst())
+          {
+            System.out.println("There is no scheduled flight "+flightno+" for "+sqlDate.toString()+".");
+            return;
+          }
+          
           statement = "update sch_flights "
           + "set act_dep_time = (TO_DATE('" + deptime + "', 'yyyy/mm/dd hh24:mi:ss')) "
           + "where flightno = '"+flightno.toUpperCase()+"'"
