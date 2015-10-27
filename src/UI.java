@@ -1213,7 +1213,7 @@ class UI
   public static boolean isValidDate(String input) {
     boolean valid = false;
     try {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/mm/dd hh24:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/mm/dd HH:mm:ss");
         dateFormat.setLenient(false);
         java.util.Date output = dateFormat.parse(input);
         valid = true;
