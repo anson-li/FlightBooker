@@ -569,7 +569,12 @@ class UI
       System.out.println("Please enter the country of the passenger:");
       country = scan.nextLine();
       String addToPassengers = "insert into passengers values ('" + pub_email + "', '" + name + "', '" + country + "')";
-      sql_handler.runSQLStatement(addToPassengers);
+      try {
+        sql_handler.runSQLStatement(addToPassengers);
+      } catch (SQLException sqle) {
+        System.out.println("Unsupported Name, Country values.\nBooking Failed.");
+        return;
+      }
     } else {
       ResultSet passengerRs1 = sql_handler.runSQLQuery(passengerquery);
       while (passengerRs1.next()) {
