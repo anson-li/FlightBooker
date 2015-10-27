@@ -1458,7 +1458,7 @@ class UI
       if (rs.isFirst())
       {
         System.out.println("Did you mean one of the following airports?");
-        System.out.println("\nCode    Ariport Name");
+        System.out.println("\nCode    Airport Name");
         System.out.println  ("+--+    +-=-=-=-=-=+");
       }
 
