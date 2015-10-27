@@ -623,8 +623,8 @@ class UI
         System.out.println("Price:      " + price);
       }
       System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
-      System.out.println("Please select a booking by ID to view more information, "
-                          + "or (e)xit.\n");
+      System.out.println("Please select a booking by ID to view more information, \n"
+                          + "or (e)xit to Main Menu.\n");
       while(true) {
         String i = scan.nextLine();
         if (isInteger(i, 10)) {
@@ -979,7 +979,7 @@ class UI
         sea2 = Integer.parseInt(rs2.getString("seats"));
       }
 
-      System.out.println  ("-----------------------------------------");
+      System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-+");
       System.out.println  ("Flight Plan: " + planId);
       System.out.println  ("Price: " + price);
       if (has_sec_dep_flight)
@@ -1069,15 +1069,17 @@ class UI
       sqlh1.close();
       planId++;
     }
-    System.out.println("Round-trips are currently being sorted by number of connections, and price.");
+
+    System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-+");
+
+    System.out.println("Please select a Flight Plan by ID to make a booking,\n"
+                     + "or (R)eturn to Main Menu.\n");
 
     while(true) {
-      System.out.println("(R)eturn to main menu.");
-      System.out.println("Or select a booking with the corresponding ID (eg. 1, 2, ...)");
 
       String i = scan.nextLine();
       if (i.equals("R") || i.equals("r")) {
-        MainHub();
+        return;
       } else if (isInteger(i,10)) {
         Integer intIndex = Integer.parseInt(i);
         if (intIndex <= flightnolist1.size() && intIndex > 0) {
@@ -1086,6 +1088,7 @@ class UI
                        flightnolist2.get(intIndex),
                        flightnolist3.get(intIndex),
                        flightnolist4.get(intIndex));
+          return;
         } else {
           System.out.println("Invalid entry - please try again.");
         }
