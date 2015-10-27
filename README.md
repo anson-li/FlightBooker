@@ -33,7 +33,7 @@ The project is stored in the following structure:
 * in general, more descriptive error messages in catch exceptions.
 * [FIXED] check if flight number is valid in airlineagent - flight arrival and departure
 * add comments 
-* remove commented-out code
+* [FIXED] remove commented-out code
 * 0 flight plans should say something else (round trip & regular flights)
 
 #### References:

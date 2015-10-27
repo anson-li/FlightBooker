@@ -68,7 +68,8 @@ class UI
   }
 
   /**
-   *
+   * Handles the main screen processing;
+   * first main screen of application
    * @throws SQLException
    */
   public void WelcomeScreen() throws SQLException {
@@ -99,7 +100,10 @@ class UI
   }
 
   /**
-   * FIXME: i want to be a complete method comment
+   * Registers the user given a valid email and password.
+   * The password must be 4 or less alphanumeric characters, and 
+   * email must be valid given regex provided in validEmail().
+   * Simulation of a registration screen.
    * @throws SQLException
    */
   public boolean Register() throws SQLException {
@@ -160,7 +164,11 @@ class UI
   }
 
   /**
-   * FIXME: my dream is to be a complete comment
+   * Logs in the user given correct email and password
+   * according to the sql table users.
+   * Sets the role (for which some functionalities are dependent)
+   * and email (for which functionalities such as bookings are dependent)
+   * Simulates traditional login system.
    * @throws SQLException
    */
   private boolean Login() throws SQLException {
@@ -226,7 +234,11 @@ class UI
   }
 
   /**
-   * FIXME: im a incomplete comment
+   * Operates as the main menu for the application.
+   * Lets user decide function to access based on suite of tasks.
+   * Functionalities that terminate from this point revert to this
+   * function immediately.
+   * Additional functions dependent on role.
    * @param role
    * @throws SQLException
    */
@@ -268,7 +280,9 @@ class UI
   }
 
   /**
-   *
+   * Seaches for flights given destination and 
+   * source airport, and departure time.
+   * Bookings are identified from this function.
    * @param role
    * @throws SQLException
    */
@@ -388,6 +402,11 @@ class UI
   }
 
   /**
+   * Print flight plans given airport information.
+   * The number of flight plans output is dependent on the number of flights.
+   * Can send selected flights for bookings.
+   * Scalable dependent on number of flights output.
+   * Logic dependent on one flight, no flight or multiple flights.
    * FIXME: add logic to return if no flights
    * @param rs
    * @param planId
@@ -483,7 +502,8 @@ class UI
   }
 
   /**
-   *
+   * Books flight as identified in flights listings. 
+   * Function is encapsulated in transaction for whole process.
    * @param flightno
    * @param name
    * @throws SQLException
@@ -507,7 +527,6 @@ class UI
     String fare = rs.getString("FARE");
     int seat = rs.getInt("SEATS");
 
-
     String addToTickets = "insert into tickets values (" + tno + ", '" + name + "', '" + pub_email + "', " + rs.getFloat("PRICE") + ")";
     sql_handler.runSQLStatement(addToTickets);
 
@@ -530,7 +549,10 @@ class UI
   }
 
   /**
-   *
+   * Make booking for multiple flights; 
+   * can extend for four trips, or as few as 1.
+   * Logic flexible between 2 to 4 flights.
+   * Transaction completed only after all flights have completed.
    * @param role
    * @param flightno1
    * @param flightno2
@@ -590,7 +612,9 @@ class UI
   }
 
   /**
-   *
+   * Shows current bookings given the user email. 
+   * Indiscriminate of name and country; users can
+   * also describe and/or delete each booking.
    * @param role
    * @throws SQLException
    */
@@ -653,7 +677,12 @@ class UI
   }
 
   /**
-   *
+   * Describes an individual booking in specifics;
+   * Identifies the bookings' specific details, as well
+   * as the user who booked the flight. Relation between
+   * flight and booking is 1 - 1; multiple flights
+   * yield multiple bookings that must be queried separately.
+   * Can specify the booking to be cancelled.
    * @param role
    * @param tno
    * @throws SQLException
@@ -704,6 +733,12 @@ class UI
     }
   }
 
+  /**
+   * Cancels a specific booking and its corresponding ticket. 
+   * Completes process via transaction to prevent SQL requery issues.
+   * Generates a view post-transaction to verify views via SQL.
+   * @throws SQLException
+   */
   public void CancelBooking(String tno) throws SQLException {
     try {
       sql_handler.con.setAutoCommit(false);
@@ -723,14 +758,13 @@ class UI
   }
 
   /**
-   *
+   * Logs out the user.
+   * Performs the action immediately; stores datetime
+   * of statement as the last_login date.
+   * Returns to the Welcome Screen post-process.
    * @throws SQLException
    */
   public void Logout() throws SQLException {
-    // logout
-    // detail system date for last_login
-    // return to main
-
     String statement = "update users "
                      + "set last_login=sysdate "
                      + "where email='"+pub_email+"'";
@@ -739,6 +773,13 @@ class UI
     System.out.println("You have now been logged out.");
   }
 
+  /**
+   * Airline agent specific: record the departure time.
+   * Can input custom datetime value, or current value.
+   * Ensures proper values are used at any iteration;
+   * including flight number and datetime.
+   * @throws SQLException
+   */
   public void RecordDeparture() throws SQLException {
     String flightno = "";
     while(true) {
@@ -781,6 +822,14 @@ class UI
     }
   }
 
+  /**
+   * Airline agent specific: record the arrival time.
+   * Can input custom datetime value, or current value.
+   * Ensures proper values are used at any iteration;
+   * including flight number and datetime.
+   * Mimics RecordDeparture design. 
+   * @throws SQLException
+   */
   public void RecordArrival() throws SQLException {
     String flightno = "";
     while(true) {
@@ -824,7 +873,9 @@ class UI
   }
 
   /**
-   * FIXME: kappa
+   * Finds round trip location given the destination and source
+   * airports, the departure and the return date.
+   * Uses flexible query to initialise between 2-4 flights for booking.
    * @throws SQLException
    */
   public void RoundTrips() throws SQLException
@@ -1107,13 +1158,14 @@ class UI
   }
 
   /**
-   * FIXME: add method comment
+   * Identifies whether the string is an integer value -
+   * that is, if the string is available to be converted to integer.
+   * code taken from http://stackoverflow.com/questions/5439529/determine-if-a-string-is-an-integer-in-java
+   * by corsiKa
    * @param s
    * @param radix
    * @return
    */
-  // code taken from http://stackoverflow.com/questions/5439529/determine-if-a-string-is-an-integer-in-java
-  // by corsiKa
   public static boolean isInteger(String s, int radix) {
     if(s.isEmpty()) return false;
     for(int i = 0; i < s.length(); i++) {
@@ -1126,8 +1178,14 @@ class UI
     return true;
   }
 
-  // code taken from http://stackoverflow.com/questions/11480542/fastest-way-to-tell-if-a-string-is-a-valid-date
-  // by victor.hernandez
+  /**
+   * Identifies whether the string is a date value - 
+   * dependent on the dateformat specified (consistent between our processes).
+   * code taken from http://stackoverflow.com/questions/11480542/fastest-way-to-tell-if-a-string-is-a-valid-date
+   * by victor.hernandez
+   * @param input
+   * @return valid
+   */
   public static boolean isValidDate(String input) {
     boolean valid = false;
     try {
@@ -1139,7 +1197,9 @@ class UI
 }
 
   /**
-   * FIXME: finish comment
+   * Determines whether or not the string is a valid 
+   * airport code. If not, queries the airport names 
+   * to find whether or not the string appears within the airport name.
    * @param ac
    * @return
    * @throws SQLException
