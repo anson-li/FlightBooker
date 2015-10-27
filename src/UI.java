@@ -306,7 +306,14 @@ class UI
                     "order by price";
 
     ResultSet rs = sql_handler.runSQLQuery(query);
-    System.out.println("The flight plans that match your description are as follows:\n");
+    
+    if(rs.isBeforeFirst())
+      System.out.println("The flight plans that match your description are as follows:\n");
+    else
+    {
+      System.out.println("No flights match your criteria.");
+      return;
+    }
     ArrayList<String> flightnolist = new ArrayList<>();
     ArrayList<String> flightnolist2 = new ArrayList<>();
     int planId = 1;
@@ -1108,10 +1115,17 @@ class UI
       return true;
 
     System.out.println("Sorry the airport code could not be matched.");
+    System.out.println("Checking against airport names...");
 
     query = "select * from airports where regexp_like(name, '"+ac+"', 'i')";
     rs = sql_handler.runSQLQuery(query);
-
+    
+    if(!rs.isBeforeFirst())
+    {
+      System.out.println("The entered value doesn't match known airport names.");
+      return false;
+    }
+    
     while (rs.next())
     {
       if (rs.isFirst())
