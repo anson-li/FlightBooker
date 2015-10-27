@@ -66,7 +66,8 @@ class UI
   }
 
   /**
-   *
+   * Handles the main screen processing;
+   * first main screen of application
    * @throws SQLException
    */
   public void WelcomeScreen() throws SQLException {
@@ -96,7 +97,10 @@ class UI
   }
 
   /**
-   * FIXME: i want to be a complete method comment
+   * Registers the user given a valid email and password.
+   * The password must be 4 or less alphanumeric characters, and 
+   * email must be valid given regex provided in validEmail().
+   * Simulation of a registration screen.
    * @throws SQLException
    */
   public void Register() throws SQLException {
@@ -155,7 +159,11 @@ class UI
   }
 
   /**
-   * FIXME: my dream is to be a complete comment
+   * Logs in the user given correct email and password
+   * according to the sql table users.
+   * Sets the role (for which some functionalities are dependent)
+   * and email (for which functionalities such as bookings are dependent)
+   * Simulates traditional login system.
    * @throws SQLException
    */
   private boolean Login() throws SQLException {
