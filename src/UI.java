@@ -1128,8 +1128,8 @@ class UI
         System.out.println("    Number of Stops: 1");
         System.out.println("    Layover Time: " + (Float.parseFloat(dep_layover)*1440) +" minutes.");
         System.out.println("    Num Seats: " + Math.min(sea1, sea2));
-        System.out.println("               Flight 1          Flight 2");
-        System.out.println("               --------          --------");
+        System.out.println("               Flight 1        Flight 2");
+        System.out.println("               +-=-=-=+        +-=-=-=+");
         System.out.println("    Flight #:  "+dep_flightno1+"          "+dep_flightno2);
         System.out.println("    Source:    "+src1+"             "+src2);
         System.out.println("    Dest.:     "+dst1+"             "+dst2);
