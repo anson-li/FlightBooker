@@ -999,7 +999,7 @@ class UI
       String findflightno = "select * from sch_flights where flightno = '" + flightno.toUpperCase() + "'";
       ResultSet rsflightno = sql_handler.runSQLQuery(findflightno);
       if (!rsflightno.next()) {
-        System.out.println("Invalid flight number.")
+        System.out.println("Invalid flight number.");
       } else {
         break;
       }
