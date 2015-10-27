@@ -1183,6 +1183,8 @@ class UI
    * dependent on the dateformat specified (consistent between our processes).
    * code taken from http://stackoverflow.com/questions/11480542/fastest-way-to-tell-if-a-string-is-a-valid-date
    * by victor.hernandez
+   * code for setLenient take from http://stackoverflow.com/questions/4528047/checking-the-validity-of-a-date
+   * by Pangea
    * @param input
    * @return valid
    */
