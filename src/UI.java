@@ -244,7 +244,7 @@ class UI
       System.out.println("(S)earch for flights & make a booking, \nView or cancel (E)xisting bookings, \nFind (R)ound trips, \n(L)og out.");
       if (pub_role.equals("poweruser")) {
         System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
-        System.out.println("AIRLINE AGENT ONLY:");
+        System.out.println("                   AIRLINE AGENT ONLY:                      ");
         System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
         System.out.println("Record (D)eparture, \nRecord (A)rrival for a scheduled flight.");
       }
