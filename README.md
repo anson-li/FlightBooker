@@ -31,7 +31,7 @@ The project is stored in the following structure:
 * [FIXED] descriptive message if the sql query fails for rollbacks... (re: bookings)
 * [FIXED] regenerate views after bookings is cancelled 
 * in general, more descriptive error messages in catch exceptions.
-* check if flight number is valid in airlineagent - flight arrival and departure
+* [FIXED] check if flight number is valid in airlineagent - flight arrival and departure
 * add comments 
 * remove commented-out code
 * 0 flight plans should say something else (round trip & regular flights)
