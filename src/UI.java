@@ -818,6 +818,9 @@ class UI
         try {
           java.util.Date depDate = new java.util.Date();
           depDate = df.parse(deptime);
+          
+          System.out.println(depDate + " " + depDate.toString());
+          
           java.sql.Date sqlDate = new java.sql.Date(depDate.getTime());
           
           String query = "select * from sch_flights "
