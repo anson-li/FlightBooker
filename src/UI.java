@@ -814,7 +814,7 @@ class UI
       String statement = "";
       String deptime = scan.nextLine();
       if (isValidDate(deptime)) {
-        DateFormat df = new SimpleDateFormat("yyyy/mm/dd hh:mm:ss");
+        DateFormat df = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
         try {
           java.util.Date depDate = new java.util.Date();
           depDate = df.parse(deptime);
