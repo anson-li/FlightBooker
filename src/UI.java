@@ -59,9 +59,11 @@ class UI
       "where a1.dst=a2.src and a1.arr_time +1.5/24 <=a2.dep_time and a1.arr_time +5/24 >=a2.dep_time " +
       "group by a1.src, a2.dst, a1.dep_date, a1.flightno, a2.flightno, a2.dep_time, a1.arr_time ";
 
-    sql_handler.runSQLStatement(dropAvailableFlights);
+    try {
+      sql_handler.runSQLStatement(dropAvailableFlights);
+      sql_handler.runSQLStatement(dropGoodConnections);
+    } catch (SQLException sqle) { /* views are already dropped */ }
     sql_handler.runSQLStatement(createAvailableFlights);
-    sql_handler.runSQLStatement(dropGoodConnections);
     sql_handler.runSQLStatement(createGoodConnections);
   }
 
@@ -818,39 +820,6 @@ class UI
     }
   }
 
-  /* CHOOSE ONE OF THREE OPTIONS:
-  Support search and booking of round-trips. The system should offer an option for round-trips.
-  If this option is selected, your system will get a return date from the user, and will list
-  the flights in both directions, sorted by the sum of the price (from lowest to the highest).
-  The user should be able to select an option and book it. (PREFERRED!)
-
-  Support search and booking of flights with three connecting flights. In its default setting,
-  your system will search for flights with two connections at most. In implementing this
-  functionality, your system should offer an option to raise this maximum to three connections.
-  Again this is an option to be set by user when running your system and cannot be the
-  default setting of your application.
-
-  Support search and booking for parties of size larger than one. There should be an option for
-  the user to state the number of passengers. The search component of your system will only list
-  flights that have enough seats for all party members. Both the seat pricing and the booking will
-  be based on filling the lowest fare seats first before moving to the next fare. For example,
-  suppose there are 2 seats available in the lowest fare and 5 seats in some higher-priced fare.
-  For a party of size 4, your system will book those 2 lowest fare seats and another 2 seats in
-  the next fare type that is available.
-  */
-
-  // select f.flightno, a1.acode, a2.acode, dep_time, dep_time + est_dur (not right...) as arr_time, 0 as num_conn, 0 as layover_time, ff1.price, ff1.limit - COUNT(b.seat) as open_seats
-  // from flights f, flight_fares ff1, airports a1, airports a2, bookings b
-  // where (f.src like 'SRC' or a1.name like 'SRC')
-  // and (f.dst like 'DST' or a2.name like 'DST')
-  // and (f.dep_time like 'DEP_TIME')
-  // and f.src like a1.acode and f.dst like a2.acode and f.flightno like ff1.flightno
-  // and b.flightno like f.flightno and b.fare like ff1.fare
-  // UNION
-  // (add the 1-connection flights ...)
-  // GROUP BY flightno, ...
-  // ORDER BY PRICE
-
   /**
    * FIXME: kappa
    * @throws SQLException
@@ -887,6 +856,8 @@ class UI
     } catch (SQLException sqle) {
 
     }
+    
+    GenerateViews();
 
     String stmt1 = "create view good_dep_trips (flightno1, flightno2, layover, price) as " +
                     "select flightno1, flightno2, layover, price " +
