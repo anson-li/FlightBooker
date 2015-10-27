@@ -518,8 +518,8 @@ class UI
         System.out.println("1");
         System.out.println("Layover Time: " + (Float.parseFloat(layover)*1440) +" minutes.");
         System.out.println("Num Seats: " + Math.min(sea1, sea2));
-        System.out.println("Flight Info:   Flight 1          Flight 2");
-        System.out.println("               +=-=-=-+          +=-=-=-+");
+        System.out.println("Flight Info:   Flight 1        Flight 2");
+        System.out.println("               +=-=-=-+        +=-=-=-+");
         System.out.println("    Flight #:  "+flightno1+"          "+flightno2);
         System.out.println("    Source:    "+src1+"             "+src2);
         System.out.println("    Dest.:     "+dst1+"             "+dst2);
@@ -1186,8 +1186,8 @@ class UI
         System.out.println("    Number of Stops: 1");
         System.out.println("    Layover Time: " + (Float.parseFloat(ret_layover)*1440) +" minutes.");
         System.out.println("    Num Seats: " + Math.min(sea1, sea2));
-        System.out.println("               Flight 1          Flight 2");
-        System.out.println("               --------          --------");
+        System.out.println("               Flight 1        Flight 2");
+        System.out.println("               +-=-=-=+        +-=-=-=+");
         System.out.println("    Flight #:  "+ret_flightno1+"          "+ret_flightno2);
         System.out.println("    Source:    "+src1+"             "+src2);
         System.out.println("    Dest.:     "+dst1+"             "+dst2);
