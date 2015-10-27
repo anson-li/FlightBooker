@@ -1042,8 +1042,18 @@ class UI
   // rs.updateString(4, INPUT_DATE)
 
   public void RecordArrival() throws SQLException {
-    System.out.println("Flight number: ");
-    String flightno = scan.nextLine();
+    String flightno = "";
+    while(true) {
+      System.out.println("Flight number: ");
+      flightno = scan.nextLine();
+      String findflightno = "select * from sch_flights where flightno = '" + flightno.toUpperCase() + "'";
+      ResultSet rsflightno = sql_handler.runSQLQuery(findflightno);
+      if (!rsflightno.next()) {
+        System.out.println("Invalid flight number.");
+      } else {
+        break;
+      }
+    }
     System.out.println("Arrival time: - format is 'yyyy/mm/dd hh24:mi:ss', example: 2003/05/03 21:02:44 or select (C)urrent time.");
     while(true) {
       String statement = "";
