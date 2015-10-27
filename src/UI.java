@@ -237,7 +237,9 @@ class UI
   public void MainHub() throws SQLException {
     Scanner scan = new Scanner(System.in);
     while(true) {
-      System.out.println("Main area reached. Please select from the following options:");
+      System.out.println("\n+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
+      System.out.println("            Welcome to Air Kappa's Main Menu                ");
+      System.out.println("         Please select from the following options:          ");
       System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
       System.out.println("(S)earch for flights & make a booking, \nView or cancel (E)xisting bookings, \nFind (R)ound trips, \n(L)og out.");
       if (pub_role.equals("poweruser")) {
