@@ -24,17 +24,17 @@ The project is stored in the following structure:
 
 #### To-do List:
 * [FIXED] case-insensitive acodes
-* return immediately after booking 
+* [FIXED] return immediately after booking 
 * [FIXED] consistent styling (+-=-=-=-=-+ system?)
-* removing ghost sql statements
-* refactoring?
+* [FIXED] removing ghost sql statements
+* [FIXED] refactoring?
 * [FIXED] descriptive message if the sql query fails for rollbacks... (re: bookings)
 * [FIXED] regenerate views after bookings is cancelled 
-* in general, more descriptive error messages in catch exceptions.
+* [FIXED] in general, more descriptive error messages in catch exceptions.
 * [FIXED] check if flight number is valid in airlineagent - flight arrival and departure
-* add comments 
+* [FIXED] add comments 
 * [FIXED] remove commented-out code
-* 0 flight plans should say something else (round trip & regular flights)
+* [FIXED] 0 flight plans should say something else (round trip & regular flights)
 
 #### References:
 * http://www.tutorialspoint.com/jdbc/jdbc-sample-code.htm
