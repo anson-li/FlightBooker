@@ -84,7 +84,8 @@ class UI
           continue;
         MainHub();
       } else if (i.equals("r") || i.equals("R")) {
-        Register();
+        if (!Register())
+          continue;
         MainHub();
       } else if (i.equals("e")  || i.equals("E")) {
         System.out.println("System is exiting; "
@@ -101,7 +102,7 @@ class UI
    * FIXME: i want to be a complete method comment
    * @throws SQLException
    */
-  public void Register() throws SQLException {
+  public boolean Register() throws SQLException {
 
     String email = "";
     String password = "";
@@ -117,7 +118,7 @@ class UI
       else
       {
         System.out.println("Registration failed. Passwords do not match.");
-        return;
+        return false;
       }
     } catch (IOError ioe){
       System.err.println(ioe.getMessage());
@@ -126,7 +127,7 @@ class UI
     if (!validEmail(email))
     {
       System.out.println("Registration failed. Invalid Email.");
-      return;
+      return false;
     }
     else
     {
@@ -136,14 +137,14 @@ class UI
       if (rs.next())
       {
         System.out.println("Registration failed. User exists.");
-        return;
+        return false;
       }
     }
 
     if (!validPassword(password))
     {
       System.out.println("Registration failed. Invalid Password.");
-      return;
+      return false;
     }
     else
     {
@@ -154,6 +155,8 @@ class UI
     }
     pub_email = email;
     pub_role = "user";
+    
+    return true;
   }
 
   /**
