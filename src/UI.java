@@ -516,7 +516,7 @@ class UI
       if (has_sec_flight)
       {
         System.out.println("1");
-        System.out.println("Layover Time: " + (Integer.parseInt(layover)*1440) +" minutes.");
+        System.out.println("Layover Time: " + (Float.parseFloat(layover)*1440) +" minutes.");
         System.out.println("Num Seats: " + Math.min(sea1, sea2));
         System.out.println("Flight Info:   Flight 1          Flight 2");
         System.out.println("               +=-=-=-+          +=-=-=-+");
@@ -1126,7 +1126,7 @@ class UI
       {
         System.out.println("Departing Flight Info:");
         System.out.println("    Number of Stops: 1");
-        System.out.println("    Layover Time: " + (Integer.parseInt(dep_layover)*1440) +" minutes.");
+        System.out.println("    Layover Time: " + (Float.parseFloat(dep_layover)*1440) +" minutes.");
         System.out.println("    Num Seats: " + Math.min(sea1, sea2));
         System.out.println("               Flight 1          Flight 2");
         System.out.println("               --------          --------");
@@ -1184,7 +1184,7 @@ class UI
       {
         System.out.println("Return Flight Info:");
         System.out.println("    Number of Stops: 1");
-        System.out.println("    Layover Time: " + (Integer.parseInt(ret_layover)*1440) +" minutes.");
+        System.out.println("    Layover Time: " + (Float.parseFloat(ret_layover)*1440) +" minutes.");
         System.out.println("    Num Seats: " + Math.min(sea1, sea2));
         System.out.println("               Flight 1          Flight 2");
         System.out.println("               --------          --------");
