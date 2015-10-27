@@ -956,6 +956,12 @@ class UI
     sql_handler.runSQLStatement(stmt1);
     sql_handler.runSQLStatement(stmt2);
     ResultSet rs = sql_handler.runSQLQuery(query);
+    if (!rs.isBeforeFirst())
+    {
+      System.out.println("There are no flight plans mathing your criteria.");
+      return;
+    }
+    
     System.out.println("The following flight plans match your criteria:\n");
     ArrayList<String> flightnolist1 = new ArrayList<>();
     ArrayList<String> flightnolist2 = new ArrayList<>();
