@@ -818,9 +818,6 @@ class UI
         try {
           java.util.Date depDate = new java.util.Date();
           depDate = df.parse(deptime);
-          
-          System.out.println(depDate + " " + depDate.toString());
-          
           java.sql.Date sqlDate = new java.sql.Date(depDate.getTime());
           
           String query = "select * from sch_flights "
@@ -895,17 +892,42 @@ class UI
         try {
           java.util.Date arrDate = new java.util.Date();
           arrDate = df.parse(arrtime);
+          
+          java.sql.Date sqlDate = new java.sql.Date(arrDate.getTime());
+          
+          String query = "select * from sch_flights "
+              + "where flightno='"+flightno+"' "
+              + "and to_char(dep_date, 'yyyy-mm-dd')='"+sqlDate.toString()+"'";
+          ResultSet rs = sql_handler.runSQLQuery(query);
+          if (!rs.isBeforeFirst())
+          {
+            System.out.println("There is no scheduled flight "+flightno+" for "+sqlDate.toString()+".");
+            return;
+          }
+          
           statement = "update sch_flights "
           + "set act_arr_time = (TO_DATE('" + arrtime + "', 'yyyy/mm/dd hh24:mi:ss')) "
-          + "where flightno = '"+flightno.toUpperCase()+"'";
+          + "where flightno = '"+flightno.toUpperCase()+"'"
+          + "and to_char(dep_date, 'yyyy-mm-dd')='"+sqlDate.toString()+"'";
           sql_handler.runSQLStatement(statement);
           System.out.println("Flight arrival time successfully updated.");
           return;
         } catch (ParseException e) {}
       } else if (arrtime.equals("C") || arrtime.equals("c")) {
+        java.sql.Date sqlDate = new java.sql.Date((new java.util.Date()).getTime());
+        String query = "select * from sch_flights "
+            + "where flightno='"+flightno+"' "
+            + "and to_char(dep_date, 'yyyy-mm-dd')='"+sqlDate.toString()+"'";
+        ResultSet rs = sql_handler.runSQLQuery(query);
+        if (!rs.isBeforeFirst())
+        {
+          System.out.println("There is no scheduled flight "+flightno+" for today.");
+          return;
+        }
         statement = "update sch_flights "
         + "set act_arr_time = sysdate "
-        + "where flightno = '"+flightno.toUpperCase()+"'";
+        + "where flightno = '"+flightno.toUpperCase()+"'"
+        + "and to_char(dep_date, 'yyyy-mm-dd')='"+sqlDate.toString()+"'";
         sql_handler.runSQLStatement(statement);
         System.out.println("Flight arrival time successfully updated.");
         return;
