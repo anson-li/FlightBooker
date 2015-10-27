@@ -993,9 +993,10 @@ class UI
   // rs.updateString(3, INPUT_DATE);
 
   public void RecordDeparture() throws SQLException {
+    String flightno = "";
     while(true) {
       System.out.println("Flight number: ");
-      String flightno = scan.nextLine();
+      flightno = scan.nextLine();
       String findflightno = "select * from sch_flights where flightno = '" + flightno.toUpperCase() + "'";
       ResultSet rsflightno = sql_handler.runSQLQuery(findflightno);
       if (!rsflightno.next()) {
