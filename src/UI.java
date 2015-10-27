@@ -158,7 +158,7 @@ class UI
    * FIXME: my dream is to be a complete comment
    * @throws SQLException
    */
-  private void Login() throws SQLException {
+  private boolean Login() throws SQLException {
     System.out.println("Login:");
     String email = "";
     String pword = "";
@@ -244,18 +244,18 @@ class UI
       System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
       String input = scan.nextLine();
       if (input.equals("S") || input.equals("s")) {
-        SearchForFlights();
+        SearchForFlights(); // TODO:
       } else if (input.equals("E") || input.equals("e")) {
-        ExistingBookings();
+        ExistingBookings(); // TODO:
       } else if (input.equals("R") || input.equals("r")) {
-        RoundTrips();
+        RoundTrips(); // TODO:
       } else if (input.equals("L") || input.equals("l")) {
-        Logout();
+        Logout(); // TODO:
         return;
       } else if ((input.equals("D") || input.equals("d")) && pub_role.equals("poweruser")) {
-        RecordDeparture();
+        RecordDeparture(); // TODO:
       } else if ((input.equals("A") || input.equals("a")) && pub_role.equals("poweruser")) {
-        RecordArrival();
+        RecordArrival(); // TODO:
       } else {
         System.out.println("Invalid entry - please try again.");
       }
@@ -654,7 +654,7 @@ class UI
    * @param tno
    * @throws SQLException
    */
-  public void BookingDetail(String tno) throws SQLException {
+  public int BookingDetail(String tno) throws SQLException {
     Scanner scan = new Scanner(System.in);
     System.out.println("Your booking details is as follows: ");
     String query = "select b.tno, b.flightno, b.fare, p.name, p.email, p.country, to_char(b.dep_date, 'yyyy-MM-dd') as dep_date, t.paid_price " +
