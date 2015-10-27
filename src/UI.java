@@ -287,7 +287,7 @@ class UI
     }
 
     // add departure date
-    System.out.println("Please enter your departure date in format DD/MM/YYYY - eg: 01/10/2015 for October 10, 2015");
+    System.out.println("Please enter your departure date in format DD/MM/YYYY\n   eg: 01/10/2015 for October 10, 2015");
     depDate = scan.nextLine();
     /*DateFormat df = new SimpleDateFormat("dd-MMM-yy");
     java.util.Date depDate = new java.util.Date();
@@ -324,11 +324,11 @@ class UI
     int planId = 1;
     planId = printFlightPlans(rs, planId, flightnolist, flightnolist2);
     System.out.print("\nFlights are currently being sorted by price:"
-        + "\n(S)ort the result based on number of connections, or ");
+                   + "\n(S)ort the result based on number of connections, or ");
 
     while(true) {
-      System.out.println("(R)eturn to main menu.");
-      System.out.println("Or select a booking with the corresponding ID (eg. 1, 2, ...)");
+      System.out.println("Please select a Flight Plan by ID to make a booking,\n"
+                       + "or (R)eturn to Main Menu.\n");
 
       String i = scan.nextLine();
       if (i.equals("S") || i.equals("s")) {
@@ -575,8 +575,8 @@ class UI
 
       return;
 
-    } catch (SQLException sqle) {
-      System.out.println("Error: Booking failed - please see error for more information! \nYour request has been fully reverted.");
+    } catch (SQLException sqle) { //FIXME
+      System.out.println("Booking failed - please see error for more information!\nYour request has been fully reverted.");
       System.out.println(sqle);
       sql_handler.con.rollback();
     }
@@ -709,8 +709,8 @@ class UI
       sql_handler.con.commit();
       System.out.println("Booking has been deleted.");
       GenerateViews();
-    } catch (SQLException e) {
-      System.out.println("Error: Booking cancellation failed - please see error for more information! \nYour request has been fully reverted.");
+    } catch (SQLException e) { // FIXME
+      System.out.println("Booking cancellation failed - please see error for more information!\nYour request has been fully reverted.");
       System.out.println(e);
       sql_handler.con.rollback();
     }
@@ -875,10 +875,10 @@ class UI
     }
 
     // add departure date
-    System.out.println("Please enter your departure date in format DD/MMM/YYYY - eg: 01/10/2015 for October 10, 2015");
+    System.out.println("Please enter your departure date in format DD/MMM/YYYY\n  eg: 01/10/2015 for October 10, 2015");
     depDate = scan.nextLine();
 
-    System.out.println("Please enter your return date in format DD/MMM/YYYY - eg: 01/10/2015 for October 10, 2015");
+    System.out.println("Please enter your return date in format DD/MMM/YYYY\n  eg: 01/10/2015 for October 10, 2015");
     retDate = scan.nextLine();
 
     try {
