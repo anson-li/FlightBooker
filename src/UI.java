@@ -78,9 +78,12 @@ class UI
       System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
       String i = scan.nextLine();
       if (i.equals("l") || i.equals("L")) {
-        Login();
+        if(!Login())
+          continue;
+        MainHub();
       } else if (i.equals("r") || i.equals("R")) {
         Register();
+        MainHub();
       } else if (i.equals("e")  || i.equals("E")) {
         System.out.println("System is exiting; "
                          + "Thank you for visiting Air Kappa!");
@@ -96,19 +99,13 @@ class UI
    * FIXME: i want to be a complete method comment
    * @throws SQLException
    */
-  /*
-  Sample users table generation:
-  create table users ( email varchar(20), password varchar(8), last_login date)
-  create table airline_agents (email varchar(20), name varchar(20))
-  insert into users values('dude@ggg.com', '1234', sysdate);
-  insert into airline_agents values('dude@ggg.com', 'dude mcman');
-  */
   public void Register() throws SQLException {
 
     String email = "";
     String password = "";
 
-    System.out.println("Registration (password must be 4 (or less) alpha-numeric characters):");
+    System.out.println("Registration "
+        + "(password must be 4 (or less) alpha-numeric characters):");
     try {
       email = con.readLine("Email: ");
       char[] pwArray1 = con.readPassword("Password: ");
@@ -151,17 +148,10 @@ class UI
       String statement = "insert into users values('" + email +  "',"
                         + "'" + password +"',"
                         + "sysdate )";
-
-      System.out.println(statement);
       sql_handler.runSQLStatement(statement);
     }
-
-    // TODO: how is the user's role selected? are they predetermined?
-    String role = "user";
-    pub_email = email; // remove this once emailvalidation exists
-    pub_role = role;
-    MainHub();
-    scan.close();
+    pub_email = email;
+    pub_role = "user";
   }
 
   /**
@@ -182,13 +172,13 @@ class UI
       if (!validEmail(email))
       {
         System.out.println("Invalid email.");
-        return;
+        return false;
       }
 
       if (!validPassword(pword))
       {
         System.out.println("Invalid password.");
-        return;
+        return false;
       }
 
       String query = "select email, pass from users where email='"+email+"'";
@@ -197,7 +187,7 @@ class UI
       if (!rs.next())
       {
         System.out.println("Invalid email/password combination.");
-        return;
+        return false;
       }
 
       query = "select * from airline_agents where email='"+email+"'";
@@ -225,7 +215,8 @@ class UI
 
       pub_email = email;
       pub_role = role;
-      MainHub();
+
+      return true;
     }
   }
 
@@ -241,7 +232,9 @@ class UI
       System.out.println("            Welcome to Air Kappa's Main Menu                ");
       System.out.println("         Please select from the following options:          ");
       System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
-      System.out.println("(S)earch for flights & make a booking, \nView or cancel (E)xisting bookings, \nFind (R)ound trips, \n(L)og out.");
+      System.out.println("(S)earch for flights & make a booking, \n"
+                       + "View or cancel (E)xisting bookings, \nFind (R)ound trips, \n"
+                       + "(L)og out.");
       if (pub_role.equals("poweruser")) {
         System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
         System.out.println("                   AIRLINE AGENT ONLY:                      ");
@@ -258,6 +251,7 @@ class UI
         RoundTrips();
       } else if (input.equals("L") || input.equals("l")) {
         Logout();
+        return;
       } else if ((input.equals("D") || input.equals("d")) && pub_role.equals("poweruser")) {
         RecordDeparture();
       } else if ((input.equals("A") || input.equals("a")) && pub_role.equals("poweruser")) {
@@ -266,34 +260,7 @@ class UI
         System.out.println("Invalid entry - please try again.");
       }
     }
-
   }
-
-  /*	Search for flights. A user should be able to search
-  for flights. Your system should prompt the user for a
-  source, a destination and a departure date. For source
-  and destination, the user may enter an airport code or
-  a text that can be used to find an airport code. If the
-  entered text is not a valid airport code, your system
-  should search for airports that have the entered text
-  in their city or name fields (partial match is allowed)
-  and display a list of candidates from which an airport
-  can be selected by the user. Your search for source and
-  destination must be case-insensitive. Your system should
-  search for flights between the source and the destination
-  on the given date(s) and return all those that have a
-  seat available. The search result will include both direct
-  flights and flights with one connection (i.e. two flights
-  with a stop between). The result will include flight details
-  (including flight number, source and destination airport
-  codes, departure and arrival times), the number of stops,
-  the layover time for non-direct flights, the price, and the
-  number of seats at that price. The result should be sorted
-  based on price (from the lowest to the highest); the user
-  should also have the option to sort the result based on the
-  number of connections (with direct flights listed first) as
-  the primary sort criterion and the price as the
-  secondary sort criterion.
 
   /**
    *
@@ -304,7 +271,7 @@ class UI
     String srcACode = "";
     String destACode = "";
     String depDate = "";
-    
+
     GenerateViews();
 
     while (!validAcode(srcACode))
@@ -344,7 +311,14 @@ class UI
                     "order by price";
 
     ResultSet rs = sql_handler.runSQLQuery(query);
-    System.out.println("The flight plans that match your description are as follows:\n");
+
+    if(rs.isBeforeFirst())
+      System.out.println("The flight plans that match your description are as follows:\n");
+    else
+    {
+      System.out.println("No flights match your criteria.");
+      return;
+    }
     ArrayList<String> flightnolist = new ArrayList<>();
     ArrayList<String> flightnolist2 = new ArrayList<>();
     int planId = 1;
@@ -392,12 +366,13 @@ class UI
 
 
       } else if (i.equals("R") || i.equals("r")) {
-        MainHub();
+        return;
       } else if (isInteger(i,10)) {
         Integer intIndex = Integer.parseInt(i);
         if (intIndex <= flightnolist.size() && intIndex > 0) {
           intIndex = intIndex - 1;
           MakeABooking(flightnolist.get(intIndex), flightnolist2.get(intIndex), null, null);
+          return;
         } else {
           System.out.println("Invalid entry - please try again.");
         }
@@ -502,30 +477,12 @@ class UI
     return planId;
   }
 
-  /* Make a booking. A user should be able to select a flight
-  (or flights when there are connections) from those returned
-  for a search and book it. The system should get the name
-  of the passenger and check if the name is listed in the
-  passenger table with the user email. If not, the name and
-  the country of the passenger should be added to the passenger
-  table with the user email. Your system should add rows to
-  tables bookings and tickets to indicate that the booking is
-  done (a unique ticket number should be generated by the system).
-  Your system can be used by multiple users at the same time and
-  overbooking is not allowed. Therefore, before your update
-  statements, you probably want to check if the seat is still
-  available and place this checking and your update statements
-  within a transaction. Finally the system should return the
-  ticket number and a confirmation message if a ticket is
-  issued or a descriptive message if a ticket cannot be
-  issued for any reason.*/
-
-
-  // if seat is empty..
-  // insert into passengers values ('EMAIL', 'NAME', 'COUNTRY')
-  // insert into tickets values (tno (gen), 'EMAIL', 'PAID PRICE')
-  // insert into bookings values (tno (gen), flight_no, fare, dep_date, seat)
-
+  /**
+   *
+   * @param flightno
+   * @param name
+   * @throws SQLException
+   */
   private void BookFlight(String flightno, String name) throws SQLException
   {
     int tno = 0;
@@ -536,7 +493,7 @@ class UI
     if (tmpTno != null)
       tno = Integer.parseInt(tmpTno);
     tno += 100;
-      
+
     GenerateViews();
     String query = "select * from available_flights where flightno='"+flightno+"'";
     ResultSet rs = sql_handler.runSQLQuery(query);
@@ -544,12 +501,12 @@ class UI
     String depdate = rs.getString("DEP_DATE"), convdate = "";
     String fare = rs.getString("FARE");
     int seat = rs.getInt("SEATS");
-    
-    
+
+
     String addToTickets = "insert into tickets values (" + tno + ", '" + name + "', '" + pub_email + "', " + rs.getFloat("PRICE") + ")";
     System.out.println(addToTickets);
     sql_handler.runSQLStatement(addToTickets);
-    
+
     DateFormat df = new SimpleDateFormat("dd-MMM-yy");
     DateFormat initialdf = new SimpleDateFormat("yyyy-MM-dd");
     try {
@@ -580,9 +537,9 @@ class UI
     String name = "", country = "";
     System.out.println("Please enter the name of the passenger:");
     name = scan.nextLine();
-    String passengerquery = "select * from passengers where email = '" + pub_email + "' and regexp_like(name, '"+name+"', 'i')"; 
+    String passengerquery = "select * from passengers where email = '" + pub_email + "' and regexp_like(name, '"+name+"', 'i')";
     ResultSet passengerRs = sql_handler.runSQLQuery(passengerquery);
-        
+
     if (!passengerRs.next()) {
       System.out.println("Please enter the country of the passenger:");
       country = scan.nextLine();
@@ -595,12 +552,12 @@ class UI
         country = passengerRs1.getString("country");
       }
     }
-    
+
     boolean has_dep_flight     = (flightno1 != null);
     boolean has_dep_sec_flight = (flightno2 != null);
     boolean has_round_trip     = (flightno3 != null);
     boolean has_ret_sec_flight = (flightno4 != null);
-    
+
     try{
       sql_handler.con.setAutoCommit(false);
       if (has_dep_flight)
@@ -609,7 +566,7 @@ class UI
         if (has_dep_sec_flight)
           BookFlight(flightno2, name);
       }
-      
+
       if (has_round_trip)
       {
         BookFlight(flightno3, name);
@@ -617,21 +574,21 @@ class UI
           BookFlight(flightno4, name);
       }
       sql_handler.con.commit();
-      
+
       return;
-      
+
     } catch (SQLException sqle) {
       System.out.println("Error: Booking failed - please see error for more information! \nYour request has been fully reverted.");
       System.out.println(sqle);
       sql_handler.con.rollback();
     }
-    
+
     return;
     /*
     // process...
     if (flightno2 == null) {
       System.out.println("Only one flight selected - please confirm your booking: ");
-      
+
       /*
       String query1 = "select src, dst, dep_date, to_char(dep_time, 'hh24:mi') as dept, to_char(arr_time, 'hh24:mi') as arrt, fare, seats, price " +
               "from available_flights where flightno='"+flightno1+"'";
@@ -668,10 +625,10 @@ class UI
       System.out.println("    Name:      "+name);
       System.out.println("    Country:   "+country);
       System.out.println("-----------------------------------------");
-      
+
       System.out.println("\nDo you want to (B)ook this flight? Or (R)eturn to main page?");
       String confirm = scan.nextLine();
-      
+
         try {
           sql_handler.con.setAutoCommit(false);
           GenerateViews();
@@ -684,7 +641,7 @@ class UI
           String addToBookings = "insert into bookings values (" + maxTno + ", '" + flightno1 + "', '" + fare + "', '" + convdate + "', null)";
           sql_handler.runSQLStatement(addToBookings);
           if ()
-          
+
           sql_handler.con.commit();
           System.out.println("+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-+");
           System.out.println("Success - you have booked your flight!");
@@ -776,7 +733,7 @@ class UI
         String findTno = "select max(tno) as tno from tickets";
         ResultSet tnoVal = sql_handler.runSQLQuery(findTno);
         while (tnoVal.next()) {
-          try { 
+          try {
             String tmpTno = tnoVal.getString("tno");
             if (tmpTno != null) {
               maxTno1 = Integer.parseInt(tmpTno);
@@ -818,34 +775,31 @@ class UI
     MainHub();*/
   }
 
-  /* List existing bookings. A user should be able to list all
-  his/her existing bookings. The result will be given in a list
-  form and will include for each booking, the ticket number,
-  the passenger name, the departure date and the price. The
-  user should be able to select a row and get more detailed
-  information about the booking.
-
-  // select b.tno, p.name, s.dep_date, t.paid_price
-  // from bookings b, tickets t, passengers p, sch_flights s
-  // where b.tno like t.tno and p.email like t.email and s.flightno like b.flightno
-
   /**
    *
    * @param role
    * @throws SQLException
    */
   public void ExistingBookings() throws SQLException {
-    // search for user bookings
-    // put them in a list, sep. by number index
-    // System.out.println("pub_email: " + pub_email);
     System.out.println("Your current bookings for this account are: ");
     String query = "select b.tno, p.name, to_char(b.dep_date, 'yyyy-MM-dd') as dep_date, t.paid_price " +
       "from bookings b, tickets t, passengers p " +
       "where b.tno = t.tno and t.name = p.name and t.email = p.email and t.email = '" + pub_email + "'";
+    System.out.println("Please select a booking by ID to view more information, "
+                        + "or (e)xit.\n");
     ResultSet rs = sql_handler.runSQLQuery(query);
     int intId = 0;
     ArrayList<String> tnolist = new ArrayList<>();
-
+    if (rs.isBeforeFirst())
+    {
+      System.out.println("ID  TNO  NAME                 DEP_DATE               PRICE");
+      System.out.println("--  ---  -----------------    ---------------------  -----");
+    }
+    else
+    {
+      System.out.println("There are no existing bookings.");
+      return;
+    }
     while (rs.next()) {
       String tno = rs.getString("tno");
       String name = rs.getString("name");
@@ -870,21 +824,18 @@ class UI
         Integer intIndex = Integer.parseInt(i);
         if (intIndex <= tnolist.size() && intIndex > 0) {
           intIndex = intIndex - 1;
-          BookingDetail(tnolist.get(intIndex));
+          int bd = BookingDetail(tnolist.get(intIndex));
+          return;
         } else {
           System.out.println("Invalid entry - please try again.");
         }
       } else if (i.equals("e") || i.equals("E")) {
-        MainHub();
+        return;
       } else {
         System.out.println("Invalid entry - please try again.");
       }
     }
   }
-
-  // select tno, flight_no, fare, dep_date, seat
-  // from bookings
-  // where tno like 'TNO_INPUT'
 
   /**
    *
@@ -925,31 +876,20 @@ class UI
     while(true) {
       String i = scan.nextLine();
       if (i.equals("b") || i.equals("B")) {
-        ExistingBookings();
+        return 1;
       }
       else if (i.equals("e") || i.equals("E")) {
-        MainHub();
+        return 0;
       } else if (i.equals("c") || i.equals("C")) {
         CancelBooking(tno);
+        return 1;
       } else {
         System.out.println("Invalid entry - please try again.");
       }
     }
   }
 
-  /* Cancel a booking. The user should be able to select a
-  booking from those listed under "list existing bookings"
-  and cancel it. The proper tables should be updated to reflect
-  the cancelation and the cancelled seat should be returned to
-  the system and is made available for future bookings.
-  */
-
-  // delete from bookings
-  // where tno like 'TNO_INPUT'
-
-  public void CancelBooking(String tno) throws SQLException { // pass in booking value in here?
-    // delete the booking
-    // return to mainhub
+  public void CancelBooking(String tno) throws SQLException {
     try {
       sql_handler.con.setAutoCommit(false);
       String delbookings = "delete from bookings where tno = " + tno;
@@ -964,17 +904,13 @@ class UI
       System.out.println(e);
       sql_handler.con.rollback();
     }
-    MainHub();
+    return;
   }
 
-  /* Logout. There must be an option to log out of the system. At
-  logout, the field last_login in users is set to the current system date.
-  */
-
-  // get the user into the rs... select * from users where user_id like 'INPUTUSERID'
-  // rs.updateString(4, sysdate); // currently only in the result set: Indexing from 1.
-  // rs.updateRow(); // makes the changes permanent
-
+  /**
+   *
+   * @throws SQLException
+   */
   public void Logout() throws SQLException {
     // logout
     // detail system date for last_login
@@ -986,16 +922,7 @@ class UI
 
     sql_handler.runSQLStatement(statement);
     System.out.println("You have now been logged out.");
-    WelcomeScreen();
   }
-
-  /* AIRLINE AGENT ONLY: Record a flight departure. After a plane takes off,
-  the user may want to record the departure. Your system should support the
-  task and make necessary updates such as updating the act_dep_time.
-  */
-
-  // select * from sch_flights // flightno, dep_date, act_dep_time, act_arr_time
-  // rs.updateString(3, INPUT_DATE);
 
   public void RecordDeparture() throws SQLException {
     String flightno = "";
@@ -1024,7 +951,7 @@ class UI
           + "where flightno = '"+flightno.toUpperCase()+"'";
           sql_handler.runSQLStatement(statement);
           System.out.println("Flight departure time successfully updated.");
-          MainHub();
+          return;
         } catch (ParseException e) {}
       } else if (deptime.equals("C") || deptime.equals("c")) {
         statement = "update sch_flights "
@@ -1032,19 +959,12 @@ class UI
         + "where flightno = '"+flightno.toUpperCase()+"'";
         sql_handler.runSQLStatement(statement);
         System.out.println("Flight departure time successfully updated.");
-        MainHub();
+        return;
       } else {
         System.out.println("Incorrect input - please try again.");
       }
     }
   }
-
-  /* AIRLINE AGENT ONLY: Record a flight arrival. After a landing, the user may
-  want to record the arrival and your system should support the task.
-  */
-
-  // select * from sch_flights // flightno, dep_date, act_dep_time, act_arr_time
-  // rs.updateString(4, INPUT_DATE)
 
   public void RecordArrival() throws SQLException {
     String flightno = "";
@@ -1073,7 +993,7 @@ class UI
           + "where flightno = '"+flightno.toUpperCase()+"'";
           sql_handler.runSQLStatement(statement);
           System.out.println("Flight arrival time successfully updated.");
-          MainHub();
+          return;
         } catch (ParseException e) {}
       } else if (arrtime.equals("C") || arrtime.equals("c")) {
         statement = "update sch_flights "
@@ -1081,7 +1001,7 @@ class UI
         + "where flightno = '"+flightno.toUpperCase()+"'";
         sql_handler.runSQLStatement(statement);
         System.out.println("Flight arrival time successfully updated.");
-        MainHub();
+        return;
       } else {
         System.out.println("Incorrect input - please try again.");
       }
@@ -1125,8 +1045,8 @@ class UI
    * FIXME: kappa
    * @throws SQLException
    */
-  public void RoundTrips() throws SQLException 
-  { 
+  public void RoundTrips() throws SQLException
+  {
     String srcACode = "";
     String destACode = "";
     String depDate = "";
@@ -1147,17 +1067,17 @@ class UI
     // add departure date
     System.out.println("Please enter your departure date in format DD/MMM/YYYY - eg: 01/10/2015 for October 10, 2015");
     depDate = scan.nextLine();
-    
+
     System.out.println("Please enter your return date in format DD/MMM/YYYY - eg: 01/10/2015 for October 10, 2015");
     retDate = scan.nextLine();
-    
+
     try {
       sql_handler.runSQLStatement("drop view good_dep_trips");
       sql_handler.runSQLStatement("drop view good_ret_trips");
     } catch (SQLException sqle) {
-      
+
     }
-    
+
     String stmt1 = "create view good_dep_trips (flightno1, flightno2, layover, price) as " +
                     "select flightno1, flightno2, layover, price " +
                     "from ( " +
@@ -1171,7 +1091,7 @@ class UI
                     "from available_flights " +
                     "where to_char(dep_date,'DD/MM/YYYY')='"+ depDate +"' and src='"+srcACode.toUpperCase()+"' and dst='"+destACode.toUpperCase()+"')) " +
                     "order by price";
-    
+
     String stmt2 =  "create view good_ret_trips (flightno1, flightno2, layover, price) as " +
                     "select flightno1, flightno2, layover, price " +
                     "from ( " +
@@ -1185,14 +1105,14 @@ class UI
                     "from available_flights " +
                     "where to_char(dep_date,'DD/MM/YYYY')='"+ retDate +"' and src='"+destACode.toUpperCase()+"' and dst='"+srcACode.toUpperCase()+"')) " +
                     "order by price";
-    
+
     String query =  "select gdt.flightno1 as dep_flightno1, gdt.flightno2 as dep_flightno2, gdt.layover as dep_layover, " +
                     "grt.flightno1 as ret_flightno1, grt.flightno2 as ret_flightno2, grt.layover as ret_layover, " +
                     "gdt.price+grt.price as price " +
                     "from good_dep_trips gdt, good_ret_trips grt " +
                     "group by gdt.flightno1, gdt.flightno2, gdt.layover, gdt.price, grt.flightno1, grt.flightno2, grt.layover, grt.price " +
                     "order by price";
-    
+
     sql_handler.runSQLStatement(stmt1);
     sql_handler.runSQLStatement(stmt2);
     ResultSet rs = sql_handler.runSQLQuery(query);
@@ -1201,21 +1121,21 @@ class UI
     ArrayList<String> flightnolist2 = new ArrayList<>();
     ArrayList<String> flightnolist3= new ArrayList<>();
     ArrayList<String> flightnolist4 = new ArrayList<>();
-    int planId = 1;    
+    int planId = 1;
     while(rs.next())
     {
       String dep_flightno1 = rs.getString("DEP_FLIGHTNO1");
       String dep_flightno2 = rs.getString("DEP_FLIGHTNO2");
       String dep_layover = rs.getString("DEP_LAYOVER");
       boolean has_sec_dep_flight = (dep_flightno2 != null);
-      
+
       String ret_flightno1 = rs.getString("RET_FLIGHTNO1");
       String ret_flightno2 = rs.getString("RET_FLIGHTNO2");
       String ret_layover = rs.getString("RET_LAYOVER");
       boolean has_sec_ret_flight = (ret_flightno2 != null);
-      
+
       String price = rs.getString("PRICE");
-      
+
       flightnolist1.add(dep_flightno1);
       flightnolist2.add(dep_flightno2);
 
@@ -1277,7 +1197,7 @@ class UI
         System.out.println("    Dep. Time: "+dep1);
         System.out.println("    Arr. Time: "+arr1);
       }
-      
+
       flightnolist3.add(ret_flightno1);
       flightnolist4.add(ret_flightno2);
 
@@ -1340,7 +1260,7 @@ class UI
       planId++;
     }
     System.out.println("Round-trips are currently being sorted by number of connections, and price.");
-    
+
     while(true) {
       System.out.println("(R)eturn to main menu.");
       System.out.println("Or select a booking with the corresponding ID (eg. 1, 2, ...)");
@@ -1352,7 +1272,7 @@ class UI
         Integer intIndex = Integer.parseInt(i);
         if (intIndex <= flightnolist1.size() && intIndex > 0) {
           intIndex = intIndex - 1;
-          MakeABooking(flightnolist1.get(intIndex), 
+          MakeABooking(flightnolist1.get(intIndex),
                        flightnolist2.get(intIndex),
                        flightnolist3.get(intIndex),
                        flightnolist4.get(intIndex));
@@ -1449,9 +1369,16 @@ class UI
       return true;
 
     System.out.println("Sorry the airport code could not be matched.");
+    System.out.println("Checking against airport names...");
 
     query = "select * from airports where regexp_like(name, '"+ac+"', 'i')";
     rs = sql_handler.runSQLQuery(query);
+
+    if(!rs.isBeforeFirst())
+    {
+      System.out.println("The entered value doesn't match known airport names.");
+      return false;
+    }
 
     while (rs.next())
     {
