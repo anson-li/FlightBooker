@@ -160,6 +160,17 @@ class UI
     pub_email = email;
     pub_role = "user";
     
+    String query = "select * from airline_agents where email='"+email+"'";
+    ResultSet rs = sql_handler.runSQLQuery(query);
+    if (rs.next())
+    {
+      pub_role = "poweruser";
+    }
+    else
+    {
+      pub_role = "user";
+    }
+    
     return true;
   }
 
