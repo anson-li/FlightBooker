@@ -1,5 +1,5 @@
 # CMPUT 291 MINI-PROJECT 1:
-Satyen Alkolkar and Anson Li
+Satyen Akolkar and Anson Li
 
 #### What is this project?
 This project is an airline search tool that searches for flights, and allows users to interact with flights, bookings, as well as engage in other activities.
