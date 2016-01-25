@@ -1,4 +1,4 @@
-# CMPUT 291 MINI-PROJECT 1:
+# FlightBooker
 Satyen Akolkar and Anson Li
 
 #### What is this project?
